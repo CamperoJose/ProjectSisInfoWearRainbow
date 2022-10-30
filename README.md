@@ -1,0 +1,9 @@
+# ProjectSisInfoWearRainbow
+ProjectSisInfoWearRainbow
+
+
+CONTRIBUCIONES:
+- CAMPERO JOSE
+- GUACHALLA SERGIO
+- MALLEA LAURA
+- ZIZOLD GABRIELA
