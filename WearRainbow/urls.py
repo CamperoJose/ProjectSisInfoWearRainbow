@@ -24,5 +24,6 @@ urlpatterns = [
     path('SignInAsClient/', views.SignInAsClient, name="SignInAsClient"),
     path('ClientPanel/', views.ClientPanel, name="ClientPanel"),
     path('registrarCliente/', views.registroCliente, name="registrarCliente"),
+    path('inicioSesionCliente/', views.inicioSesionCliente, name="inicioSesionCliente"),
 ]
 

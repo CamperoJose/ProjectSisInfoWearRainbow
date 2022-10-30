@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from WearRainbow.models import persona
 from WearRainbow.models import cliente
@@ -55,3 +56,31 @@ def registroCliente(request):
 
         response = redirect('/SignInAsClient/')
         return response
+
+
+def inicioSesionCliente(request):
+    if request.method == 'POST':
+        usuario = request.POST['user']
+        contraseña = request.POST['pass']
+        try:
+            verificar = cliente.objects.get(usuario=usuario)
+
+            usr = verificar.get_usuario()
+            pass1 = verificar.get_contraseña()
+
+            if usuario != usr or contraseña != pass1:
+                messages.success(request, 'El nombre de usuario o contraseña no es correcto')
+                response = redirect('/SignInAsClient/')
+                return response
+            else:
+                dat2 = (verificar.get_id_persona()).get_id_persona()
+                dat1 = verificar.get_id_cliente()
+
+                response = redirect('/ClientPanel/')
+                response.set_cookie('id_cliente', dat1)
+                response.set_cookie('id_persona', dat2)
+                return response
+        except:
+            messages.success(request, 'El nombre de usuario o contraseña no es correcto')
+            response = redirect('/SignInAsClient/')
+            return response

@@ -40,25 +40,29 @@
               class="img-fluid" alt="Sample image">
           </div>
           <div class="col-md-8 col-lg-6 col-xl-4 offset-md-1">
-            <form>
-
-
+            <form action="/inicioSesionCliente/" class="form-horizontal" method="post">
+            {% csrf_token %}
               <!-- Email input -->
               <div class="form-outline mb-4">
-                <input type="email" id="form3Example3" class="form-control form-control-md"
+                <input type="text" name="user" class="form-control form-control-md"
                   placeholder="Ingrese su Usuario" />
                 <label class="form-label" for="form3Example3">Usuario</label>
               </div>
 
               <!-- Password input -->
               <div class="form-outline mb-3">
-                <input type="password" id="form3Example4" class="form-control form-control-md"
+                <input type="password" name="pass" class="form-control form-control-md"
                   placeholder="Ingrese su Contraseña" />
                 <label class="form-label" for="form3Example4">Contraseña</label>
               </div>
 
+                {% if messages %}
+                    {% for msg in messages %}
+                    <b>{{msg}}</b>
+                    {% endfor %}
+                    {% endif %}
+
               <div class="d-flex justify-content-between align-items-center">
-                <!-- Checkbox -->
                 <div class="form-check mb-0">
 
                 </div>
@@ -66,8 +70,11 @@
               </div>
 
               <div class="text-center text-lg-start mt-4 pt-2">
-                <button type="button" class="btn  btn-md"
+                <button type="submit" class="btn  btn-md"
                   style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: #3D384D; color: white; ">Ingresar</button>
+
+
+
                 <p class="small fw-bold mt-2 pt-1 mb-0"> <a href="{% url 'registrarPersona' %}"
                     class="link-danger">Registrarse</a></p>
               </div>
@@ -79,8 +86,6 @@
 
 
     </section>
-
-
 
 	<!-- All Js -->
 

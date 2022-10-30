@@ -28,3 +28,14 @@ class cliente(models.Model):
     id_persona = models.ForeignKey(persona, on_delete=models.CASCADE)
     usuario  = models.CharField(max_length=30, null=False)
     contraseña  = models.CharField(max_length=30, null=False)
+
+    def get_id_cliente(self):
+        return self.id_cliente
+    def get_id_persona(self):
+        return self.id_persona
+
+    def get_usuario(self):
+        return self.usuario
+
+    def get_contraseña(self):
+        return self.contraseña
