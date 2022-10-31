@@ -92,7 +92,7 @@ def inicioSesionCliente(request):
             return response
 
 
-def inicioSesionAdministrador(request, valueError=None):
+def inicioSesionAdministrador(request):
     if request.method == 'POST':
         usuario = request.POST['user']
         contraseña = request.POST['pass']
@@ -122,7 +122,7 @@ def inicioSesionAdministrador(request, valueError=None):
                 response.set_cookie('id_administrador', dat1)
                 response.set_cookie('id_persona', dat2)
                 return response
-        except valueError:
-            messages.success(request, 'El nombre de usuario o contraseña no es correcto', valueError)
+        except:
+            messages.success(request, 'El nombre de usuario o contraseña no es correcto')
             response = redirect('/SignInAsAdministrator/')
             return response
