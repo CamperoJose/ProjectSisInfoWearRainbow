@@ -1,10 +1,95 @@
-<!DOCTYPE html>
+{% load static %}
+
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+	<meta charset="UTF-8">
+	<meta content="IE=edge" http-equiv="X-UA-Compatible">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<title>WEAR RAINBOW</title>
+	<!-- All CSS -->
+    <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}' />
+	<link href='{% static "cssForIndex.css" %}' rel="stylesheet">
 </head>
 <body>
+	<nav style="background: #3D384D" class="navbar navbar-expand-lg navbar-dark bg-ligth fixed-top">
+		<div class="container">
+			<a class="navbar-brand" href="#"><img style="height: 45px"  src="{% static 'MEDIA/logo01.png' %}" alt=""></a> <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span></button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav ms-auto mb-4 mb-lg-0">
 
-</body>
-</html>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Productos</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Contactos</a>
+					</li>
+					<li class="nav-item">
+						<a style="color: #F2727D; font-weight: bold;" class="nav-link" href="{% url 'SignInAsClient' %}">Iniciar Sesión</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+    <section class="vh-100">
+      <div class="container-fluid h-custom">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+
+          <div class="col-md-8 row-cols-1 col-xl-4 offset-xl-0">
+            <form action="/inicioSesionAdministrador/" class="form-horizontal" method="post">
+            {% csrf_token %}
+              <!-- Email input -->
+              <div class="form-outline mb-4">
+                <input type="text" name="user" class="form-control form-control-md"
+                  placeholder="Ingrese su Usuario" />
+                <label class="form-label" for="form3Example3">Usuario</label>
+              </div>
+
+              <!-- Password input -->
+              <div class="form-outline mb-3">
+                <input type="password" name="pass" class="form-control form-control-md"
+                  placeholder="Ingrese su Contraseña" />
+                <label class="form-label" for="form3Example4">Contraseña</label>
+              </div>
+
+                {% if messages %}
+                    {% for msg in messages %}
+                    <b>{{msg}}</b>
+                    {% endfor %}
+                    {% endif %}
+
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="form-check mb-0">
+
+                </div>
+                <a href="{% url 'SignInAsClient' %}" class="text-body">Ingresar como Cliente</a>
+              </div>
+
+              <div class="text-center text-lg-start mt-4 pt-2">
+                <button type="submit" class="btn  btn-md"
+                  style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: #3D384D; color: white; ">Ingresar</button>
+
+
+              </div>
+
+            </form>
+          </div>
+
+            <div class="col-md-9 col-lg-6 col-xl-5">
+            <img src="{% static 'MEDIA/img03.png' %}"
+              class="img-fluid" alt="Sample image">
+          </div>
+
+        </div>
+      </div>
+
+
+    </section>
+
+	<!-- All Js -->
+
+    <script src="{% static 'js/jquery-3.5.1.slim.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+

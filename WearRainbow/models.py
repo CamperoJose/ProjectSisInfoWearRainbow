@@ -23,6 +23,17 @@ class administrador(models.Model):
     usuario  = models.CharField(max_length=30, null=False)
     contraseña  = models.CharField(max_length=30, null=False)
 
+    def get_id_administrador(self):
+        return self.id_administrador
+    def get_id_persona(self):
+        return self.id_persona
+
+    def get_usuario(self):
+        return self.usuario
+
+    def get_contraseña(self):
+        return self.contraseña
+
 class cliente(models.Model):
     id_cliente = models.AutoField(primary_key=True, null=False, unique=True)
     id_persona = models.ForeignKey(persona, on_delete=models.CASCADE)

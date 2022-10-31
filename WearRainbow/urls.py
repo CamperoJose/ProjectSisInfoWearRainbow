@@ -19,11 +19,14 @@ from django.urls import path
 from . import views
 urlpatterns = [
     #path('admin/', admin.site.urls),
-    path('', views.paginaIndex),
+    path('', views.paginaIndex, name="paginaIndex"),
     path('registrarpersona', views.registroPersona, name="registrarPersona"),
     path('SignInAsClient/', views.SignInAsClient, name="SignInAsClient"),
+    path('SignInAsAdministrator/', views.SignInAsAdministrator, name="SignInAsAdministrator"),
     path('ClientPanel/', views.ClientPanel, name="ClientPanel"),
+    path('AdministratorPanel/', views.AdministratorPanel, name="AdministratorPanel"),
     path('registrarCliente/', views.registroCliente, name="registrarCliente"),
     path('inicioSesionCliente/', views.inicioSesionCliente, name="inicioSesionCliente"),
+    path('inicioSesionAdministrador/', views.inicioSesionAdministrador, name="inicioSesionAdministrador"),
 ]
 

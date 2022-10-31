@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from WearRainbow.models import persona
+from WearRainbow.models import persona, administrador
 from WearRainbow.models import cliente
 from django.contrib import messages
 
@@ -12,10 +12,16 @@ def paginaIndex(request):
 def SignInAsClient(request):
     return render(request, 'SigninAsClient.html')
 
+def SignInAsAdministrator(request):
+    return render(request, 'SignInAsAdministrator.html')
+
+
 
 def ClientPanel(request):
     return render(request, 'ClientPanel.html')
 
+def AdministratorPanel(request):
+    return render(request, 'AdministratorPanel.html')
 
 def registroPersona(request):
     if request.method == 'POST':
@@ -83,4 +89,40 @@ def inicioSesionCliente(request):
         except:
             messages.success(request, 'El nombre de usuario o contraseña no es correcto')
             response = redirect('/SignInAsClient/')
+            return response
+
+
+def inicioSesionAdministrador(request, valueError=None):
+    if request.method == 'POST':
+        usuario = request.POST['user']
+        contraseña = request.POST['pass']
+        try:
+            verificar = administrador.objects.get(usuario=usuario)
+
+            print(verificar)
+
+            usr = verificar.get_usuario()
+            pass1 = verificar.get_contraseña()
+
+
+            if usuario != usr or contraseña != pass1:
+                messages.success(request, 'El nombre de usuario o contraseña no es correcto')
+                response = redirect('/SignInAsAdministrator/')
+                return response
+            else:
+                print("datos correctos")
+                dat1 = verificar.get_id_administrador()
+
+                print(dat1)
+
+                dat2 = (verificar.get_id_persona()).get_id_persona()
+                print(dat2)
+
+                response = redirect('/AdministratorPanel/')
+                response.set_cookie('id_administrador', dat1)
+                response.set_cookie('id_persona', dat2)
+                return response
+        except valueError:
+            messages.success(request, 'El nombre de usuario o contraseña no es correcto', valueError)
+            response = redirect('/SignInAsAdministrator/')
             return response
