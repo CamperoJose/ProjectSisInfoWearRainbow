@@ -16,12 +16,17 @@ def SignInAsAdministrator(request):
     return render(request, 'SignInAsAdministrator.html')
 
 
-
 def ClientPanel(request):
     return render(request, 'ClientPanel.html')
 
 def AdministratorPanel(request):
     return render(request, 'AdministratorPanel.html')
+
+def OrdersAdministrator(request):
+    return render(request, 'OrdersAdministrator.html')
+
+def ProductsAdministrator(request):
+    return render(request, 'ProductsAdministrator.html')
 
 def registroPersona(request):
     if request.method == 'POST':
@@ -118,7 +123,7 @@ def inicioSesionAdministrador(request):
                 dat2 = (verificar.get_id_persona()).get_id_persona()
                 print(dat2)
 
-                response = redirect('/AdministratorPanel/')
+                response = redirect('/OrdersAdministrator/')
                 response.set_cookie('id_administrador', dat1)
                 response.set_cookie('id_persona', dat2)
                 return response
