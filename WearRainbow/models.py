@@ -83,7 +83,7 @@ class Talla(models.Model):
 class Categoria(models.Model):
     id_categoria = models.AutoField(primary_key=True, null=False, unique=True)
     categoria = models.CharField(max_length=30, null=False)
-	def get_id_id_categoria(self):
-        	return self.id_categoria
-	def get_id_categoria(self):
-        	return self.categoria
+    def get_id_categoria(self):
+        return self.id_categoria
+    def get_categoria(self):
+        return self.categoria
