@@ -1,13 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from WearRainbow.models import persona, administrador
+from WearRainbow.models import persona, administrador, Producto, Categoria
 from WearRainbow.models import cliente
 from django.contrib import messages
 
 
 def paginaIndex(request):
     return render(request, 'index.html')
-
 
 def SignInAsClient(request):
     return render(request, 'SigninAsClient.html')
@@ -26,7 +25,12 @@ def OrdersAdministrator(request):
     return render(request, 'OrdersAdministrator.html')
 
 def ProductsAdministrator(request):
-    return render(request, 'ProductsAdministrator.html')
+    productoListado = Producto.objects.all()
+    return render(request, 'ProductsAdministrator.html', {"producto": productoListado})
+
+def AddNewProduct(request):
+    return render(request, 'AddNewProduct.html')
+
 
 def registroPersona(request):
     if request.method == 'POST':

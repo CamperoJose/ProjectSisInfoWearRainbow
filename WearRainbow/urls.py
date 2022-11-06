@@ -26,6 +26,7 @@ urlpatterns = [
     path('ClientPanel/', views.ClientPanel, name="ClientPanel"),
     path('OrdersAdministrator/', views.OrdersAdministrator, name="OrdersAdministrator"),
     path('ProductsAdministrator/', views.ProductsAdministrator, name="ProductsAdministrator"),
+    path('AddNewProduct/', views.AddNewProduct, name="AddNewProduct"),
     path('registrarCliente/', views.registroCliente, name="registrarCliente"),
     path('inicioSesionCliente/', views.inicioSesionCliente, name="inicioSesionCliente"),
     path('inicioSesionAdministrador/', views.inicioSesionAdministrador, name="inicioSesionAdministrador"),

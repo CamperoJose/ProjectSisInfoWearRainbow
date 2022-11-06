@@ -78,7 +78,7 @@ DATABASES = {
         'USER': 'admin',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
-        'PORT': '1433',
+        'PORT': '1433 ',
 
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',

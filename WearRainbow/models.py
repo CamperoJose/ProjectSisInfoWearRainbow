@@ -87,3 +87,26 @@ class Categoria(models.Model):
         return self.id_categoria
     def get_categoria(self):
         return self.categoria
+    def __str__(self):
+        return self.categoria
+
+class Producto(models.Model):
+    id_producto = models.AutoField(primary_key=True, null=False, unique=True)
+    nombre = models.CharField(max_length=30, null=False)
+    descripcion = models.CharField(max_length=300, null=False)
+    color = models.CharField(max_length=30, null=False)
+    precio = models.FloatField(null=False)
+    material = models.CharField(max_length=30, null=False)
+    img = models.CharField(max_length=50, null=False)
+    id_categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+
+    def get_id_producto(self):
+        return self.id_producto
+
+    def get_id_cat(self):
+        return self.id_categoria
+class TallaDisponible(models.Model):
+    id_tallaDisponible = models.AutoField(primary_key=True, null=False, unique=True)
+    stock = models.CharField(max_length=30, null=False)
+    id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    id_talla = models.ForeignKey(Talla, on_delete=models.CASCADE)
