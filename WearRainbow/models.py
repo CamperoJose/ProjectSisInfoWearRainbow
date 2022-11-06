@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Avg, Count, Min, Sum
 
 
 class persona(models.Model):
@@ -103,10 +104,26 @@ class Producto(models.Model):
     def get_id_producto(self):
         return self.id_producto
 
+    def get_price(self):
+        return round(self.precio,1)
+
     def get_id_cat(self):
         return self.id_categoria
+
+    def get_total_stock(self):
+        obj = TallaDisponible.objects.filter(id_producto=self.id_producto).aggregate(Sum('stock'))
+        return obj['stock__sum']
 class TallaDisponible(models.Model):
     id_tallaDisponible = models.AutoField(primary_key=True, null=False, unique=True)
-    stock = models.CharField(max_length=30, null=False)
+    stock = models.IntegerField(max_length=30, null=False)
     id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     id_talla = models.ForeignKey(Talla, on_delete=models.CASCADE)
+
+    def get_stock(self):
+        return self.stock
+    def __str__(self):
+        return self
+
+class Departamento(models.Model):
+    id_departamento = models.AutoField(primary_key=True, null=False, unique=True)
+    Departamento = models.CharField(max_length=30, null=False)

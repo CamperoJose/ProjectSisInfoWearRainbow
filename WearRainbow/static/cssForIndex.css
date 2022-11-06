@@ -89,6 +89,12 @@ body {
 .team .card-body i {
 	font-size: 20px;
 }
+h2{
+	color: #3D384D;
+}
+td{
+	color: #3D384D;
+}
 @media only screen and (min-width: 768px) and (max-width: 991px) {
 	.carousel-caption {
 		bottom: 400px;

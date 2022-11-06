@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<meta content="IE=edge" http-equiv="X-UA-Compatible">
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
-	<title>WEAR RAINBOW</title>
+      <title>NUEVO PRODUCTO</title>
 	<!-- All CSS -->
     <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}' />
 		<link href='{% static "cssForIndex.css" %}' rel="stylesheet">
@@ -37,7 +37,7 @@
         <div class="text-center text-lg-start mt-4 pt-2">
 			<a href="{% url 'AddNewProduct' %}">
             <button class="btn  btn-md" style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: #3D384D; color: white; ">
-				Agregar Nuevo Producto</button></a>
+				Volver</button></a>
         </div>
     </div>
 
@@ -61,7 +61,7 @@
 									<th style="width: 12%">Precio Unitario</th>
 									<th>Material</th>
 									<th>Categoria</th>
-									<th style="width: 9%">Stock Total</th>
+									<th>Stock Total</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -75,7 +75,6 @@
 									<td style="text-align: right; padding-right: 3%">{{p.get_price}}Bs.-</td>
 									<td>{{p.material}}</td>
 									<td>{{p.get_id_cat}}</td>
-									<td style="text-align: center;">{{p.get_total_stock}} unidades</td>
 								</tr>
 								{% endfor%}
                             </tbody>
