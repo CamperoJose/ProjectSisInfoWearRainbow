@@ -61,7 +61,8 @@
 									<th style="width: 12%">Precio Unitario</th>
 									<th>Material</th>
 									<th>Categoria</th>
-									<th style="width: 9%">Stock Total</th>
+									<th style="width: 10%">Stock Total</th>
+									<th colspan="">Modificar</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -75,7 +76,8 @@
 									<td style="text-align: right; padding-right: 3%">{{p.get_price}}Bs.-</td>
 									<td>{{p.material}}</td>
 									<td>{{p.get_id_cat}}</td>
-									<td style="text-align: center;">{{p.get_total_stock}} unidades</td>
+									<td style="text-align: right;">{{p.get_total_stock}} unidades</td>
+									<td><a href=""></a>Modificar</td>
 								</tr>
 								{% endfor%}
                             </tbody>

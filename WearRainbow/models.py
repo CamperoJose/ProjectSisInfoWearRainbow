@@ -71,6 +71,9 @@ class Talla(models.Model):
     def get_id_talla(self):
         return self.talla
 
+    def get_catidadTallas(self):
+        return Talla.objects.count()
+
     def get_id_largoEspalda(self):
         return self.largoEspalda
 
@@ -84,12 +87,16 @@ class Talla(models.Model):
 class Categoria(models.Model):
     id_categoria = models.AutoField(primary_key=True, null=False, unique=True)
     categoria = models.CharField(max_length=30, null=False)
+
     def get_id_categoria(self):
         return self.id_categoria
+
     def get_categoria(self):
         return self.categoria
+
     def __str__(self):
         return self.categoria
+
 
 class Producto(models.Model):
     id_producto = models.AutoField(primary_key=True, null=False, unique=True)
@@ -105,24 +112,30 @@ class Producto(models.Model):
         return self.id_producto
 
     def get_price(self):
-        return round(self.precio,1)
+        return round(self.precio, 1)
 
     def get_id_cat(self):
         return self.id_categoria
 
     def get_total_stock(self):
         obj = TallaDisponible.objects.filter(id_producto=self.id_producto).aggregate(Sum('stock'))
+        if obj['stock__sum'] == None:
+            return 0
         return obj['stock__sum']
+
+
 class TallaDisponible(models.Model):
     id_tallaDisponible = models.AutoField(primary_key=True, null=False, unique=True)
-    stock = models.IntegerField(max_length=30, null=False)
+    stock = models.IntegerField(null=False)
     id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     id_talla = models.ForeignKey(Talla, on_delete=models.CASCADE)
 
     def get_stock(self):
         return self.stock
+
     def __str__(self):
         return self
+
 
 class Departamento(models.Model):
     id_departamento = models.AutoField(primary_key=True, null=False, unique=True)

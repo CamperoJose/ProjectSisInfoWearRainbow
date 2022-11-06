@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from WearRainbow.models import persona, administrador, Producto, Categoria
+from WearRainbow.models import persona, administrador, Producto, Categoria, Talla, TallaDisponible
 from WearRainbow.models import cliente
 from django.contrib import messages
 
@@ -29,7 +29,9 @@ def ProductsAdministrator(request):
     return render(request, 'ProductsAdministrator.html', {"producto": productoListado})
 
 def AddNewProduct(request):
-    return render(request, 'AddNewProduct.html')
+    CategoriaListado = Categoria.objects.all()
+    tallaListado = Talla.objects.all()
+    return render(request, 'AddNewProduct.html', {"categoria": CategoriaListado, "talla": tallaListado})
 
 
 def registroPersona(request):
@@ -135,3 +137,34 @@ def inicioSesionAdministrador(request):
             messages.success(request, 'El nombre de usuario o contraseña no es correcto')
             response = redirect('/SignInAsAdministrator/')
             return response
+
+def registroProducto(request):
+    if request.method == 'POST':
+
+        #ParaRegistro de producto:
+        nombre = request.POST['nombre']
+        material = request.POST['material']
+        cat = request.POST['cat']
+        color = request.POST['color']
+        precio = request.POST['precio']
+        desc = request.POST['desc']
+
+
+        product = Producto( nombre=nombre, descripcion=desc, color=color, precio=float(precio), material=material, img="Enter IMG", id_categoria=Categoria(cat))
+        product.save()
+        id_producto=product.get_id_producto()
+        # Para Registro de tallas en las que estara disponible el producto:
+
+
+        catidadTallas = Talla.objects.count()
+        Tallas = Talla.objects.all()
+        print(catidadTallas)
+        print(Tallas[0].id_talla)
+        ListaIdTallas=()
+        for i in range(catidadTallas):
+            stock = request.POST[str(Tallas[i].id_talla)]
+            obj2 = TallaDisponible(stock=stock, id_producto=Producto(id_producto), id_talla=Talla(Tallas[i].id_talla))
+            obj2.save()
+
+        response = redirect('/ProductsAdministrator/')
+        return response
