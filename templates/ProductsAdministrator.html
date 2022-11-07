@@ -12,7 +12,7 @@
 		<link href='{% static "cssForIndex.css" %}' rel="stylesheet">
 </head>
 <body>
-	<nav style="background: #3D384D" class="navbar navbar-expand-lg navbar-dark bg-ligth fixed-top">
+		<nav style="background: #3D384D" class="navbar navbar-expand-lg navbar-dark bg-ligth fixed-top">
 		<div class="container">
 			<a class="navbar-brand" href="#"><img style="height: 45px"  src="{% static 'MEDIA/logo01.png' %}" alt=""></a> <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span></button>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -23,6 +23,12 @@
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="{% url 'ProductsAdministrator' %}">Productos</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'CategoriesAdministrator' %}">Categorias</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'SizesAdministrator' %}">Tallas</a>
 					</li>
 					<li class="nav-item">
 						<a style="color: #F2727D; font-weight: bold;" class="nav-link" href="{% url 'paginaIndex' %}">Cerrar Sesión</a>
@@ -79,7 +85,7 @@
 									<td>{{p.get_id_cat}}</td>
 									<td style="text-align: right;">{{p.get_total_stock}} unidades</td>
 									<td style="text-align: center; padding-right: 2%"><a class="btn" href="/ModifyProduct/{{p.id_producto}}"><img style="height: 25px" src="{% static 'MEDIA/icono05.png' %}" alt=""></a></td>
-									<td style="text-align: center; padding-right: 2%"><a class="btn" href="/ModifyProduct/{{p.id_producto}}"><img style="height: 25px" src="{% static 'MEDIA/icono06.png' %}" alt=""></a></td>
+									<td style="text-align: center; padding-right: 2%"><a class="btn" href="/ViewProduct/{{p.id_producto}}"><img style="height: 25px" src="{% static 'MEDIA/icono07.png' %}" alt=""></a></td>
 								</tr>
 								{% endfor%}
                             </tbody>

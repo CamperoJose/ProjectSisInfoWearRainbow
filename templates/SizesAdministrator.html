@@ -19,10 +19,16 @@
 				<ul class="navbar-nav ms-auto mb-4 mb-lg-0">
 
 					<li class="nav-item">
-						<a class="nav-link" href="#">Pedidos</a>
+						<a class="nav-link" href="{% url 'OrdersAdministrator' %}">Pedidos</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="#">Productos</a>
+						<a class="nav-link" href="{% url 'ProductsAdministrator' %}">Productos</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'CategoriesAdministrator' %}">Categorias</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'SizesAdministrator' %}">Tallas</a>
 					</li>
 					<li class="nav-item">
 						<a style="color: #F2727D; font-weight: bold;" class="nav-link" href="{% url 'paginaIndex' %}">Cerrar Sesión</a>
@@ -32,7 +38,7 @@
 		</div>
 	</nav>
     <br><br><br><br><br>
-    <h1>manejo de pedidos</h1>
+    <h1>manejo de tallas</h1>
 
 	<!-- All Js -->
 

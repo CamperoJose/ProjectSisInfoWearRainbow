@@ -18,11 +18,15 @@ def SignInAsAdministrator(request):
 def ClientPanel(request):
     return render(request, 'ClientPanel.html')
 
-def AdministratorPanel(request):
-    return render(request, 'AdministratorPanel.html')
 
 def OrdersAdministrator(request):
     return render(request, 'OrdersAdministrator.html')
+
+def CategoriesAdministrator(request):
+    return render(request, 'CategoriesAdministrator.html')
+
+def SizesAdministrator(request):
+    return render(request, 'SizesAdministrator.html')
 
 def ModifyProduct(request, id):
     producto=Producto.objects.get(id_producto=id)
@@ -33,6 +37,16 @@ def ModifyProduct(request, id):
         Lista.append(i.id_talla.id_talla)
     tallaListado = Talla.objects.exclude(id_talla__in=Lista)
     return render(request, 'ModifyProduct.html', {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado, "tallaDisponibles": TallaDisponibleListado})
+
+def ViewProduct(request, id):
+    producto=Producto.objects.get(id_producto=id)
+    CategoriaListado = Categoria.objects.all()
+    TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
+    Lista=[]
+    for i in TallaDisponibleListado:
+        Lista.append(i.id_talla.id_talla)
+    tallaListado = Talla.objects.exclude(id_talla__in=Lista)
+    return render(request, 'PreviewProductAsAdministrator.html', {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado, "tallaDisponibles": TallaDisponibleListado})
 
 def ProductsAdministrator(request):
     productoListado = Producto.objects.all()
