@@ -201,6 +201,7 @@ def modificarProducto(request):
 
         # Para Modificacion de tallas en las que estara disponible el producto:
 
+
         catidadTallas = Talla.objects.count()
         Tallas = Talla.objects.all()
         print(catidadTallas)
@@ -208,8 +209,10 @@ def modificarProducto(request):
         ListaIdTallas=()
         for i in range(catidadTallas):
             stock = request.POST[str(Tallas[i].id_talla)]
-            obj2 = TallaDisponible(stock=stock, id_producto=Producto(id_producto), id_talla=Talla(Tallas[i].id_talla))
+            obj2 = TallaDisponible.objects.get(id_producto = Producto(id_producto), id_talla = Talla(Tallas[i].id_talla))
+            obj2.stock = int(stock)
             obj2.save()
+
 
         response = redirect('/ProductsAdministrator/')
         return response
