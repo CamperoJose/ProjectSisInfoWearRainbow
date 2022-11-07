@@ -157,9 +157,10 @@ def registroProducto(request):
         color = request.POST['color']
         precio = request.POST['precio']
         desc = request.POST['desc']
+        img = request.FILES['img']
 
 
-        product = Producto( nombre=nombre, descripcion=desc, color=color, precio=float(precio), material=material, img="Enter IMG", id_categoria=Categoria(cat))
+        product = Producto( nombre=nombre, descripcion=desc, color=color, precio=float(precio), material=material, img=img, id_categoria=Categoria(cat))
         product.save()
         id_producto=product.get_id_producto()
         # Para Registro de tallas en las que estara disponible el producto:
@@ -197,15 +198,18 @@ def modificarProducto(request):
         obj.precio = float(precio)
         obj.descripcion = desc
 
+
+        if request.FILES!={}:
+            img = request.FILES['img']
+            obj.img = img
+
         obj.save()
 
         # Para Modificacion de tallas en las que estara disponible el producto:
 
-
         catidadTallas = Talla.objects.count()
         Tallas = Talla.objects.all()
-        print(catidadTallas)
-        print(Tallas[0].id_talla)
+
         ListaIdTallas=()
         for i in range(catidadTallas):
             stock = request.POST[str(Tallas[i].id_talla)]

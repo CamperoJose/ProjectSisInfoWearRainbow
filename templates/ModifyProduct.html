@@ -50,7 +50,7 @@
                     <div class="card shadow-lg card-1">
                         <div class="card-body inner-card">
 
-                            <form action="/modificarProducto/" class="form-horizontal" method="post">
+                            <form action="/modificarProducto/" class="form-horizontal" method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                                 <div class="row justify-content-center">
                                     <div class="col-lg-5 col-md-6 col-sm-12">
@@ -76,7 +76,7 @@
 
                                 <div class="row justify-content-center">
                                     <div class="col-md-12 col-lg-10 col-12"> <div class="form-group"> <label >Descripcion</label>  <input type="text" class="form-control" name="desc" value="{{producto.descripcion}}"> </div></div>
-                                    <div class="col-md-12 col-lg-10 col-12"> <div class="form-group files"><label class="my-auto">Upload Your File </label> <input name="file" type="file" class="form-control" /></div></div>
+                                    <div class="col-md-12 col-lg-10 col-12"> <div class="form-group files"><label class="my-auto">Cambiar Imagen </label> <input name="img" type="file" class="form-control"/></div></div>
 
                                 </div>
                                 <br>
@@ -94,8 +94,6 @@
                                             <div class="form-group"> <label >{{t.talla}}: </label> <input style="text-align: right" type="number" value="0" class="form-control" name="{{t.id_talla}}"> </div>
 								        {% endfor%}
 
-
-
                                     </div>
                                 </div>
 
@@ -103,11 +101,9 @@
 
                                     <div class="text-center text-lg-start mt-4 pt-2">
                                         <button type="submit" class="btn  btn-md" style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: #3D384D; color: white; ">
-                                            Registrar</button>
+                                            Guardar cambios</button>
                                     </div>
                                 </div>
-
-
 
                             </form>
                         </div>

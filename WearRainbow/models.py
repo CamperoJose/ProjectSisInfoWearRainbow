@@ -108,7 +108,7 @@ class Producto(models.Model):
     color = models.CharField(max_length=30, null=False)
     precio = models.FloatField(null=False)
     material = models.CharField(max_length=30, null=False)
-    img = models.CharField(max_length=50, null=False)
+    img = models.ImageField(upload_to="images/", null=False)
     id_categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
 
     def get_id_producto(self):
