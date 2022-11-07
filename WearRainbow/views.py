@@ -27,7 +27,8 @@ def CategoriesAdministrator(request):
     return render(request, 'CategoriesAdministrator.html', {"categoria": CategoriaListado})
 
 def SizesAdministrator(request):
-    return render(request, 'SizesAdministrator.html')
+    TallaListado = Talla.objects.all()
+    return render(request, 'SizesAdministrator.html', {"talla": TallaListado})
 
 def ModifyProduct(request, id):
     producto=Producto.objects.get(id_producto=id)
@@ -196,7 +197,7 @@ def registroProducto(request):
 
 def registroCategoria(request):
     if request.method == 'POST':
-        #ParaRegistro de producto:
+        #ParaRegistro de categoria:
 
         categoria = request.POST['nombre']
         id = request.POST['id']
@@ -209,6 +210,41 @@ def registroCategoria(request):
             obj.save()
 
         response = redirect('/CategoriesAdministrator/')
+        return response
+
+def registroTalla(request):
+    if request.method == 'POST':
+        #ParaRegistro de talla:
+
+        talla = request.POST['nombre']
+        largoEspalda = request.POST['size1']
+        contornoPecho = request.POST['size2']
+        contornoCuello = request.POST['size3']
+        id = request.POST['id']
+        if id=='':
+            obj = Talla(talla=talla, largoEspalda=largoEspalda, contornoPecho=contornoPecho, contornoCuello=contornoCuello)
+            obj.save()
+
+            productos = Producto.objects.all()
+
+            for i in productos:
+
+                obj2 = TallaDisponible(stock=0, id_producto=Producto(i.id_producto), id_talla=Talla(obj.get_id_talla()))
+                obj2.save()
+
+        else:
+            obj = Talla.objects.get(id_talla=id)
+            if talla!='':
+                obj.talla = talla
+            if largoEspalda!='':
+                obj.largoEspalda = int(largoEspalda)
+            if contornoPecho!='':
+                obj.contornoPecho = int(contornoPecho)
+            if contornoCuello!='':
+                obj.contornoCuello = int(contornoCuello)
+            obj.save()
+
+        response = redirect('/SizesAdministrator/')
         return response
 
 def modificarProducto(request):

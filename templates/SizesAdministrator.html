@@ -48,20 +48,40 @@
 		<div class="row">
     <div class="col-sm-12 col-md-6 col-lg-4 col-xl-5">
 
-        <h1>Adicionar o Modificar Categoría</h1>
+        <h1>Adicionar o Modificar Talla</h1>
         <div class="card">
             <div class="card-body">
-                <form action="/registroCategoria/" method="POST">{% csrf_token %}
+                <form action="/registroTalla/" method="POST">{% csrf_token %}
 
                     <div class="form-group">
-                        <input type="text"  name="id" class="form-control" placeholder="Id categoria (llenar solo para modificar)"
+                        <input type="text"  name="id" class="form-control" placeholder="Id Talla (llenar solo para modificar)"
                             maxlength="30" >
                     </div>
                     <br>
                     <div class="form-group">
-                        <input type="text"  name="nombre" class="form-control" placeholder="Nombre"
-                            maxlength="30" required>
+                        <input type="text"  name="nombre" class="form-control" placeholder="Talla"
+                            maxlength="30" >
                     </div>
+
+                    <br>
+                    <div class="form-group">
+                        <input type="text"  name="size1" class="form-control" placeholder="Largo Espalda"
+                            maxlength="30" >
+                    </div>
+
+                    <br>
+                    <div class="form-group">
+                        <input type="text"  name="size2" class="form-control" placeholder="Contorno Pecho"
+                            maxlength="30" >
+                    </div>
+
+                    <br>
+                    <div class="form-group">
+                        <input type="text"  name="size3" class="form-control" placeholder="Contorno Cuello"
+                            maxlength="30" >
+                    </div>
+
+
                     <br>
 
                     <div class="form-group">
@@ -72,22 +92,26 @@
         </div>
     </div>
     <div class="col-sm-12 col-md-6 col-lg-5 col-xl-7">
-        <h1>Listado de Categorías</h1>
+        <h1>Listado de Tallas</h1>
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr style="color: #679FBF; ">
-                        <th style="text-align: center">Id Categoría</th>
-                        <th style="text-align: center">Nombre categoría</th>
-                        <th style="text-align: center" >Cantidad de productos</th>
+                        <th style="text-align: center">Id Talla</th>
+                        <th style="text-align: center">Talla</th>
+                        <th style="text-align: center" >Largo Espalda</th>
+                        <th style="text-align: center" >Contorno Pecho</th>
+                        <th style="text-align: center" >Contorno Cuello</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for c in categoria %}
+                    {% for t in talla %}
                     <tr>
-                        <td style="text-align: center; font-weight: bold" >{{c.id_categoria}}</td>
-                        <td style="text-align: left; padding-left: 8%">{{c.categoria}}</td>
-                        <td style="text-align: center">{{c.get_total_products}} productos</td>
+                        <td style="text-align: center; font-weight: bold" >{{t.id_talla}}</td>
+                        <td style="text-align: left; padding-left: 8%">{{t.talla}}</td>
+                        <td style="text-align: center">{{t.largoEspalda}} cm.</td>
+                        <td style="text-align: center">{{t.contornoPecho}} cm.</td>
+                        <td style="text-align: center">{{t.contornoCuello}} cm.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
