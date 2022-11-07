@@ -23,7 +23,8 @@ def OrdersAdministrator(request):
     return render(request, 'OrdersAdministrator.html')
 
 def CategoriesAdministrator(request):
-    return render(request, 'CategoriesAdministrator.html')
+    CategoriaListado = Categoria.objects.all()
+    return render(request, 'CategoriesAdministrator.html', {"categoria": CategoriaListado})
 
 def SizesAdministrator(request):
     return render(request, 'SizesAdministrator.html')
@@ -191,6 +192,23 @@ def registroProducto(request):
             obj2.save()
 
         response = redirect('/ProductsAdministrator/')
+        return response
+
+def registroCategoria(request):
+    if request.method == 'POST':
+        #ParaRegistro de producto:
+
+        categoria = request.POST['nombre']
+        id = request.POST['id']
+        if id=='':
+            obj = Categoria(categoria=categoria)
+            obj.save()
+        else:
+            obj = Categoria.objects.get(id_categoria=id)
+            obj.categoria = categoria
+            obj.save()
+
+        response = redirect('/CategoriesAdministrator/')
         return response
 
 def modificarProducto(request):

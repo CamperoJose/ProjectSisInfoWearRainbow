@@ -49,7 +49,7 @@
 
 	<!-- Visualizacion de produdctos -->
 	<div class="container" style="padding-top: 3%">
-		<h2 style="color: #3D384D;">Listado de productos</h2>
+		<h1 style="color: #3D384D;">Listado de productos</h1>
 	</div>
 
 	<div class="container mt-5">
@@ -76,7 +76,7 @@
                             <tbody class="table-body">
 								{% for p in producto %}
 								<tr>
-									<td style="text-align: center;">{{p.id_producto}}</td>
+									<td style="text-align: center; font-weight: bold">{{p.id_producto}}</td>
 									<td style="text-align: center;"><img style="height: 70px; border-radius: 5px" src="{{p.img.url}}" alt=""></td>
 									<td>{{p.nombre}}</td>
 									<td>{{p.color}}</td>

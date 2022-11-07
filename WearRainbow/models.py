@@ -97,6 +97,12 @@ class Categoria(models.Model):
     def get_categoria(self):
         return self.categoria
 
+    def get_total_products(self):
+        obj = Producto.objects.filter(id_categoria=self.id_categoria).aggregate(Count('id_producto'))
+        if obj['id_producto__count'] == None:
+            return 0
+        return obj['id_producto__count']
+
     def __str__(self):
         return self.categoria
 

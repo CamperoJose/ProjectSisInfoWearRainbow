@@ -36,6 +36,7 @@ urlpatterns = [
     path('ModifyProduct/<id>', views.ModifyProduct, name="ModifyProduct"),
     path('ViewProduct/<id>', views.ViewProduct, name="ViewProduct"),
     path('modificarProducto/', views.modificarProducto, name="modificarProducto"),
+    path('registroCategoria/', views.registroCategoria, name="registroCategoria"),
     path('registrarCliente/', views.registroCliente, name="registrarCliente"),
     path('inicioSesionCliente/', views.inicioSesionCliente, name="inicioSesionCliente"),
     path('inicioSesionAdministrador/', views.inicioSesionAdministrador, name="inicioSesionAdministrador"),

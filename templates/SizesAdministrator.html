@@ -38,7 +38,69 @@
 		</div>
 	</nav>
     <br><br><br><br><br>
-    <h1>manejo de tallas</h1>
+
+
+
+
+
+
+		<div class="container">
+		<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-5">
+
+        <h1>Adicionar o Modificar Categoría</h1>
+        <div class="card">
+            <div class="card-body">
+                <form action="/registroCategoria/" method="POST">{% csrf_token %}
+
+                    <div class="form-group">
+                        <input type="text"  name="id" class="form-control" placeholder="Id categoria (llenar solo para modificar)"
+                            maxlength="30" >
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <input type="text"  name="nombre" class="form-control" placeholder="Nombre"
+                            maxlength="30" required>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <button style=" background-color: #F2727D;" type="submit" class="btn btn-block text-white">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-5 col-xl-7">
+        <h1>Listado de Categorías</h1>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr style="color: #679FBF; ">
+                        <th style="text-align: center">Id Categoría</th>
+                        <th style="text-align: center">Nombre categoría</th>
+                        <th style="text-align: center" >Cantidad de productos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in categoria %}
+                    <tr>
+                        <td style="text-align: center; font-weight: bold" >{{c.id_categoria}}</td>
+                        <td style="text-align: left; padding-left: 8%">{{c.categoria}}</td>
+                        <td style="text-align: center">{{c.get_total_products}} productos</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
 
 	<!-- All Js -->
 
