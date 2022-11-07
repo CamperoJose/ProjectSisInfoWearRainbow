@@ -62,7 +62,7 @@
 									<th>Material</th>
 									<th>Categoria</th>
 									<th style="width: 10%">Stock Total</th>
-									<th colspan="">Modificar</th>
+									<th colspan="2">Modificar</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -77,7 +77,7 @@
 									<td>{{p.material}}</td>
 									<td>{{p.get_id_cat}}</td>
 									<td style="text-align: right;">{{p.get_total_stock}} unidades</td>
-									<td><a href=""></a>Modificar</td>
+									<td><a class="btn btn-info" href="/ModifyProduct/{{p.id_producto}}">Modificar</a></td>
 								</tr>
 								{% endfor%}
                             </tbody>

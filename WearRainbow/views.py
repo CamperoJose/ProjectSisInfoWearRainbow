@@ -24,6 +24,16 @@ def AdministratorPanel(request):
 def OrdersAdministrator(request):
     return render(request, 'OrdersAdministrator.html')
 
+def ModifyProduct(request, id):
+    producto=Producto.objects.get(id_producto=id)
+    CategoriaListado = Categoria.objects.all()
+    TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
+    Lista=[]
+    for i in TallaDisponibleListado:
+        Lista.append(i.id_talla.id_talla)
+    tallaListado = Talla.objects.exclude(id_talla__in=Lista)
+    return render(request, 'ModifyProduct.html', {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado, "tallaDisponibles": TallaDisponibleListado})
+
 def ProductsAdministrator(request):
     productoListado = Producto.objects.all()
     return render(request, 'ProductsAdministrator.html', {"producto": productoListado})
@@ -140,7 +150,6 @@ def inicioSesionAdministrador(request):
 
 def registroProducto(request):
     if request.method == 'POST':
-
         #ParaRegistro de producto:
         nombre = request.POST['nombre']
         material = request.POST['material']
@@ -168,3 +177,40 @@ def registroProducto(request):
 
         response = redirect('/ProductsAdministrator/')
         return response
+
+def modificarProducto(request):
+    if request.method == 'POST':
+        #Para Modificacion de producto:
+        id_producto = request.POST['id']
+        nombre = request.POST['nombre']
+        material = request.POST['material']
+        cat = request.POST['cat']
+        color = request.POST['color']
+        precio = request.POST['precio']
+        desc = request.POST['desc']
+
+        obj = Producto.objects.get(id_producto = id_producto)
+        obj.nombre = nombre
+        obj.material = material
+        obj.id_categoria = Categoria(cat)
+        obj.color = color
+        obj.precio = float(precio)
+        obj.descripcion = desc
+
+        obj.save()
+
+        # Para Modificacion de tallas en las que estara disponible el producto:
+
+        catidadTallas = Talla.objects.count()
+        Tallas = Talla.objects.all()
+        print(catidadTallas)
+        print(Tallas[0].id_talla)
+        ListaIdTallas=()
+        for i in range(catidadTallas):
+            stock = request.POST[str(Tallas[i].id_talla)]
+            obj2 = TallaDisponible(stock=stock, id_producto=Producto(id_producto), id_talla=Talla(Tallas[i].id_talla))
+            obj2.save()
+
+        response = redirect('/ProductsAdministrator/')
+        return response
+

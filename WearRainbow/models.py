@@ -68,7 +68,7 @@ class Talla(models.Model):
     def get_id_talla(self):
         return self.id_talla
 
-    def get_id_talla(self):
+    def get_talla(self):
         return self.talla
 
     def get_catidadTallas(self):
@@ -82,6 +82,9 @@ class Talla(models.Model):
 
     def get_id_contornoCuello(self):
         return self.contornoCuello
+
+    def __str__(self):
+        return self.talla
 
 
 class Categoria(models.Model):
@@ -117,6 +120,12 @@ class Producto(models.Model):
     def get_id_cat(self):
         return self.id_categoria
 
+    def get_cant_talla(self):
+        obj = TallaDisponible.objects.get(id_producto=self.id_producto)
+        print(obj)
+        return obj
+
+
     def get_total_stock(self):
         obj = TallaDisponible.objects.filter(id_producto=self.id_producto).aggregate(Sum('stock'))
         if obj['stock__sum'] == None:
@@ -133,8 +142,15 @@ class TallaDisponible(models.Model):
     def get_stock(self):
         return self.stock
 
+    def get_id_talla(self):
+        return str(self.id_talla)
+
     def __str__(self):
-        return self
+        return self.id_talla
+
+
+
+
 
 
 class Departamento(models.Model):

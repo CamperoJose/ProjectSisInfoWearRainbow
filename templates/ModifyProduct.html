@@ -43,34 +43,39 @@
 	<div class="container card-0 justify-content-center ">
         <div class="card-body px-sm-4 px-0">
             <div class="row justify-content-center mb-5">
-                <div class="col-md-10 col"><h3 class="font-weight-bold ml-md-0 mx-auto text-center text-sm-left"> Registro de nuevo Producto </h3><p class="mt-md-4  ml-md-0 ml-2 text-center text-sm-left"> Para agregar un nuevo producto, por favor complete el siguiente formulario</p></div>
+                <div class="col-md-10 col"><h3 class="font-weight-bold ml-md-0 mx-auto text-center text-sm-left"> Modificar Producto </h3><p class="mt-md-4  ml-md-0 ml-2 text-center text-sm-left">{{producto.nombre}}</p></div>
             </div>
             <div class="row justify-content-center round">
                 <div class="col-lg-10 col-md-12 ">
                     <div class="card shadow-lg card-1">
                         <div class="card-body inner-card">
-                            <form action="/registroProducto/" class="form-horizontal" method="post">
+
+                            <form action="/modificarProducto/" class="form-horizontal" method="post">
                             {% csrf_token %}
                                 <div class="row justify-content-center">
                                     <div class="col-lg-5 col-md-6 col-sm-12">
-                                        <div class="form-group"><label>Nombre</label><input type="text" class="form-control" name="nombre"> </div>
-                                        <div class="form-group"> <label >Material</label> <input type="text" class="form-control" id="time"name="material">  </div>
+                                         <div class="form-group"><label>Id Producto</label><input type="text" class="form-control" name="id" value="{{producto.id_producto}}" readonly> </div>
+                                        <div class="form-group"><label>Nombre</label><input type="text" class="form-control" name="nombre" value="{{producto.nombre}}"> </div>
+                                        <div class="form-group"> <label >Material</label> <input type="text" class="form-control" id="time"name="material" value="{{producto.material}}">  </div>
                                         <div class="form-group"> <label>Categoria</label>
                                             <select class="form-control" name="cat">
-                                                {% for c in categoria %}
-                                                    <option value="{{c.id_categoria}}" >{{c.categoria}}</option>
-                                                {% endfor%}
+                                                {% if categoria %}
+                                                    <option value="{{producto.id_categoria.id_categoria}}" >{{producto.get_id_cat}}</option>
+                                                    {% for c in categoria %}
+                                                        <option value="{{c.id_categoria}}" >{{c.categoria}}</option>
+                                                    {% endfor%}
+                                                {% endif %}
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-5 col-md-6 col-sm-12">
-                                        <div class="form-group"> <label >Color</label> <input type="text" class="form-control" name="color"> </div>
-                                        <div class="form-group"> <label >Precio Unitario</label>  <input type="text" class="form-control" name="precio"> </div>
+                                        <div class="form-group"> <label >Color</label> <input type="text" class="form-control" name="color" value="{{producto.color}}"> </div>
+                                        <div class="form-group"> <label >Precio Unitario</label>  <input type="text" class="form-control" name="precio" value="{{producto.precio}}"> </div>
                                     </div>
                                 </div>
 
                                 <div class="row justify-content-center">
-                                    <div class="col-md-12 col-lg-10 col-12"> <div class="form-group"> <label >Descripcion</label>  <input type="text" class="form-control" name="desc"> </div></div>
+                                    <div class="col-md-12 col-lg-10 col-12"> <div class="form-group"> <label >Descripcion</label>  <input type="text" class="form-control" name="desc" value="{{producto.descripcion}}"> </div></div>
                                     <div class="col-md-12 col-lg-10 col-12"> <div class="form-group files"><label class="my-auto">Upload Your File </label> <input name="file" type="file" class="form-control" /></div></div>
 
                                 </div>
@@ -82,9 +87,14 @@
 
                                 <div class="row justify-content-center">
                                     <div class="col-lg-2 col-md-6 col-sm-12">
+                                        {% for t in tallaDisponibles %}
+                                            <div class="form-group"> <label >{{t.id_talla}}: </label> <input style="text-align: right" type="number" value="{{t.stock}}" class="form-control" name="{{t.id_talla.id_talla}}"> </div>
+								        {% endfor%}
                                         {% for t in talla %}
                                             <div class="form-group"> <label >{{t.talla}}: </label> <input style="text-align: right" type="number" value="0" class="form-control" name="{{t.id_talla}}"> </div>
 								        {% endfor%}
+
+
 
                                     </div>
                                 </div>
@@ -97,6 +107,8 @@
                                     </div>
                                 </div>
 
+
+
                             </form>
                         </div>
                     </div>
@@ -105,7 +117,6 @@
         </div>
     </div>
     <br><br><br>
-
 
 	<!-- All Js -->
 
