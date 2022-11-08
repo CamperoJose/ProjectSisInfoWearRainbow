@@ -278,6 +278,9 @@ def modificarProducto(request):
         catidadTallas = Talla.objects.count()
         Tallas = Talla.objects.all()
 
+
+        # Para crear de tallas en las que estara disponible el producto:
+
         ListaIdTallas=()
         for i in range(catidadTallas):
             stock = request.POST[str(Tallas[i].id_talla)]
