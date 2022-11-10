@@ -33,6 +33,7 @@ urlpatterns = [
     path('ProductsAdministrator/', views.ProductsAdministrator, name="ProductsAdministrator"),
     path('AddNewProduct/', views.AddNewProduct, name="AddNewProduct"),
     path('registroProducto/', views.registroProducto, name="registroProducto"),
+    path('contacts/', views.contacts, name="contacts"),
     path('registroTalla/', views.registroTalla, name="registroTalla"),
     path('ModifyProduct/<id>', views.ModifyProduct, name="ModifyProduct"),
     path('ViewProduct/<id>', views.ViewProduct, name="ViewProduct"),

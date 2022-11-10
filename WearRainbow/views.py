@@ -8,6 +8,9 @@ from django.contrib import messages
 def paginaIndex(request):
     return render(request, 'index.html')
 
+def contacts(request):
+    return render(request, 'contacts.html')
+
 def SignInAsClient(request):
     return render(request, 'SigninAsClient.html')
 

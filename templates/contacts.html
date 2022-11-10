@@ -10,6 +10,7 @@
 	<!-- All CSS -->
     <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}' />
 	<link href='{% static "cssForIndex.css" %}' rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
 	<nav style="background: #3D384D" class="navbar navbar-expand-lg navbar-dark bg-ligth fixed-top">
@@ -17,7 +18,6 @@
 			<a class="navbar-brand" href="#"><img style="height: 45px"  src="{% static 'MEDIA/logo01.png' %}" alt=""></a> <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span></button>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav ms-auto mb-4 mb-lg-0">
-
 					<li class="nav-item">
 						<a class="nav-link" href="#">Productos</a>
 					</li>
@@ -31,66 +31,81 @@
 			</div>
 		</div>
 	</nav>
-	<div class="carousel slide" data-bs-ride="carousel" id="carouselExampleIndicators">
-		<div class="carousel-indicators">
-			<button aria-label="Slide 1" class="active" data-bs-slide-to="0" data-bs-target="#carouselExampleIndicators" type="button"></button> <button aria-label="Slide 2" data-bs-slide-to="1" data-bs-target="#carouselExampleIndicators" type="button"></button> <button aria-label="Slide 3" data-bs-slide-to="2" data-bs-target="#carouselExampleIndicators" type="button"></button>
+
+    <div class="container">
+		<div class="row">
+			<div class="col-log-12 col-md-12 col-12 ps-lg-5 mt-md-5">
+				<h2 style="font-weight: bold;">Contactanos - Aceptamos reclamos y consultas</h2>
+			</div>
+
 		</div>
-		<div class="carousel-inner">
-			<div class="carousel-item active">
-				<img alt="..." class="d-block w-100" src="{% static 'MEDIA/carrusel01.png' %}">
-				<div class="carousel-caption">
-                    <h5 style="color: #E52B69 ; font-weight: bold;">Variedad de ropa</h5>
 
-				</div>
-			</div>
-			<div class="carousel-item">
-				<img alt="..." class="d-block w-100" src="{% static 'MEDIA/carrusel02.png' %}">
-				<div class="carousel-caption">
-                    <h5 style="color: #679FBF; font-weight: bold;">Para todo género</h5>
-
-				</div>
-			</div>
-			<div class="carousel-item">
-				<img alt="..." class="d-block w-100" src="{% static 'MEDIA/carrusel03.png' %}">
-				<div class="carousel-caption">
-                    <h5 style="color: #F28F6B; font-weight: bold;">Entrega Garantizada</h5>
-
-				</div>
-			</div>
-		</div><button class="carousel-control-prev" data-bs-slide="prev" data-bs-target="#carouselExampleIndicators" type="button"><span aria-hidden="true" class="carousel-control-prev-icon"></span> <span class="visually-hidden">Previous</span></button> <button class="carousel-control-next" data-bs-slide="next" data-bs-target="#carouselExampleIndicators" type="button"><span aria-hidden="true" class="carousel-control-next-icon"></span> <span class="visually-hidden">Next</span></button>
 	</div><!-- about section starts -->
+	<hr>
 	<section class="about section-padding" id="about">
 		<div class="container">
 			<div class="row">
-				<div class="col-lg-4 col-md-12 col-12">
-					<div class="about-img"><img style="border-radius: 15px;" alt="" class="img-fluid" src="{% static 'MEDIA/img01.png' %}"></div>
+				<div class="col-lg-4 col-md-12 col-12 ps-lg-5 mt-md-5">
+					<div class="about-img"><img style="border-radius: 15px;" alt="" class="img-fluid" src="{% static 'MEDIA/whatsapp-contacts.png' %}"></div>
 				</div>
-				<div class="col-lg-8 col-md-12 col-12 ps-lg-5 mt-md-5">
+				<div class="col-lg-4 col-md-12 col-12 ps-lg-5 mt-md-5">
 					<div class="about-text">
-						<h2>Nuestra Historia<br></h2>
-						<p style="color: #F2727D">WEAR RAINBOW nació en 2006 a partir de la idea de dos jóvenes emprendedores y con una grán pasión en el diseño de ropa moderna inspirada en la cultura boliviana. La tienda de ropa cumple un objetivo en mente, poder brindar a las familias bolivianas productos de calidad a
-                            excelentes precios.
-                            <br><br>
-                            Y es así como nos conviertimos en pioneros nacionales siendo la primera tienda de ropa moderna inspirada en la cultura boliviana. Creen que para mejorar el país se debe impulsar el talento boliviano. Es por eso que como empresa han formado diferentes proyectos de impulso al empleo joven y dando oportunidades a diseñadores bolivianos.</p>
+						<h2 align="center" style="color: #097B5A;font-weight: bold;">Escribenos a los números oficiales: <br></h2>
+						<h3 align="center">66583924</h3>
+						<h3 align="center">77583984</h3>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-12 col-12 ps-lg-5 mt-md-5">
+					<div class="about-text">
+						<h1 align="center" style="color: #097B5A; font-weight: bold;">Whatsapp</h1>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section><!-- about section Ends -->
-
-    <center>
-        <hr>
-        misión
-		<hr>
-        visión
-        <hr>
-        valores----
-        <br><br><br><br><br>
-    </center>
-
-
-	<h1>{{ verificar.usuario }}</h1>
-
+    <hr>
+    <section class="about section-padding" id="about">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-4 col-md-12 col-12 ps-lg-5 mt-md-5">
+					<div class="about-text">
+						<h1 align="center" style="color: #B406B3; font-weight: bold;">Instagram</h1>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-12 col-12 ps-lg-5 mt-md-5">
+					<div class="about-text">
+						<h2 align="center" style="color: #B406B3; font-weight: bold;">Siguenos para contactarte con la cuenta oficial:<br></h2>
+						<h3 align="center">@wear_rainbow_oficial</h3>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-12 col-12 ps-lg-5 mt-md-5">
+					<div class="about-img"><img style="border-radius: 15px;" alt="" class="img-fluid" src="{% static 'MEDIA/instagram-contacts.png' %}"></div>
+				</div>
+			</div>
+		</div>
+	</section><!-- about section Ends -->
+    <hr>
+    <section class="about section-padding" id="about">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-4 col-md-12 col-12 ps-lg-5 mt-md-5">
+					<div class="about-img"><img style="border-radius: 15px;" alt="" class="img-fluid" src="{% static 'MEDIA/facebook-contacts.png' %}"></div>
+				</div>
+				<div class="col-lg-4 col-md-12 col-12 ps-lg-5 mt-md-5">
+					<div class="about-text">
+						<h2 align="center" style="color: #2A32C1; font-weight: bold;">Buscanos en facebook para estar al día con nuestros productos: <br></h2>
+						<h3 align="center">Wear Rainbow Bolivia</h3>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-12 col-12 ps-lg-5 mt-md-5">
+					<div class="about-text">
+						<h1 align="center" style="color: #2A32C1; font-weight: bold;">Facebook</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section><!-- about section Ends -->
+	<br><br>
     <!-- FOOTERt -->
     <footer class="text-center text-white" style="background-color: #3D384D;">
         <!-- Grid container -->
@@ -114,9 +129,6 @@
                     target="_blank">
                     <img style="height: 35px;" src="{% static 'MEDIA/icono03.png' %}" alt="">
                 </a>
-
-
-
                 <!-- Section: Social media -->
         </div>
         <!-- Grid container -->
@@ -134,4 +146,3 @@
     <script src="{% static 'js/jquery-3.5.1.slim.min.js' %}"></script>
     <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
-
