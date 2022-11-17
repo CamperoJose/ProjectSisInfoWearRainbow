@@ -253,6 +253,8 @@ def registroCategoria(request):
         return response
 
 
+
+
 def registroTalla(request):
     if request.method == 'POST':
         # ParaRegistro de talla:
@@ -358,16 +360,18 @@ def Carrito(request):
 
     datos = dict()
     listaProductos = []
+    subTotal = 0
 
     for i in range(catidadTallas):
         text = TallasDisp[i].get_id_tallaCART()
         if text in request.COOKIES:
             valor = request.COOKIES[text]
-
             text2 = int(text.replace('id', ''))
             varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
-            listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor, Talla.objects.get(id_talla=varProd.id_talla.id_talla),
-                                   ])
+            listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor, Talla.objects.get(id_talla=varProd.id_talla.id_talla),])
+            precioU=(Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
+            subTotal+=float(valor)*precioU
+
             # print(varProd.varProd.)
             # datos[text] = varProd.id_producto
             # lista.append(varProd)
@@ -375,8 +379,9 @@ def Carrito(request):
         # producto = Producto.objects.get(id_producto=text)
         # datos['tallas']=lista
     datos['productos'] = [listaProductos]
-    print(listaProductos)
+    print(subTotal)
 
+    messages.success(request, subTotal)
     return render(request, 'Carrito.html', datos)
 
 
