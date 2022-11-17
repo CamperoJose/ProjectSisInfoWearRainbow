@@ -160,11 +160,25 @@ class TallaDisponible(models.Model):
     def __str__(self):
         return self.id_talla
 
-
-
-
-
-
 class Departamento(models.Model):
     id_departamento = models.AutoField(primary_key=True, null=False, unique=True)
     Departamento = models.CharField(max_length=30, null=False)
+    precio = models.FloatField(null=False)
+
+class Pedido(models.Model):
+    id_pedido = models.AutoField(primary_key=True, null=False, unique=True)
+    TotalPagar = models.FloatField(null=False)
+    Direccion = models.CharField(max_length=150, null=False)
+    Zona = models.CharField(max_length=50, null=False)
+    Apartamento = models.CharField(max_length=50, null=False)
+    EstadoPedido = models.CharField(max_length=50, null=False)
+    FechaPedido = models.DateTimeField(max_length=50, null=False)
+    id_departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE)
+    id_cliente = models.ForeignKey(cliente, on_delete=models.CASCADE)
+
+class ProductosPedido(models.Model):
+    id_productoPedido = models.AutoField(primary_key=True, null=False, unique=True)
+    cantidad = models.IntegerField(null=False)
+    id_pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    id_tallaDisponible = models.ForeignKey(TallaDisponible, on_delete=models.CASCADE)
+
