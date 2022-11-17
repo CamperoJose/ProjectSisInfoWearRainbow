@@ -19,11 +19,18 @@
 				<ul class="navbar-nav ms-auto mb-4 mb-lg-0">
 
 					<li class="nav-item">
-						<a class="nav-link" href="#">Productos</a>
+						<a class="nav-link" href="{% url 'productsAsClient' %}">Productos</a>
 					</li>
+
 					<li class="nav-item">
 						<a class="nav-link" href="#">Contactos</a>
 					</li>
+
+					<li class="nav-item">
+						<a class="nav-link" href="#"><img src="" alt="{% static 'MEDIA/icono08.png' %}"></a>
+					</li>
+
+
 					<li class="nav-item">
 						<a style="color: #F2727D; font-weight: bold;" class="nav-link" href="{% url 'paginaIndex' %}">Cerrar Sesión</a>
 					</li>

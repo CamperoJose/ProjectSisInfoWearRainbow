@@ -1,3 +1,5 @@
+from idlelib import window
+
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from WearRainbow.models import persona, administrador, Producto, Categoria, Talla, TallaDisponible
@@ -8,11 +10,23 @@ from django.contrib import messages
 def paginaIndex(request):
     return render(request, 'index.html')
 
+
+def Carrito(request):
+    return render(request, 'Carrito.html')
+
+
+def productsAsClient(request):
+    productoListado = Producto.objects.all()
+    return render(request, 'productsAsClient.html', {"producto": productoListado})
+
+
 def contacts(request):
     return render(request, 'contacts.html')
 
+
 def SignInAsClient(request):
     return render(request, 'SigninAsClient.html')
+
 
 def SignInAsAdministrator(request):
     return render(request, 'SignInAsAdministrator.html')
@@ -25,37 +39,60 @@ def ClientPanel(request):
 def OrdersAdministrator(request):
     return render(request, 'OrdersAdministrator.html')
 
+
 def CategoriesAdministrator(request):
     CategoriaListado = Categoria.objects.all()
     return render(request, 'CategoriesAdministrator.html', {"categoria": CategoriaListado})
+
 
 def SizesAdministrator(request):
     TallaListado = Talla.objects.all()
     return render(request, 'SizesAdministrator.html', {"talla": TallaListado})
 
+
 def ModifyProduct(request, id):
-    producto=Producto.objects.get(id_producto=id)
+    producto = Producto.objects.get(id_producto=id)
     CategoriaListado = Categoria.objects.all()
     TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
-    Lista=[]
+    Lista = []
     for i in TallaDisponibleListado:
         Lista.append(i.id_talla.id_talla)
     tallaListado = Talla.objects.exclude(id_talla__in=Lista)
-    return render(request, 'ModifyProduct.html', {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado, "tallaDisponibles": TallaDisponibleListado})
+    return render(request, 'ModifyProduct.html',
+                  {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
+                   "tallaDisponibles": TallaDisponibleListado})
+
 
 def ViewProduct(request, id):
-    producto=Producto.objects.get(id_producto=id)
+    producto = Producto.objects.get(id_producto=id)
     CategoriaListado = Categoria.objects.all()
     TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
-    Lista=[]
+    Lista = []
     for i in TallaDisponibleListado:
         Lista.append(i.id_talla.id_talla)
     tallaListado = Talla.objects.exclude(id_talla__in=Lista)
-    return render(request, 'PreviewProductAsAdministrator.html', {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado, "tallaDisponibles": TallaDisponibleListado})
+    return render(request, 'PreviewProductAsAdministrator.html',
+                  {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
+                   "tallaDisponibles": TallaDisponibleListado})
+
+
+def ViewProductClient(request, id):
+    producto = Producto.objects.get(id_producto=id)
+    CategoriaListado = Categoria.objects.all()
+    TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
+    Lista = []
+    for i in TallaDisponibleListado:
+        Lista.append(i.id_talla.id_talla)
+    tallaListado = Talla.objects.exclude(id_talla__in=Lista)
+    return render(request, 'PreviewProductAsClient.html',
+                  {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
+                   "tallaDisponibles": TallaDisponibleListado})
+
 
 def ProductsAdministrator(request):
     productoListado = Producto.objects.all()
     return render(request, 'ProductsAdministrator.html', {"producto": productoListado})
+
 
 def AddNewProduct(request):
     CategoriaListado = Categoria.objects.all()
@@ -144,7 +181,6 @@ def inicioSesionAdministrador(request):
             usr = verificar.get_usuario()
             pass1 = verificar.get_contraseña()
 
-
             if usuario != usr or contraseña != pass1:
                 messages.success(request, 'El nombre de usuario o contraseña no es correcto')
                 response = redirect('/SignInAsAdministrator/')
@@ -167,9 +203,10 @@ def inicioSesionAdministrador(request):
             response = redirect('/SignInAsAdministrator/')
             return response
 
+
 def registroProducto(request):
     if request.method == 'POST':
-        #ParaRegistro de producto:
+        # ParaRegistro de producto:
         nombre = request.POST['nombre']
         material = request.POST['material']
         cat = request.POST['cat']
@@ -178,18 +215,17 @@ def registroProducto(request):
         desc = request.POST['desc']
         img = request.FILES['img']
 
-
-        product = Producto( nombre=nombre, descripcion=desc, color=color, precio=float(precio), material=material, img=img, id_categoria=Categoria(cat))
+        product = Producto(nombre=nombre, descripcion=desc, color=color, precio=float(precio), material=material,
+                           img=img, id_categoria=Categoria(cat))
         product.save()
-        id_producto=product.get_id_producto()
+        id_producto = product.get_id_producto()
         # Para Registro de tallas en las que estara disponible el producto:
-
 
         catidadTallas = Talla.objects.count()
         Tallas = Talla.objects.all()
         print(catidadTallas)
         print(Tallas[0].id_talla)
-        ListaIdTallas=()
+        ListaIdTallas = ()
         for i in range(catidadTallas):
             stock = request.POST[str(Tallas[i].id_talla)]
             obj2 = TallaDisponible(stock=stock, id_producto=Producto(id_producto), id_talla=Talla(Tallas[i].id_talla))
@@ -198,13 +234,14 @@ def registroProducto(request):
         response = redirect('/ProductsAdministrator/')
         return response
 
+
 def registroCategoria(request):
     if request.method == 'POST':
-        #ParaRegistro de categoria:
+        # ParaRegistro de categoria:
 
         categoria = request.POST['nombre']
         id = request.POST['id']
-        if id=='':
+        if id == '':
             obj = Categoria(categoria=categoria)
             obj.save()
         else:
@@ -215,44 +252,46 @@ def registroCategoria(request):
         response = redirect('/CategoriesAdministrator/')
         return response
 
+
 def registroTalla(request):
     if request.method == 'POST':
-        #ParaRegistro de talla:
+        # ParaRegistro de talla:
 
         talla = request.POST['nombre']
         largoEspalda = request.POST['size1']
         contornoPecho = request.POST['size2']
         contornoCuello = request.POST['size3']
         id = request.POST['id']
-        if id=='':
-            obj = Talla(talla=talla, largoEspalda=largoEspalda, contornoPecho=contornoPecho, contornoCuello=contornoCuello)
+        if id == '':
+            obj = Talla(talla=talla, largoEspalda=largoEspalda, contornoPecho=contornoPecho,
+                        contornoCuello=contornoCuello)
             obj.save()
 
             productos = Producto.objects.all()
 
             for i in productos:
-
                 obj2 = TallaDisponible(stock=0, id_producto=Producto(i.id_producto), id_talla=Talla(obj.get_id_talla()))
                 obj2.save()
 
         else:
             obj = Talla.objects.get(id_talla=id)
-            if talla!='':
+            if talla != '':
                 obj.talla = talla
-            if largoEspalda!='':
+            if largoEspalda != '':
                 obj.largoEspalda = int(largoEspalda)
-            if contornoPecho!='':
+            if contornoPecho != '':
                 obj.contornoPecho = int(contornoPecho)
-            if contornoCuello!='':
+            if contornoCuello != '':
                 obj.contornoCuello = int(contornoCuello)
             obj.save()
 
         response = redirect('/SizesAdministrator/')
         return response
 
+
 def modificarProducto(request):
     if request.method == 'POST':
-        #Para Modificacion de producto:
+        # Para Modificacion de producto:
         id_producto = request.POST['id']
         nombre = request.POST['nombre']
         material = request.POST['material']
@@ -261,7 +300,7 @@ def modificarProducto(request):
         precio = request.POST['precio']
         desc = request.POST['desc']
 
-        obj = Producto.objects.get(id_producto = id_producto)
+        obj = Producto.objects.get(id_producto=id_producto)
         obj.nombre = nombre
         obj.material = material
         obj.id_categoria = Categoria(cat)
@@ -269,8 +308,7 @@ def modificarProducto(request):
         obj.precio = float(precio)
         obj.descripcion = desc
 
-
-        if request.FILES!={}:
+        if request.FILES != {}:
             img = request.FILES['img']
             obj.img = img
 
@@ -281,17 +319,75 @@ def modificarProducto(request):
         catidadTallas = Talla.objects.count()
         Tallas = Talla.objects.all()
 
-
         # Para crear de tallas en las que estara disponible el producto:
 
-        ListaIdTallas=()
+        ListaIdTallas = ()
         for i in range(catidadTallas):
             stock = request.POST[str(Tallas[i].id_talla)]
-            obj2 = TallaDisponible.objects.get(id_producto = Producto(id_producto), id_talla = Talla(Tallas[i].id_talla))
+            obj2 = TallaDisponible.objects.get(id_producto=Producto(id_producto), id_talla=Talla(Tallas[i].id_talla))
             obj2.stock = int(stock)
             obj2.save()
-
 
         response = redirect('/ProductsAdministrator/')
         return response
 
+
+def addCart(request, id):
+    if request.method == 'POST':
+        # Para Modificacion de producto:
+        Tallas = TallaDisponible.objects.all()
+        catidadTallas = TallaDisponible.objects.count()
+
+        response = redirect('/productsAsClient/')
+        for i in range(catidadTallas):
+            text = Tallas[i].get_id_tallaCART()
+            if Tallas[i].stock > 0 and str(Tallas[i].id_producto.id_producto) == id:
+                quantity = request.POST[str(text)]
+                if int(quantity) > 0:
+                    response.set_cookie(text, quantity)
+
+                if str(text) in request.COOKIES and int(quantity) <= 0:
+                    response.delete_cookie(str(text))
+        return response
+
+
+def Carrito(request):
+    TallasDisp = TallaDisponible.objects.all()
+    catidadTallas = TallaDisponible.objects.count()
+    producto = Producto.objects.all()
+
+    datos = dict()
+    listaProductos = []
+
+    for i in range(catidadTallas):
+        text = TallasDisp[i].get_id_tallaCART()
+        if text in request.COOKIES:
+            valor = request.COOKIES[text]
+
+            text2 = int(text.replace('id', ''))
+            varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
+            listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor, Talla.objects.get(id_talla=varProd.id_talla.id_talla),
+                                   ])
+            # print(varProd.varProd.)
+            # datos[text] = varProd.id_producto
+            # lista.append(varProd)
+
+        # producto = Producto.objects.get(id_producto=text)
+        # datos['tallas']=lista
+    datos['productos'] = [listaProductos]
+    print(listaProductos)
+
+    return render(request, 'Carrito.html', datos)
+
+
+def ViewProduct(request, id):
+    producto = Producto.objects.get(id_producto=id)
+    CategoriaListado = Categoria.objects.all()
+    TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
+    Lista = []
+    for i in TallaDisponibleListado:
+        Lista.append(i.id_talla.id_talla)
+    tallaListado = Talla.objects.exclude(id_talla__in=Lista)
+    return render(request, 'PreviewProductAsAdministrator.html',
+                  {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
+                   "tallaDisponibles": TallaDisponibleListado})

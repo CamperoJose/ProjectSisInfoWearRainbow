@@ -151,6 +151,12 @@ class TallaDisponible(models.Model):
     def get_id_talla(self):
         return str(self.id_talla)
 
+    def get_id_producto(self):
+        return str(self.id_producto)
+
+    def get_id_tallaCART(self):
+        return 'id'+str(self.id_tallaDisponible)
+
     def __str__(self):
         return self.id_talla
 
