@@ -1,8 +1,10 @@
+from datetime import datetime
 from idlelib import window
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from WearRainbow.models import persona, administrador, Producto, Categoria, Talla, TallaDisponible
+from WearRainbow.models import persona, administrador, Producto, Categoria, Talla, TallaDisponible, Departamento, \
+    Pedido, ProductosPedido
 from WearRainbow.models import cliente
 from django.contrib import messages
 
@@ -291,6 +293,53 @@ def registroTalla(request):
         return response
 
 
+def registroPedido(request):
+    if request.method == 'POST':
+        # ParaRegistro de pedido:
+        Direccion = request.POST['direccion']
+        Zona = request.POST['zona']
+        dep = request.POST['dep']
+        Apartamento = request.POST['apartamento']
+        idCliente=request.COOKIES['id_cliente']
+        EstadoPedido='En Espera'
+        FechaPedido = datetime.now()
+        TotalPagar=0;
+
+        TallasDisp = TallaDisponible.objects.all()
+        catidadTallas = TallaDisponible.objects.count()
+
+        listaProductos = []
+
+        response = redirect('/productsAsClient/')
+
+        for i in range(catidadTallas):
+            text = TallasDisp[i].get_id_tallaCART()
+            if text in request.COOKIES:
+                cantidad = request.COOKIES[text]
+                response.delete_cookie(text)
+                text2 = int(text.replace('id', ''))
+                varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
+                precioU = (Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
+                TotalPagar += float(cantidad) * precioU
+                listaProductos.append([text2, cantidad])
+
+        obj = Pedido(TotalPagar=TotalPagar, Direccion=Direccion, Zona=Zona, Apartamento=Apartamento, EstadoPedido=EstadoPedido, FechaPedido=FechaPedido, id_departamento=Departamento(dep), id_cliente=cliente(idCliente))
+        obj.save()
+
+        print(listaProductos)
+
+        for i in range(len(listaProductos)):
+            b=listaProductos[i][0]
+            a=listaProductos[i][1]
+
+            obj2=ProductosPedido(cantidad=a,id_pedido=obj, id_tallaDisponible=TallaDisponible(b))
+            obj2.save()
+
+        return response
+
+
+
+
 def modificarProducto(request):
     if request.method == 'POST':
         # Para Modificacion de producto:
@@ -383,6 +432,40 @@ def Carrito(request):
 
     messages.success(request, subTotal)
     return render(request, 'Carrito.html', datos)
+
+
+def OrderForm(request):
+    TallasDisp = TallaDisponible.objects.all()
+    catidadTallas = TallaDisponible.objects.count()
+    producto = Producto.objects.all()
+
+    datos = dict()
+    listaProductos = []
+    subTotal = 0
+
+    for i in range(catidadTallas):
+        text = TallasDisp[i].get_id_tallaCART()
+        if text in request.COOKIES:
+            valor = request.COOKIES[text]
+            text2 = int(text.replace('id', ''))
+            varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
+            precioU = (Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
+            listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor, Talla.objects.get(id_talla=varProd.id_talla.id_talla),float(valor)*precioU])
+
+            subTotal+=float(valor)*precioU
+
+            # print(varProd.varProd.)
+            # datos[text] = varProd.id_producto
+            # lista.append(varProd)
+
+        # producto = Producto.objects.get(id_producto=text)
+        # datos['tallas']=lista
+    datos['productos'] = [listaProductos]
+    datos['departamentos'] = Departamento.objects.all()
+    print(subTotal)
+
+    messages.success(request, subTotal)
+    return render(request, 'OrderForm.html', datos)
 
 
 def ViewProduct(request, id):
