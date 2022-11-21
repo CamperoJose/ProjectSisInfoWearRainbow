@@ -255,8 +255,6 @@ def registroCategoria(request):
         return response
 
 
-
-
 def registroTalla(request):
     if request.method == 'POST':
         # ParaRegistro de talla:
@@ -336,8 +334,6 @@ def registroPedido(request):
             obj2.save()
 
         return response
-
-
 
 
 def modificarProducto(request):
