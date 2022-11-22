@@ -131,7 +131,6 @@ class Producto(models.Model):
         print(obj)
         return obj
 
-
     def get_total_stock(self):
         obj = TallaDisponible.objects.filter(id_producto=self.id_producto).aggregate(Sum('stock'))
         if obj['stock__sum'] == None:
@@ -155,15 +154,17 @@ class TallaDisponible(models.Model):
         return str(self.id_producto)
 
     def get_id_tallaCART(self):
-        return 'id'+str(self.id_tallaDisponible)
+        return 'id' + str(self.id_tallaDisponible)
 
     def __str__(self):
         return self.id_talla
+
 
 class Departamento(models.Model):
     id_departamento = models.AutoField(primary_key=True, null=False, unique=True)
     Departamento = models.CharField(max_length=30, null=False)
     precio = models.FloatField(null=False)
+
 
 class Pedido(models.Model):
     id_pedido = models.AutoField(primary_key=True, null=False, unique=True)
@@ -176,9 +177,24 @@ class Pedido(models.Model):
     id_departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE)
     id_cliente = models.ForeignKey(cliente, on_delete=models.CASCADE)
 
+    def get_envio(self):
+        return round(self.id_departamento.precio, 1)
+
+    def get_status(self):
+        color = 0
+        if self.EstadoPedido == 'En Espera':
+            color = 1
+        elif self.EstadoPedido == 'Rechazado':
+            color = 2
+        return color
+
+
 class ProductosPedido(models.Model):
     id_productoPedido = models.AutoField(primary_key=True, null=False, unique=True)
     cantidad = models.IntegerField(null=False)
     id_pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     id_tallaDisponible = models.ForeignKey(TallaDisponible, on_delete=models.CASCADE)
 
+    def get_subtotal(self):
+        cantidad = float(self.cantidad)
+        return round(self.id_tallaDisponible.id_producto.precio * cantidad, 1)

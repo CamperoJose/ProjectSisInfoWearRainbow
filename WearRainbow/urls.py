@@ -40,6 +40,7 @@ urlpatterns = [
     path('contacts/', views.contacts, name="contacts"),
     path('registroTalla/', views.registroTalla, name="registroTalla"),
     path('ModifyProduct/<id>', views.ModifyProduct, name="ModifyProduct"),
+    path('DetallePedidio/<id>', views.DetallePedidio, name="DetallePedidio"),
     path('ViewProduct/<id>', views.ViewProduct, name="ViewProduct"),
     path('ViewProductClient/<id>', views.ViewProductClient, name="ViewProductClient"),
     path('modificarProducto/', views.modificarProducto, name="modificarProducto"),

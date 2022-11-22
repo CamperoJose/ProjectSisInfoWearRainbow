@@ -13,6 +13,15 @@ def paginaIndex(request):
     return render(request, 'index.html')
 
 
+def DetallePedidio(request,id):
+    pedido = Pedido.objects.get(id_pedido=id)
+    productos = ProductosPedido.objects.filter(id_pedido=id)
+
+    print(productos)
+
+    return render(request, 'DetallePedidio.html',
+                  {"pedido": pedido, "productos": productos})
+
 def Carrito(request):
     return render(request, 'Carrito.html')
 
@@ -39,18 +48,18 @@ def ClientPanel(request):
 
 
 def OrdersAdministrator(request):
-    return render(request, 'OrdersAdministrator.html')
+    OrdersList = Pedido.objects.all()
+    DepartmentsList = Departamento.objects.all()
+    return render(request, 'OrdersAdministrator.html',{'OrdersList': OrdersList, 'DepartmentsList':DepartmentsList})
 
 
 def CategoriesAdministrator(request):
     CategoriaListado = Categoria.objects.all()
     return render(request, 'CategoriesAdministrator.html', {"categoria": CategoriaListado})
 
-
 def SizesAdministrator(request):
     TallaListado = Talla.objects.all()
     return render(request, 'SizesAdministrator.html', {"talla": TallaListado})
-
 
 def ModifyProduct(request, id):
     producto = Producto.objects.get(id_producto=id)
