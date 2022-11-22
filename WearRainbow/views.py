@@ -12,14 +12,34 @@ from django.contrib import messages
 def paginaIndex(request):
     return render(request, 'index.html')
 
+def PaymentDetails01(request):
+    return render(request, 'PaymentDetails01.html')
+
+def PaymentDetails02(request):
+    return render(request, 'PaymentDetails02.html')
+
+def PaymentDetails03(request):
+    return render(request, 'PaymentDetails03.html')
+
+def OrdersAsClient(request):
+    id_cliente = request.COOKIES['id_cliente']
+    OrdersList = Pedido.objects.filter(id_cliente=cliente(id_cliente))
+    print(id_cliente, OrdersList)
+    return render(request, 'OrdersAsClient.html', {'OrdersList': OrdersList})
+
 
 def DetallePedidio(request,id):
     pedido = Pedido.objects.get(id_pedido=id)
     productos = ProductosPedido.objects.filter(id_pedido=id)
 
-    print(productos)
-
     return render(request, 'DetallePedidio.html',
+                  {"pedido": pedido, "productos": productos})
+
+def DetallePedidoCliente(request,id):
+    pedido = Pedido.objects.get(id_pedido=id)
+    productos = ProductosPedido.objects.filter(id_pedido=id)
+
+    return render(request, 'DetallePedidoCliente.html',
                   {"pedido": pedido, "productos": productos})
 
 def Carrito(request):
@@ -49,8 +69,7 @@ def ClientPanel(request):
 
 def OrdersAdministrator(request):
     OrdersList = Pedido.objects.all()
-    DepartmentsList = Departamento.objects.all()
-    return render(request, 'OrdersAdministrator.html',{'OrdersList': OrdersList, 'DepartmentsList':DepartmentsList})
+    return render(request, 'OrdersAdministrator.html',{'OrdersList': OrdersList})
 
 
 def CategoriesAdministrator(request):
@@ -299,6 +318,41 @@ def registroTalla(request):
         response = redirect('/SizesAdministrator/')
         return response
 
+def registroPago(request):
+    if request.method == 'POST':
+
+        talla = request.POST['nombre']
+        largoEspalda = request.POST['size1']
+        contornoPecho = request.POST['size2']
+        contornoCuello = request.POST['size3']
+        id = request.POST['id']
+        if id == '':
+            obj = Talla(talla=talla, largoEspalda=largoEspalda, contornoPecho=contornoPecho,
+                        contornoCuello=contornoCuello)
+            obj.save()
+
+            productos = Producto.objects.all()
+
+            for i in productos:
+                obj2 = TallaDisponible(stock=0, id_producto=Producto(i.id_producto), id_talla=Talla(obj.get_id_talla()))
+                obj2.save()
+
+        else:
+            obj = Talla.objects.get(id_talla=id)
+            if talla != '':
+                obj.talla = talla
+            if largoEspalda != '':
+                obj.largoEspalda = int(largoEspalda)
+            if contornoPecho != '':
+                obj.contornoPecho = int(contornoPecho)
+            if contornoCuello != '':
+                obj.contornoCuello = int(contornoCuello)
+            obj.save()
+
+        response = redirect('/SizesAdministrator/')
+        return response
+
+
 
 def registroPedido(request):
     if request.method == 'POST':
@@ -317,7 +371,7 @@ def registroPedido(request):
 
         listaProductos = []
 
-        response = redirect('/productsAsClient/')
+        response = redirect('/PaymentDetails01/')
 
         for i in range(catidadTallas):
             text = TallasDisp[i].get_id_tallaCART()

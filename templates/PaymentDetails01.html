@@ -60,13 +60,18 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-12 col-12 ps-lg-5 mt-md-5 d-flex align-items-center form-group">
                         <div class="d-grid gap-2 col-6 mx-auto">
-                            <button style="background-color: #7ED9B7" class="btn btn-block text-white btn-md"><b>Pagar con QR</b></button>
+
+                        <a href="{% url 'PaymentDetails02' %}">
+                                <button style="background-color: #7ED9B7" class="btn btn-block text-white btn-md"><b>Pagar mediante QR</b></button>
+                            </a>
                         </div>
                     </div>
                     <br><br>
                     <div class="col-lg-6 col-md-12 col-12 ps-lg-5 mt-md-5 d-flex align-items-center form-group">
                         <div class="d-grid gap-2 col-6 mx-auto">
-                            <button style="background-color: #7ED9B7" class="btn btn-block text-white btn-md"><b>Pagar con transferencia bancaria</b></button>
+                            <a href="{% url 'PaymentDetails03' %}">
+                                <button style="background-color: #7ED9B7" class="btn btn-block text-white btn-md"><b>Pagar con transferencia bancaria</b></button>
+                            </a>
                         </div>
                     </div>
                 </div>

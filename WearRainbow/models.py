@@ -188,7 +188,6 @@ class Pedido(models.Model):
             color = 2
         return color
 
-
 class ProductosPedido(models.Model):
     id_productoPedido = models.AutoField(primary_key=True, null=False, unique=True)
     cantidad = models.IntegerField(null=False)
@@ -198,3 +197,11 @@ class ProductosPedido(models.Model):
     def get_subtotal(self):
         cantidad = float(self.cantidad)
         return round(self.id_tallaDisponible.id_producto.precio * cantidad, 1)
+
+class Pago(models.Model):
+    id_pago = models.AutoField(primary_key=True, null=False, unique=True)
+    Comprobante = models.ImageField(upload_to="comprobantesPago/", null=False)
+    BancoProveniente = models.CharField(max_length=150, null=False)
+    MetodoPago = models.CharField(max_length=150, null=False)
+    FechaPago = models.DateTimeField(max_length=50, null=False)
+    id_pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)

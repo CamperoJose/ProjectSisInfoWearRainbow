@@ -32,7 +32,6 @@
 		</div>
 	</nav>
 	<main>
-        <br><br><br>
         <section class="about section-padding" id="about">
 			<div class="container">
 				<h4 align="center" style="font-weight: bold;">PAGO CON QR</h4>
@@ -41,7 +40,7 @@
             <div>
                 <div class="container">
                     <div class="row">
-                        <div class="col-lg-6 col-md-12 col-12 ps-lg-5 mt-md-5">
+                        <div class="col-lg-8 col-md-12 col-12 ps-lg-5 mt-md-5">
                             <div class="about-text">
                                 <h5 align="padding-left" style="font-weight: bold;">Instrucciones:</h5>
                                 <ul style="list-style-type: disc;">
@@ -51,19 +50,23 @@
                                     <li>Esperar confirmación.</li>
                                     <li>Una vez confirmado se enviará el pedido lo antes posible.</li>
                                 </ul>
-                                <div class="d-grid gap-1 col-8">
+                                <form action="/registroPedido/" class="form-horizontal" method="post" enctype="multipart/form-data">
+                                    <div class="d-grid gap-1 col-8">
                                     <div class="form-group files">
-                                        <label class="my-auto"><b>Subir comprobante</b></label> 
+                                        <label class="my-auto"><b>Subir comprobante</b></label>
                                         <input name="img" type="file" class="form-control" />
                                     </div>
                                     <!-- <button style="background-color: #F2727D" class="btn btn-block text-white btn-md"><b>Subir comprobante</b></button> -->
                                     <br>
-                                </div>
+                                    </div>
+                                </form>
                             </div>   
                         </div>              
-                        <div class="col-lg-6 col-md-12 col-12 ps-lg-5 mt-md-5">
+                        <div class="col-lg-2 col-md-12 col-12 ps-lg-2">
                             <!-- <div class="about-img"><img style="border-radius: 15px;" alt="" class="img-fluid" src="{% static 'MEDIA/qr_image.png'%}"></div> -->
-                            <img src="D:\Estudios\Universidad\4to Semestre\4S - Sistemas de Informacion I\qr_imageCopy.jpg">
+                            <center>
+                                <img style="width: 400px" src="{% static 'MEDIA/imgQR.jpg' %}">
+                            </center>
                         </div>
                     </div>
                 </div>
