@@ -7,10 +7,15 @@ from WearRainbow.models import persona, administrador, Producto, Categoria, Tall
     Pedido, ProductosPedido
 from WearRainbow.models import cliente
 from django.contrib import messages
-
+from cryptography.fernet import Fernet
 
 def paginaIndex(request):
-    return render(request, 'index.html')
+    sesion = request.session.get('id_persona')
+    if sesion:
+        sesion_activa = True 
+    else:
+        sesion_activa = False
+    return render(request, 'index.html',{'Sesion': sesion_activa})
 
 def PaymentDetails01(request):
     return render(request, 'PaymentDetails01.html')
@@ -64,7 +69,11 @@ def SignInAsAdministrator(request):
 
 
 def ClientPanel(request):
-    return render(request, 'ClientPanel.html')
+    if request.session.get('token_cliente'):
+        return render(request, 'ClientPanel.html')
+    else:
+        return redirect('/SignInAsClient')
+    #return render(request, 'ClientPanel.html')
 
 
 def OrdersAdministrator(request):
@@ -120,14 +129,22 @@ def ViewProductClient(request, id):
 
 
 def ProductsAdministrator(request):
-    productoListado = Producto.objects.all()
-    return render(request, 'ProductsAdministrator.html', {"producto": productoListado})
+    user = request.COOKIES.get('id_persona')
+    if user:
+
+        productoListado = Producto.objects.all()
+        return render(request, 'ProductsAdministrator.html', {"producto": productoListado})
+    else:
+        return redirect('SignInAsAdministrator')
 
 
 def AddNewProduct(request):
     CategoriaListado = Categoria.objects.all()
     tallaListado = Talla.objects.all()
+    print(request.user.is_authenticated)
+           
     return render(request, 'AddNewProduct.html', {"categoria": CategoriaListado, "talla": tallaListado})
+
 
 
 def registroPersona(request):
@@ -172,29 +189,39 @@ def registroCliente(request):
 
 
 def inicioSesionCliente(request):
+    key = Fernet.generate_key()
+    x = Fernet(key)
     if request.method == 'POST':
         usuario = request.POST['user']
         contraseña = request.POST['pass']
-        try:
-            verificar = cliente.objects.get(usuario=usuario)
+        encrypted_text = x.encrypt(str.encode(usuario))
 
+        try: 
+            verificar = cliente.objects.get(usuario=usuario)
             usr = verificar.get_usuario()
             pass1 = verificar.get_contraseña()
-
+            print('User: ',usr, 'Pass: ', pass1, 'User: ', usuario, 'Pass: ', contraseña)
             if usuario != usr or contraseña != pass1:
                 messages.success(request, 'El nombre de usuario o contraseña no es correcto')
                 response = redirect('/SignInAsClient/')
+                
                 return response
             else:
                 dat2 = (verificar.get_id_persona()).get_id_persona()
                 dat1 = verificar.get_id_cliente()
-
                 response = redirect('/ClientPanel/')
+                request.session['token_cliente'] = encrypted_text.decode()
+                print(request.session['token_cliente'])
+                '''response.session['id_cliente'] = dat1
+                response.session['id_persona'] = dat2'''
+
+
                 response.set_cookie('id_cliente', dat1)
                 response.set_cookie('id_persona', dat2)
                 return response
         except:
-            messages.success(request, 'El nombre de usuario o contraseña no es correcto')
+            
+            messages.success(request, 'El nombre de usuario o contraseña no es correctos')
             response = redirect('/SignInAsClient/')
             return response
 
@@ -538,3 +565,7 @@ def ViewProduct(request, id):
     return render(request, 'PreviewProductAsAdministrator.html',
                   {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
                    "tallaDisponibles": TallaDisponibleListado})
+
+def Logout(request):
+    request.session.flush()
+    return redirect('/')

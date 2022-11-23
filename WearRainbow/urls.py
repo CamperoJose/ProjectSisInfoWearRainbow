@@ -15,14 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
 from django.conf import settings
 from django.conf.urls.static import static
-
+from django.contrib.auth.views import LoginView
 from . import views
 urlpatterns = [
     #path('admin/', admin.site.urls),
     path('', views.paginaIndex, name="paginaIndex"),
+    #path('',LoginView.as_view(template_name = 'SignInAsClient.html'), name='login'),
     path('registrarpersona', views.registroPersona, name="registrarPersona"),
     path('registroPedido/', views.registroPedido, name="registroPedido"),
     path('SignInAsClient/', views.SignInAsClient, name="SignInAsClient"),
@@ -33,7 +33,7 @@ urlpatterns = [
     path('Carrito/', views.Carrito, name="Carrito"),
     path('CategoriesAdministrator/', views.CategoriesAdministrator, name="CategoriesAdministrator"),
     path('SizesAdministrator/', views.SizesAdministrator, name="SizesAdministrator"),
-    path('ProductsAdministrator/', views.ProductsAdministrator, name="ProductsAdministrator"),
+    path('ProductsAdministrator/', (views.ProductsAdministrator), name="ProductsAdministrator"),
     path('productsAsClient/', views.productsAsClient, name="productsAsClient"),
     path('AddNewProduct/', views.AddNewProduct, name="AddNewProduct"),
     path('registroProducto/', views.registroProducto, name="registroProducto"),
@@ -54,5 +54,6 @@ urlpatterns = [
     path('PaymentDetails01/', views.PaymentDetails01, name="PaymentDetails01"),
     path('PaymentDetails02/', views.PaymentDetails02, name="PaymentDetails02"),
     path('PaymentDetails03/', views.PaymentDetails03, name="PaymentDetails03"),
+    path('Logout/', views.Logout, name="Logout"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
