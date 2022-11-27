@@ -4,7 +4,7 @@ from idlelib import window
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from WearRainbow.models import persona, administrador, Producto, Categoria, Talla, TallaDisponible, Departamento, \
-    Pedido, ProductosPedido, Pago, PedidoAceptado
+    Pedido, ProductosPedido, Pago, PedidoAceptado, PedidoRechazado
 from WearRainbow.models import cliente
 from django.contrib import messages
 
@@ -41,8 +41,13 @@ def DetallePedidio(request,id):
     if pago==True:
         pagoDetails=Pago.objects.get(id_pedido=id)
         data["pagoDetails"]=pagoDetails
-    print(data)
 
+    if pedido.EstadoPedido == "Rechazado":
+        data["rechazo"] = PedidoRechazado.objects.get(id_pedido=id)
+    elif pedido.EstadoPedido != "En Espera":
+        data["aceptado"] = PedidoAceptado.objects.get(id_pedido=id)
+
+    print(data)
     return render(request, 'DetallePedidio.html',data)
 
 def DetallePedidoCliente(request,id):
@@ -80,6 +85,22 @@ def ClientPanel(request):
 def OrdersAdministrator(request):
     OrdersList = Pedido.objects.all()
     return render(request, 'OrdersAdministrator.html',{'OrdersList': OrdersList})
+
+def PedidosSeleccionados(request):
+    if request.method == 'POST':
+        cat=request.POST['cat']
+        if cat=="op01":
+            OrdersList = Pedido.objects.all()
+        elif cat == "op02":
+            OrdersList = Pedido.objects.filter(EstadoPedido="En Espera")
+        elif cat=="op03":
+            OrdersList = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar")
+        elif cat=="op04":
+            OrdersList = Pedido.objects.filter(EstadoPedido="Aceptado y enviado")
+        else:
+            OrdersList = Pedido.objects.filter(EstadoPedido="Rechazado")
+
+        return render(request, 'OrdersAdministrator.html', {'OrdersList': OrdersList})
 
 
 def CategoriesAdministrator(request):
@@ -429,9 +450,45 @@ def registroPedidoAceptado(request, id):
         obj = PedidoAceptado(FechaAceptacion=FechaAceptacion, id_pedido=Pedido(id), id_administrador=administrador(id_administrador))
         obj.save()
 
+        obj = Pedido.objects.get(id_pedido=id)
+        obj.EstadoPedido = "Aceptado sin enviar"
+        obj.save()
+
         response = redirect('/OrdersAdministrator/')
         return response
 
+
+
+def registroPedidoRechazado(request, id):
+    if request.method == 'POST':
+        FechaRechazo = datetime.now()
+        RazonRechazo = request.POST['textRechazo']
+        id_administrador = request.COOKIES['id_administrador']
+
+        obj = PedidoRechazado(FechaRechazo=FechaRechazo, RazonRechazo=RazonRechazo, id_pedido=Pedido(id), id_administrador=administrador(id_administrador))
+        obj.save()
+
+        obj = Pedido.objects.get(id_pedido=id)
+        obj.EstadoPedido = "Rechazado"
+        obj.save()
+
+        response = redirect('/OrdersAdministrator/')
+        return response
+
+def registroPedidoEnviado(request, id):
+    if request.method == 'POST':
+        FechaEnvio = datetime.now()
+
+        obj = PedidoAceptado.objects.get(id_pedido=id)
+        obj.FechaEnvio = FechaEnvio
+        obj.save()
+
+        obj = Pedido.objects.get(id_pedido=id)
+        obj.EstadoPedido = "Aceptado y enviado"
+        obj.save()
+
+        response = redirect('/OrdersAdministrator/')
+        return response
 
 
 def modificarProducto(request):
@@ -573,3 +630,8 @@ def ViewProduct(request, id):
     return render(request, 'PreviewProductAsAdministrator.html',
                   {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
                    "tallaDisponibles": TallaDisponibleListado})
+
+
+def administratorManager(request):
+    AdministratorsList = administrador.objects.all()
+    return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList})

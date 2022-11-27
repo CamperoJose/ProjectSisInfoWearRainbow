@@ -31,7 +31,7 @@
 						<a class="nav-link" href="{% url 'SizesAdministrator' %}">Tallas</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="{% url 'administratorManager' %}">Administradores</a>
+						<a class="nav-link" href="{% url 'SizesAdministrator' %}">Administradores</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="{% url 'SizesAdministrator' %}">Reporte</a>
@@ -46,33 +46,9 @@
 	</nav>
     <br><br><br><br>
 
-	<div class="container">
-		<form action="/PedidosSeleccionados/" method="post">
-			{% csrf_token %}
-			<div class="row justify-content-center">
-		<div class="col-lg-3 col-md-4 col-sm-3">
-				<select class="form-control" name="cat">
-					<option value="op01" >Todos Los pedidos</option>
-					<option value="op02" >Pedidos En Espera</option>
-					<option value="op03" >Pedidos aceptados sin enviar</option>
-					<option value="op04" >Pedidos aceptados enviados</option>
-					<option value="op05" >Pedidos rechazados</option>
-				</select>
-		</div>
-
-		<div class="col-lg-2 col-md-2 col-sm-2">
-				<button type="submit" class="btn  btn-md" style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: #3D384D; color: white; ">
-					 Mostrar
-				</button>
-		</div>
-		</div>
-		</form>
-	</div>
-
-	<hr>
 
 	<div class="container">
-		<h4>Listado de pedidos:</h4>
+		<h4>Administradores:</h4>
 
 		<div class="d-flex justify-content-center row">
             <div class="col-md-12">
@@ -81,32 +57,20 @@
                         <table class="table">
                             <thead>
                                 <tr style="color: #679FBF; ">
-									<th>ID Pedido</th>
-                                    <th>Fecha pedido</th>
-									<th>Destino</th>
-									<th>Estado Pedido</th>
-									<th>Monto</th>
-                                    <th>Ver más</th>
+									<th>Nombres</th>
+                                    <th>Apellidos</th>
+									<th>CI</th>
+									<th>Rol</th>
+                                    <th>Estado</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody class="table-body">
-								{% for o in OrdersList %}
+								{% for o in AdministratorsList %}
 								<tr>
-									<td>{{o.id_pedido}}</td>
-                                    <td>{{o.FechaPedido}}</td>
-									<td>{{o.id_departamento.Departamento}}</td>
-									{% if o.get_status == 1 %}
-										<td style="color: orange">{{o.EstadoPedido}}</td>
-									{% endif %}
-
-									{% if o.get_status == 0 %}
-										<td style="color: green">{{o.EstadoPedido}}</td>
-									{% endif %}
-									{% if o.get_status == 2  %}
-										<td style="color: red">{{o.EstadoPedido}}</td>
-									{% endif %}
-
+									<td>{{o.id_persona.nombre}}</td>
+                                    <td>{{o.id_persona.apellidoPaterno}} {{o.id_persona.apellidoMaterno}}</td>
+									<td>{{o.id_persona.ciNumero}} {{o.id_persona.ciExtension}} {{o.id_persona.ciComplemento}}</td>
 
 
 									<td>{{o.TotalPagar}}Bs.-</td>

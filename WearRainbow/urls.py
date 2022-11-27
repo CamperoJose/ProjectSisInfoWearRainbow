@@ -51,10 +51,14 @@ urlpatterns = [
     path('registrarCliente/', views.registroCliente, name="registrarCliente"),
     path('inicioSesionCliente/', views.inicioSesionCliente, name="inicioSesionCliente"),
     path('inicioSesionAdministrador/', views.inicioSesionAdministrador, name="inicioSesionAdministrador"),
+    path('PedidosSeleccionados/', views.PedidosSeleccionados, name="PedidosSeleccionados"),
+    path('administratorManager/', views.administratorManager, name="administratorManager"),
     path('PaymentDetails01/<id>', views.PaymentDetails01, name="PaymentDetails01"),
     path('PaymentDetails02/<id>', views.PaymentDetails02, name="PaymentDetails02"),
     path('PaymentDetails03/<id>', views.PaymentDetails03, name="PaymentDetails03"),
     path('registroPago/<id>', views.registroPago, name="registroPago"),
     path('registroPedidoAceptado/<id>', views.registroPedidoAceptado, name="registroPedidoAceptado"),
+    path('registroPedidoRechazado/<id>', views.registroPedidoRechazado, name="registroPedidoRechazado"),
+    path('registroPedidoEnviado/<id>', views.registroPedidoEnviado, name="registroPedidoEnviado"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
