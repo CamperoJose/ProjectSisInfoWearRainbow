@@ -190,7 +190,8 @@
 											<h5  class="modal-title">Aceptar Pedido</h5>
 											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 										  </div>
-											<form>
+											<form action="/registroPedidoAceptado/{{pedido.id_pedido}}" method="post">
+                                                {% csrf_token %}
 										  <div class="modal-body">
 											  <div class="mb-3">
 												  <input type="checkbox" name="conf"  required>

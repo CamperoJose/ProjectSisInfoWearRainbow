@@ -212,6 +212,13 @@ class Pago(models.Model):
 class PedidoAceptado(models.Model):
     id_pedidoAceptado = models.AutoField(primary_key=True, null=False, unique=True)
     FechaAceptacion = models.DateTimeField(null=False)
-    FechaEnvio = models.DateTimeField(Pedido, on_delete=models.CASCADE, null=False)
+    FechaEnvio = models.DateTimeField(null=True)
+    id_pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, null=False)
+    id_administrador = models.ForeignKey(administrador, on_delete=models.CASCADE, null=False)
+
+class PedidoRechazado(models.Model):
+    id_pedidoAceptado = models.AutoField(primary_key=True, null=False, unique=True)
+    FechaRechazo = models.DateTimeField(null=False)
+    RazonRechazo = models.CharField(max_length=150, null=False)
     id_pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, null=False)
     id_administrador = models.ForeignKey(administrador, on_delete=models.CASCADE, null=False)

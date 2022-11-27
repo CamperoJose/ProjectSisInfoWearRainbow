@@ -55,5 +55,6 @@ urlpatterns = [
     path('PaymentDetails02/<id>', views.PaymentDetails02, name="PaymentDetails02"),
     path('PaymentDetails03/<id>', views.PaymentDetails03, name="PaymentDetails03"),
     path('registroPago/<id>', views.registroPago, name="registroPago"),
+    path('registroPedidoAceptado/<id>', views.registroPedidoAceptado, name="registroPedidoAceptado"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

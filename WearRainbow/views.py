@@ -4,7 +4,7 @@ from idlelib import window
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from WearRainbow.models import persona, administrador, Producto, Categoria, Talla, TallaDisponible, Departamento, \
-    Pedido, ProductosPedido, Pago
+    Pedido, ProductosPedido, Pago, PedidoAceptado
 from WearRainbow.models import cliente
 from django.contrib import messages
 
@@ -420,6 +420,17 @@ def registroPago(request, id):
         response = redirect('/productsAsClient/')
         return response
 
+
+def registroPedidoAceptado(request, id):
+    if request.method == 'POST':
+        FechaAceptacion = datetime.now()
+        id_administrador = request.COOKIES['id_administrador']
+
+        obj = PedidoAceptado(FechaAceptacion=FechaAceptacion, id_pedido=Pedido(id), id_administrador=administrador(id_administrador))
+        obj.save()
+
+        response = redirect('/OrdersAdministrator/')
+        return response
 
 
 
