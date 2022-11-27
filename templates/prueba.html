@@ -6,10 +6,27 @@
 	<meta content="IE=edge" http-equiv="X-UA-Compatible">
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<title>WEAR RAINBOW</title>
+    <style>
+      .formPopup {
+        display: none;
+        position: fixed;
+        left: 45%;
+        top: 25%;
+        transform: translate(-50%, 5%);
+        border: 3px solid #3D384D;
+        z-index: 9;
+        border-radius: 15px;
+      }
+      .formContainer {
+        max-width: 300px;
+        padding: 20px;
+        background-color: #fff;
+      }
 
-      <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}' />
+    </style>
+
+    <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}' />
 	<link href='{% static "cssForIndex.css" %}' rel="stylesheet">
-
 
   </head>
   <body>
@@ -50,9 +67,64 @@
         </div>
         <hr>
     </div>
-    <br><br><br>
 
-  <div class="container d-flex justify-content-center mt-50 mb-50">
+    <div class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" id="popupForm1">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Modal body text goes here.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="container">
+      <div class="formPopup" id="popupForm3">
+        <form action="/action_page.php" class="formContainer">
+          <h2>Aceptar Pedido</h2>
+          <input type="checkbox" name="conf"  required>
+                <label>He revisado y verificado el pago completo y correcto del cliente. Confirmando así el pedido para su posterior preparación y envió. </label><br>
+          <button type="submit" class="btn  btn-md" style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: #3D384D; color: white; ">
+              Confirmar
+          </button>
+          <button type="button" class="btn cancel" onclick="closeForm1()">
+              Cerrar
+          </button>
+            hola
+        </form>
+      </div>
+    </div>
+
+    <div class="loginPopup">
+      <div class="formPopup" id="popupForm2">
+        <form action="/action_page.php" class="formContainer">
+          <h2>Rechazar Pedido</h2>
+          <label for="email">
+            <strong>E-mail</strong>
+          </label>
+          <input type="text" id="email" placeholder="Your Email" name="email" required>
+          <label for="psw">
+            <strong>Password</strong>
+          </label>
+          <input type="password" id="psw" placeholder="Your Password" name="psw" required>
+          <button type="submit" >Log in</button>
+          <button type="button" class="btn cancel" onclick="closeForm2()">Close</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="container d-flex justify-content-center mt-50 mb-50">
         <div class="row">
              <div class="col-md-12">
                 <div class="card">
@@ -178,65 +250,27 @@
                                     </table>
                                 </div>
                             </div>
-							{% if pagoDetails %}
 
-                                <div class="col-lg-4 col-md-2 col-sm-2 p-lg-5">
 
-									<button style="background-color: #4dd091; border: 0px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal1" data-bs-whatever="@mdo">Aceptar Pedido</button>
-									<div class="modal fade" id="Modal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-									  <div class="modal-dialog">
-										<div class="modal-content">
-										  <div style="background-color: #4dd091; color: white" class="modal-header">
-											<h5  class="modal-title">Aceptar Pedido</h5>
-											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-										  </div>
-											<form>
-										  <div class="modal-body">
-											  <div class="mb-3">
-												  <input type="checkbox" name="conf"  required>
-												  <label>He revisado y verificado el pago completo y correcto del cliente. Confirmando así el pedido para su posterior preparación y envió. </label><br>
 
-											  </div>
+                                <div class="pt-2 mb-3 wmin-md-400 ml-auto">
+                                <div class="row justify-content-center">
 
-										  </div>
-										  <div class="modal-footer">
-											<button style="background-color: #dfe6e6; border: 0px; color: #3D384D" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-											<button style="background-color: #3D384D; border: 0px" type="submit" class="btn btn-primary">Aceptar</button>
-										  </div>
-											</form>
-										</div>
-									  </div>
-									</div>
-									<br><br>
 
-									<button style="background-color: #ff828b; border: 0px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal2" data-bs-whatever="@mdo">Rechazar Pedido</button>
-									<div class="modal fade" id="Modal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-									  <div class="modal-dialog">
-										<div class="modal-content">
-										  <div style="background-color: #ff828b; color: white" class="modal-header">
-											<h5 class="modal-title" >Rechazar Pedido</h5>
-											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-										  </div>
-										<form>
-										  <div class="modal-body">
-											  <div class="mb-3">
-												<label class="col-form-label">Razón de rechazo:</label>
-												<textarea class="form-control" id="textRechazo" required></textarea>
-											  </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2">
 
-										  </div>
-										  <div class="modal-footer">
-											<button style="background-color: #dfe6e6; border: 0px; color: #3D384D" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-											<button style="background-color: #3D384D; border: 0px" type="submit" class="btn btn-primary">Aceptar</button>
-										  </div>
-											</form>
-										</div>
-									  </div>
-									</div>
+                                    <button onclick="openForm1()" class="btn  btn-md" style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: mediumseagreen; color: white; " >
+                                         Aceptar Pedido
+                                    </button>
+                                    <br><br>
+
+                                    <button onclick="openForm2()" class="btn  btn-md" style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: indianred; color: white; ">
+                                         Rechazar Pedido
+                                    </button>
 
                                 </div>
-							{% endif %}
-
+		                    </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -244,23 +278,26 @@
         </div>
     </div>
 
+    <script>
+      function openForm1() {
+        document.getElementById("popupForm1").style.display = "block";
+      }
+      function closeForm1() {
+        document.getElementById("popupForm1").style.display = "none";
+      }
+
+      function openForm2() {
+        document.getElementById("popupForm2").style.display = "block";
+      }
+      function closeForm2() {
+        document.getElementById("popupForm2").style.display = "none";
+      }
 
 
-
-
-
-
-
-
-
-
+    </script>
 
   </body>
 </html>
-
-    <script src="{% static 'js/jquery-3.5.1.slim.min.js' %}"></script>
-    <script src="{% static 'js/popper.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
 
 

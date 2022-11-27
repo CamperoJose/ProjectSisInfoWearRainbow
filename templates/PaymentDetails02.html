@@ -34,7 +34,7 @@
 	<main>
         <section class="about section-padding" id="about">
 			<div class="container">
-				<h4 align="center" style="font-weight: bold;">PAGO CON QR</h4>
+				<h4 align="center" style="font-weight: bold;">PAGO CON QR PARA PEDIDO #{{pedido.id_pedido}}</h4>
 			</div><!-- about section starts -->    
             <hr>
             <div>
@@ -50,16 +50,18 @@
                                     <li>Esperar confirmación.</li>
                                     <li>Una vez confirmado se enviará el pedido lo antes posible.</li>
                                 </ul>
-                                <form action="/registroPedido/" class="form-horizontal" method="post" enctype="multipart/form-data">
+                                <form action="/registroPago/{{pedido.id_pedido}}" class="form-horizontal" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
                                     <div class="d-grid gap-1 col-8">
+                                        <div class="form-group"><label class="my-auto"><b>Banco Proveniente</b></label><input type="text" class="form-control" name="banco" required> </div>
                                     <div class="form-group files">
                                         <label class="my-auto"><b>Subir comprobante</b></label>
-                                        <input name="img" type="file" class="form-control" />
+                                        <input name="img" type="file" class="form-control" required/>
                                     </div>
                                     <!-- <button style="background-color: #F2727D" class="btn btn-block text-white btn-md"><b>Subir comprobante</b></button> -->
                                     <br>
                                     </div>
-                                </form>
+
                             </div>   
                         </div>              
                         <div class="col-lg-2 col-md-12 col-12 ps-lg-2">
@@ -72,8 +74,9 @@
                 </div>
                 <hr>
                 <div class="d-grid gap-2 col-6 mx-auto">
-                    <button style="background-color: #7ED9B7" class="btn btn-block text-white btn-md"><b>CONFIRMAR PAGO</b></button>
+                    <button style="background-color: #7ED9B7" class="btn btn-block text-white btn-md"><b>CONFIRMAR PAGO DE {{pedido.TotalPagar}}Bs.-</b></button>
                 </div>
+                </form>
             </div>
         </section>
 	</main>

@@ -35,20 +35,26 @@
         <br><br>
         <section class="about section-padding" id="about">
 			<div class="container">
-				<h4 align="center" style="font-weight: bold;">RESUMEN DE COMPRA:</h4>
+				<h4 align="center" style="font-weight: bold;">RESUMEN DE COMPRA DEL PEDIDO #{{pedido.id_pedido}}:</h4>
 			</div><!-- about section starts -->    
             <div>
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-6 col-md-12 col-12 ps-lg-5 mt-md-5 d-flex align-items-center">
                             <div class="about-text">
-                                <h4 align="center" style="font-weight: bold;">RESUMEN DE COMPRA:</h4>
-                                <p>TEXTOTEXTOTEXTOTEXTOTEXTOTEXTOTEXTOTEXTO</p>
+                                <h4 align="center" style="font-weight: bold;">RESUMEN DEL PEDIDO:</h4>
+                                <ul style="list-style-type: none;">
+                                    <li style="font-weight: bold">Subtotal productos:  <span style="font-weight: lighter">{{pedido.TotalPagar}}Bs.-</span></li>
+                                    <li style="font-weight: bold">Subtotal envío:  <span style="font-weight: lighter">{{pedido.id_departamento.precio}}Bs.-</span></li>
+                                </ul>
+
+
+
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-12 col-12 ps-lg-5 mt-md-5 d-flex align-items-center">
                             <div class="about-text">
-                                <h4 align="center" style="font-weight: bold;">COSTO TOTAL.- </h4>
+                                <h4 align="center" style="font-weight: bold;">COSTO TOTAL: {{pedido.TotalPagar}}Bs.-</h4>
                             </div>
                         </div>
                     </div>
@@ -59,20 +65,24 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 col-md-12 col-12 ps-lg-5 mt-md-5 d-flex align-items-center form-group">
-                        <div class="d-grid gap-2 col-6 mx-auto">
+                        <form action="/PaymentDetails02/{{pedido.id_pedido}}" method="post">
+                            {% csrf_token %}
 
-                        <a href="{% url 'PaymentDetails02' %}">
-                                <button style="background-color: #7ED9B7" class="btn btn-block text-white btn-md"><b>Pagar mediante QR</b></button>
-                            </a>
-                        </div>
+                            <div class="d-grid gap-2 col-6 mx-auto">
+                                    <button type="submit" style="background-color: #7ED9B7" class="btn btn-block text-white btn-md"><b>Pagar mediante QR</b></button>
+                            </div>
+                        </form>
+
+
                     </div>
                     <br><br>
                     <div class="col-lg-6 col-md-12 col-12 ps-lg-5 mt-md-5 d-flex align-items-center form-group">
-                        <div class="d-grid gap-2 col-6 mx-auto">
-                            <a href="{% url 'PaymentDetails03' %}">
-                                <button style="background-color: #7ED9B7" class="btn btn-block text-white btn-md"><b>Pagar con transferencia bancaria</b></button>
-                            </a>
-                        </div>
+                        <form action="/PaymentDetails03/{{pedido.id_pedido}}" method="post">
+                            {% csrf_token %}
+                            <div class="d-grid gap-2 col-6 mx-auto">
+                                    <button style="background-color: #7ED9B7" class="btn btn-block text-white btn-md"><b>Pagar con transferencia bancaria</b></button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div> <!-- DESCUBRIR COMO HACER BOTONES -->

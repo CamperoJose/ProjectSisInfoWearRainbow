@@ -51,8 +51,9 @@ urlpatterns = [
     path('registrarCliente/', views.registroCliente, name="registrarCliente"),
     path('inicioSesionCliente/', views.inicioSesionCliente, name="inicioSesionCliente"),
     path('inicioSesionAdministrador/', views.inicioSesionAdministrador, name="inicioSesionAdministrador"),
-    path('PaymentDetails01/', views.PaymentDetails01, name="PaymentDetails01"),
-    path('PaymentDetails02/', views.PaymentDetails02, name="PaymentDetails02"),
-    path('PaymentDetails03/', views.PaymentDetails03, name="PaymentDetails03"),
+    path('PaymentDetails01/<id>', views.PaymentDetails01, name="PaymentDetails01"),
+    path('PaymentDetails02/<id>', views.PaymentDetails02, name="PaymentDetails02"),
+    path('PaymentDetails03/<id>', views.PaymentDetails03, name="PaymentDetails03"),
+    path('registroPago/<id>', views.registroPago, name="registroPago"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

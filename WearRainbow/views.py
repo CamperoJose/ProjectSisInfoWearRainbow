@@ -4,7 +4,7 @@ from idlelib import window
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from WearRainbow.models import persona, administrador, Producto, Categoria, Talla, TallaDisponible, Departamento, \
-    Pedido, ProductosPedido
+    Pedido, ProductosPedido, Pago
 from WearRainbow.models import cliente
 from django.contrib import messages
 
@@ -12,14 +12,17 @@ from django.contrib import messages
 def paginaIndex(request):
     return render(request, 'index.html')
 
-def PaymentDetails01(request):
-    return render(request, 'PaymentDetails01.html')
+def PaymentDetails01(request, id):
+    pedido = Pedido.objects.get(id_pedido=id)
+    return render(request, 'PaymentDetails01.html', {"pedido": pedido})
 
-def PaymentDetails02(request):
-    return render(request, 'PaymentDetails02.html')
+def PaymentDetails02(request,id):
+    pedido = Pedido.objects.get(id_pedido=id)
+    return render(request, 'PaymentDetails02.html', {"pedido": pedido})
 
-def PaymentDetails03(request):
-    return render(request, 'PaymentDetails03.html')
+def PaymentDetails03(request, id):
+    pedido = Pedido.objects.get(id_pedido=id)
+    return render(request, 'PaymentDetails03.html', {"pedido": pedido})
 
 def OrdersAsClient(request):
     id_cliente = request.COOKIES['id_cliente']
@@ -31,9 +34,16 @@ def OrdersAsClient(request):
 def DetallePedidio(request,id):
     pedido = Pedido.objects.get(id_pedido=id)
     productos = ProductosPedido.objects.filter(id_pedido=id)
+    pago = Pago.objects.filter(id_pedido=id).exists()
+    data = dict()
+    data["pedido"]=pedido
+    data["productos"]=productos
+    if pago==True:
+        pagoDetails=Pago.objects.get(id_pedido=id)
+        data["pagoDetails"]=pagoDetails
+    print(data)
 
-    return render(request, 'DetallePedidio.html',
-                  {"pedido": pedido, "productos": productos})
+    return render(request, 'DetallePedidio.html',data)
 
 def DetallePedidoCliente(request,id):
     pedido = Pedido.objects.get(id_pedido=id)
@@ -320,12 +330,9 @@ def registroTalla(request):
 
 def registroPago(request):
     if request.method == 'POST':
-
         talla = request.POST['nombre']
         largoEspalda = request.POST['size1']
-        contornoPecho = request.POST['size2']
-        contornoCuello = request.POST['size3']
-        id = request.POST['id']
+
         if id == '':
             obj = Talla(talla=talla, largoEspalda=largoEspalda, contornoPecho=contornoPecho,
                         contornoCuello=contornoCuello)
@@ -397,6 +404,23 @@ def registroPedido(request):
             obj2.save()
 
         return response
+
+
+def registroPago(request, id):
+    if request.method == 'POST':
+        # ParaRegistro de pedido:
+        BancoProveniente = request.POST['banco']
+        Comprobante = request.FILES['img']
+        MetodoPago = 'QR'
+        FechaPago = datetime.now()
+
+        obj = Pago(Comprobante=Comprobante, BancoProveniente=BancoProveniente, MetodoPago=MetodoPago, FechaPago=FechaPago, id_pedido=Pedido(id))
+        obj.save()
+
+        response = redirect('/productsAsClient/')
+        return response
+
+
 
 
 def modificarProducto(request):
