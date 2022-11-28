@@ -52,6 +52,7 @@ urlpatterns = [
     path('inicioSesionCliente/', views.inicioSesionCliente, name="inicioSesionCliente"),
     path('inicioSesionAdministrador/', views.inicioSesionAdministrador, name="inicioSesionAdministrador"),
     path('PedidosSeleccionados/', views.PedidosSeleccionados, name="PedidosSeleccionados"),
+    path('dashboard/', views.dashboard, name="dashboard"),
     path('administratorManager/', views.administratorManager, name="administratorManager"),
     path('PaymentDetails01/<id>', views.PaymentDetails01, name="PaymentDetails01"),
     path('PaymentDetails02/<id>', views.PaymentDetails02, name="PaymentDetails02"),
@@ -60,5 +61,6 @@ urlpatterns = [
     path('registroPedidoAceptado/<id>', views.registroPedidoAceptado, name="registroPedidoAceptado"),
     path('registroPedidoRechazado/<id>', views.registroPedidoRechazado, name="registroPedidoRechazado"),
     path('registroPedidoEnviado/<id>', views.registroPedidoEnviado, name="registroPedidoEnviado"),
+    path('modificarAcceso/<id>', views.modificarAcceso, name="modificarAcceso"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

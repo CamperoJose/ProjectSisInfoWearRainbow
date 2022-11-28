@@ -1,0 +1,228 @@
+{% load static %}
+     
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta content="IE=edge" http-equiv="X-UA-Compatible">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<title>WEAR RAINBOW</title>
+	<!-- All CSS -->
+    <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}' />
+	<link href='{% static "cssForIndex.css" %}' rel="stylesheet">
+
+	<style>
+		.order-card {
+    color: #fff;
+}
+
+.bg-c-blue {
+    background: linear-gradient(45deg,#4099ff,#73b4ff);
+}
+
+.bg-c-green {
+    background: linear-gradient(45deg,#2ed8b6,#59e0c5);
+}
+
+.bg-c-yellow {
+    background: linear-gradient(45deg,#FFB64D,#ffcb80);
+}
+
+.bg-c-pink {
+    background: linear-gradient(45deg,#FF5370,#ff869a);
+}
+
+
+.card {
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4,26,55,0.16);
+    box-shadow: 0 1px 2.94px 0.06px rgba(4,26,55,0.16);
+    border: none;
+    margin-bottom: 30px;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+.card .card-block {
+    padding: 25px;
+}
+
+.order-card i {
+    font-size: 26px;
+}
+
+.f-left {
+    float: left;
+}
+
+.f-right {
+    float: right;
+}
+	</style>
+</head>
+<body>
+	<nav style="background: #3D384D" class="navbar navbar-expand-lg navbar-dark bg-ligth fixed-top">
+		<div class="container">
+			<a class="navbar-brand" href="#"><img style="height: 45px"  src="{% static 'MEDIA/logo01.png' %}" alt=""></a> <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span></button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav ms-auto mb-4 mb-lg-0">
+
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'OrdersAdministrator' %}">Pedidos</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'ProductsAdministrator' %}">Productos</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'CategoriesAdministrator' %}">Categorias</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'SizesAdministrator' %}">Tallas</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'SizesAdministrator' %}">Administradores</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'SizesAdministrator' %}">Reporte</a>
+					</li>
+					<li class="nav-item">
+						<a style="color: #F2727D; font-weight: bold;" class="nav-link" href="{% url 'paginaIndex' %}">Cerrar Sesión</a>
+					</li>
+
+				</ul>
+			</div>
+		</div>
+	</nav>
+    <br><br><br><br>
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-xl-3">
+            <div class="card bg-c-blue order-card">
+                <div class="card-block">
+                    <h6 class="m-b-20">Usuarios Registrados</h6>
+                    <h2 class="text-right"><span>{{TotalClientes}}</span></h2>
+                    <p class="m-b-0">Usuarios con almenos un pedido:<span class="f-right">{{totalClientesUnPedido}}</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            <div class="card bg-c-green order-card">
+                <div class="card-block">
+                    <h6 class="m-b-20">Pedidos Recibidos</h6>
+                    <h2 class="text-right"></i><span>{{totalPedidos}}</span></h2>
+                    <p class="m-b-0">Pedidos recibidos el ultimo mes: <span class="f-right">{{totalPedidosMes}}</span></p>
+                </div>
+            </div>
+        </div>
+
+		<div class="col-md-4 col-xl-3">
+            <div class="card bg-c-pink order-card">
+                <div class="card-block">
+                    <h6 class="m-b-20">Ordenes rechazadas</h6>
+                    <h2 class="text-right"><span>{{totalRechazados}}</span></h2>
+					<p class="m-b-0">Pedidos rechazados el ultimo mes: <span class="f-right">{{totalRechazadosMes}}</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-xl-3">
+            <div class="card bg-c-yellow order-card">
+                <div class="card-block">
+                    <h6 class="m-b-20">Total Ventas</h6>
+                    <h2 class="text-right"><span>{{TotalVentas}}Bs.-</span></h2>
+					<p class="m-b-0">Suma total de ventas el ultimo mes: <span class="f-right">{{TotalVentasMes}}Bs.-</span></p>
+                </div>
+            </div>
+        </div>
+	</div>
+
+
+
+	<div class="row">
+
+            <div class="col-sm-12 col-md-6 col-lg-6 mt-4">
+                <div class="card">
+                    <img class="card-img-top" src="{{objMin.id_producto.img.url}}">
+                    <div class="card-block">
+                        <h4 style="color: darkred" class="card-title">Producto Menos Vendido</h4>
+                        <div class="meta">
+                            <a href="/ViewProduct/{{objMin.id_producto.id_producto}}">Ver producto</a>
+                        </div>
+                        <div class="card-text">
+                            Talla: {{objMin.id_talla.talla}}
+                        </div>
+                        <div class="card-text">
+                            Cantidad de ventas: {{cantidadMin}} unidades
+                        </div>
+
+                    </div>
+                    <div class="card-footer">
+                        <span class="float-right">Precio</span>
+                        <span><i class=""></i>{{objMin.id_producto.precio}}Bs.-</span>
+                    </div>
+                </div>
+            </div>
+
+			<div class="col-sm-12 col-md-6 col-lg-6 mt-4">
+                <div class="card">
+                    <img class="card-img-top" src="{{objMax.id_producto.img.url}}">
+                    <div class="card-block">
+                        <h4 style="color: green" class="card-title">Producto Mas Vendido</h4>
+                        <div class="meta">
+                            <a href="/ViewProduct/{{objMax.id_producto.id_producto}}">Ver producto</a>
+                        </div>
+                        <div class="card-text">
+                            Talla: {{objMax.id_talla.talla}}
+                        </div>
+                        <div class="card-text">
+                            Cantidad de ventas: {{cantidadMax}} unidades
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="float-right">Precio</span>
+                        <span><i class=""></i>{{objMax.id_producto.precio}}Bs.-</span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    <div class="d-flex justify-content-center row">
+            <div class="col-md-12">
+                <h4>Total ventas por Departamento</h4>
+                <div class="rounded">
+                    <div class="table-responsive table-borderless">
+                        <table class="table">
+                            <thead>
+                                <tr style="color: #679FBF; ">
+									<th>Departamento</th>
+                                    <th>Costo de envío</th>
+									<th>Cantidad ventas</th>
+									<th>Total ventas</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+								{% for o in departamentos %}
+								<tr>
+									<td>{{o.Departamento}}</td>
+                                    <td>{{o.precio}}Bs.- </td>
+									<td>{{o.get_cantidad_ventas}}</td>
+									<td>{{o.get_total_ventas.TotalPagar__sum}}Bs.-</td>
+
+                                </tr>
+		                    {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+</div>

@@ -168,6 +168,12 @@ class Departamento(models.Model):
     Departamento = models.CharField(max_length=30, null=False)
     precio = models.FloatField(null=False)
 
+    def get_cantidad_ventas(self):
+        return Pedido.objects.filter(id_departamento=self.id_departamento).count()
+
+    def get_total_ventas(self):
+        return Pedido.objects.filter(id_departamento=self.id_departamento).aggregate(Sum(('TotalPagar')))
+
 
 class Pedido(models.Model):
     id_pedido = models.AutoField(primary_key=True, null=False, unique=True)
@@ -198,9 +204,6 @@ class ProductosPedido(models.Model):
     id_pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     id_tallaDisponible = models.ForeignKey(TallaDisponible, on_delete=models.CASCADE)
 
-    def get_subtotal(self):
-        cantidad = float(self.cantidad)
-        return round(self.id_tallaDisponible.id_producto.precio * cantidad, 1)
 
 
 class Pago(models.Model):

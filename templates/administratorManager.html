@@ -59,6 +59,8 @@
                                 <tr style="color: #679FBF; ">
 									<th>Nombres</th>
                                     <th>Apellidos</th>
+									<th>Correo</th>
+									<th>Celular</th>
 									<th>CI</th>
 									<th>Rol</th>
                                     <th>Estado</th>
@@ -70,11 +72,57 @@
 								<tr>
 									<td>{{o.id_persona.nombre}}</td>
                                     <td>{{o.id_persona.apellidoPaterno}} {{o.id_persona.apellidoMaterno}}</td>
+									<td>{{o.id_persona.correo}}</td>
+									<td>{{o.id_persona.celular}}</td>
 									<td>{{o.id_persona.ciNumero}} {{o.id_persona.ciExtension}} {{o.id_persona.ciComplemento}}</td>
+									<td>{{o.Rol}}</td>
+									<td>{{o.Estado}}</td>
+
+									<td style="text-align: center; padding-right: 2%"><button style="background-color: white; border: 0px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dsa{{o.id_administrador}}" data-bs-whatever="@mdo"><img style="height: 25px" src="{% static 'MEDIA/icono05.png' %}" alt=""></button></td>
+
+									<div class="modal fade" id="dsa{{o.id_administrador}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+										<div class="modal-content">
+										  <div style="background-color: lightblue; color: #3D384D" class="modal-header">
+											<h5 class="modal-title" >Modificar acceso de {{o.id_persona.nombre}} {{o.id_persona.apellidoPaterno}} {{o.id_persona.apellidoMaterno}}</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										  </div>
+										<form action="/modificarAcceso/{{o.id_administrador}}" method="post">
+                                            {% csrf_token %}
+										  <div class="modal-body">
+
+											  <div class="mb-3">
+												  <label >Estado del usuario:</label>
+												  <select class="form-control" name="estado">
+                                                    	<option value="Activo" {% if o.Estado == "Activo" %} selected {% endif %}>Activo</option>
+														<option value="Desactivado" {% if o.Estado == "Desactivado" %} selected {% endif %} >Desactivado</option>
+                                            		</select>
+											  </div>
 
 
-									<td>{{o.TotalPagar}}Bs.-</td>
-									<td style="text-align: center; padding-right: 2%"><a class="btn" href="/DetallePedidio/{{o.id_pedido}}"><img style="height: 25px" src="{% static 'MEDIA/icono07.png' %}" alt=""></a></td>
+											  <div class="mb-3">
+												  <label >Rol del empleado:</label>
+												  	<select class="form-control" name="rol">
+														<option value="Administrador" {% if o.Rol == "Administrador" %} selected {% endif %}>Administrador</option>
+														<option value="SuperAdministrador" {% if o.Rol == "SuperAdministrador" %} selected {% endif %} >Super Administrador</option>
+                                            		</select>
+											  </div>
+
+											  <div class="mb-3">
+												  <input type="checkbox" name="conf"  required>
+												  <label>Confirmar cambios.</label><br>
+											  </div>
+
+										  </div>
+										  <div class="modal-footer">
+											<button style="background-color: #dfe6e6; border: 0px; color: #3D384D" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+											<button style="background-color: #3D384D; border: 0px" type="submit" class="btn btn-primary">Aceptar</button>
+										  </div>
+											</form>
+										</div>
+									  </div>
+									</div>
+
 
 								</tr>
 		                    {% endfor %}

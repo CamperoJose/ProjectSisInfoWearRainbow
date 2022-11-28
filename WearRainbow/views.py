@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import datetime, date
 from idlelib import window
 
+from django.db.models import Sum, Count
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from WearRainbow.models import persona, administrador, Producto, Categoria, Talla, TallaDisponible, Departamento, \
@@ -424,6 +425,9 @@ def registroPedido(request):
             obj2=ProductosPedido(cantidad=a,id_pedido=obj, id_tallaDisponible=TallaDisponible(b))
             obj2.save()
 
+        print(obj.id_pedido)
+        response = redirect('/PaymentDetails01/'+str(obj.id_pedido))
+
         return response
 
 
@@ -432,7 +436,7 @@ def registroPago(request, id):
         # ParaRegistro de pedido:
         BancoProveniente = request.POST['banco']
         Comprobante = request.FILES['img']
-        MetodoPago = 'QR'
+        MetodoPago = 'transferencia'
         FechaPago = datetime.now()
 
         obj = Pago(Comprobante=Comprobante, BancoProveniente=BancoProveniente, MetodoPago=MetodoPago, FechaPago=FechaPago, id_pedido=Pedido(id))
@@ -457,6 +461,18 @@ def registroPedidoAceptado(request, id):
         response = redirect('/OrdersAdministrator/')
         return response
 
+def modificarAcceso(request,id):
+    if request.method == 'POST':
+        Rol = request.POST['rol']
+        Estado = request.POST['estado']
+
+        obj = administrador.objects.get(id_administrador=id)
+        obj.Rol = Rol
+        obj.Estado = Estado
+        obj.save()
+
+        response = redirect('/administratorManager/')
+        return response
 
 
 def registroPedidoRechazado(request, id):
@@ -635,3 +651,62 @@ def ViewProduct(request, id):
 def administratorManager(request):
     AdministratorsList = administrador.objects.all()
     return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList})
+def dashboard(request):
+    data=dict()
+    ######################  total ventas general:
+    totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar").aggregate(Sum("TotalPagar"))
+    totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado").aggregate(Sum("TotalPagar"))
+    data['TotalVentas']=totalVentas['TotalPagar__sum']+totalVentas2['TotalPagar__sum']
+
+    ######################  total ventas ultimo mes:
+    fecha = date.today()
+    totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar", FechaPedido__month=fecha.month).aggregate(Sum("TotalPagar"))
+    totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado", FechaPedido__month=fecha.month).aggregate(Sum("TotalPagar"))
+    data['TotalVentasMes'] = totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum']
+    print(data['TotalVentasMes'])
+
+    ######################  total clientes:
+    totalClientes = cliente.objects.all().count()
+    data['TotalClientes']=totalClientes
+    totalClientesUnPedido = Pedido.objects.filter(EstadoPedido="Aceptado y enviado",FechaPedido__month=fecha.month).aggregate(Count("id_cliente"))
+    data['totalClientesUnPedido']=totalClientesUnPedido['id_cliente__count']
+
+    ######################  pedidos recibidos:
+    totalPedidos = Pedido.objects.all().count()
+    data['totalPedidos'] = totalPedidos
+    totalPedidosMes = Pedido.objects.filter( FechaPedido__month=fecha.month).count()
+    data['totalPedidosMes'] = totalPedidosMes
+
+    ######################  pedidos rechazados:
+    totalRechazados =  Pedido.objects.filter(EstadoPedido="Rechazado").count()
+    data['totalRechazados'] = totalRechazados
+    totalRechazadosMes =  Pedido.objects.filter(EstadoPedido="Rechazado",FechaPedido__month=fecha.month).count()
+    data['totalRechazadosMes'] = totalRechazadosMes
+
+    ######################  producto menos y maspedido:
+    productos = TallaDisponible.objects.all()
+    cantidadMax=0
+    cantidadMin=999999
+    objMax=''
+    objMin=''
+    TallaMax = ''
+    TallaMin = ''
+    for i in productos:
+        obj = ProductosPedido.objects.filter(id_tallaDisponible=i.id_tallaDisponible).aggregate(Sum("cantidad"))
+        if obj['cantidad__sum']!= None:
+            if obj['cantidad__sum'] <cantidadMin:
+                cantidadMin=obj['cantidad__sum']
+                objMin=i
+            if obj['cantidad__sum'] > cantidadMax:
+                cantidadMax=obj['cantidad__sum']
+                objMax=i
+    data['cantidadMax'] = cantidadMax
+    data['cantidadMin'] = cantidadMin
+    data['objMax'] = objMax
+    data['objMin'] = objMin
+
+    departamentos=Departamento.objects.all()
+
+    data['departamentos'] = departamentos
+
+    return render(request, 'dashboard.html', data)
