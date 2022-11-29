@@ -9,7 +9,6 @@
 	<title>WEAR RAINBOW</title>
 	<!-- All CSS -->
     <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}' />
-	<link href='{% static "cssForIndex.css" %}' rel="stylesheet">
 </head>
 <body>
 
@@ -44,8 +43,8 @@
 									<td>{{o.id_persona.correo}}</td>
 									<td>{{o.id_persona.celular}}</td>
 									<td>{{o.id_persona.ciNumero}} {{o.id_persona.ciExtension}} {{o.id_persona.ciComplemento}}</td>
-									<td>{{o.Rol}}</td>
-									<td>{{o.Estado}}</td>
+									<td>{{o.rol}}</td>
+									<td>{{o.estado}}</td>
 
 									<td style="text-align: center; padding-right: 2%"><button style="background-color: white; border: 0px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dsa{{o.id_administrador}}" data-bs-whatever="@mdo"><img style="height: 25px" src="{% static 'MEDIA/icono05.png' %}" alt=""></button></td>
 
@@ -63,8 +62,8 @@
 											  <div class="mb-3">
 												  <label >Estado del usuario:</label>
 												  <select class="form-control" name="estado">
-                                                    	<option value="Activo" {% if o.Estado == "Activo" %} selected {% endif %}>Activo</option>
-														<option value="Desactivado" {% if o.Estado == "Desactivado" %} selected {% endif %} >Desactivado</option>
+                                                    	<option value="Activo" {% if o.estado == "Activo" %} selected {% endif %}>Activo</option>
+														<option value="Desactivado" {% if o.estado == "Desactivado" %} selected {% endif %} >Desactivado</option>
                                             		</select>
 											  </div>
 
@@ -72,8 +71,8 @@
 											  <div class="mb-3">
 												  <label >Rol del empleado:</label>
 												  	<select class="form-control" name="rol">
-														<option value="Administrador" {% if o.Rol == "Administrador" %} selected {% endif %}>Administrador</option>
-														<option value="SuperAdministrador" {% if o.Rol == "SuperAdministrador" %} selected {% endif %} >Super Administrador</option>
+														<option value="Administrador" {% if o.rol == "Administrador" %} selected {% endif %}>Administrador</option>
+														<option value="SuperAdministrador" {% if o.rol == "SuperAdministrador" %} selected {% endif %} >Super Administrador</option>
                                             		</select>
 											  </div>
 

@@ -365,7 +365,7 @@ def inicioSesionAdministrador(request):
 
                 request.session[rol] = encrypted_text.decode()
 
-                response = redirect('/')
+                response = redirect('/OrdersAdministrator/')
                 return response
         except:
             messages.success(request, 'El nombre de usuario o contraseña no es correctosss')
@@ -568,8 +568,8 @@ def modificarAcceso(request, id):
         Estado = request.POST['estado']
 
         obj = administrador.objects.get(id_administrador=id)
-        obj.Rol = Rol
-        obj.Estado = Estado
+        obj.rol = Rol
+        obj.estado = Estado
         obj.save()
 
         response = redirect('/administratorManager/')
@@ -778,6 +778,7 @@ def ViewProduct(request, id):
 def administratorManager(request):
     val = sesiones(request)
     AdministratorsList = administrador.objects.all()
+    print(AdministratorsList[0].rol)
     return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList,'Sesion': val})
 
 
