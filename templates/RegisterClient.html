@@ -1,5 +1,5 @@
 {% load static %}
-
+{% include "DefaultNavbar.html" %}
 <html lang="en">
 
 <head>
@@ -12,25 +12,7 @@
 	<link href='{% static "cssForRegister.css" %}' rel="stylesheet">
 </head>
 <body>
-	<nav style="background: #3D384D" class="navbar navbar-expand-lg navbar-dark bg-ligth fixed-top">
-		<div class="container">
-			<a class="navbar-brand" href="#"><img style="height: 45px"  src="{% static 'MEDIA/logo01.png' %}" alt=""></a> <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span></button>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav ms-auto mb-4 mb-lg-0">
-
-					<li class="nav-item">
-						<a class="nav-link" href="#">Productos</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#">Contactos</a>
-					</li>
-					<li class="nav-item">
-						<a style="color: #F2727D; font-weight: bold;" class="nav-link" href="{% url 'SignInAsClient' %}">Iniciar Sesión</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</nav>
+=
 
 <section class="vh-100 gradient-custom">
   <div class="container py-5 h-100">
