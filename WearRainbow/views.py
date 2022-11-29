@@ -211,8 +211,13 @@ def ViewProductClient(request, id):
 
 
 def ProductsAdministrator(request):
-    productoListado = Producto.objects.all()
-    return render(request, 'ProductsAdministrator.html', {"producto": productoListado})
+    if request.session.get('token_administrador'):
+        ProductoListado = Producto.objects.all()
+        return render(request, 'ProductsAdministrator.html', {"producto": ProductoListado})
+    # productoListado = Producto.objects.all()
+    # return render(request, 'ProductsAdministrator.html', {"producto": productoListado})
+    else:
+        return redirect('/SignInAsAdministrator')
 
 
 def AddNewProduct(request):
@@ -257,11 +262,17 @@ def registroPersona(request):
 
 def registroCliente(request):
     if request.method == 'POST':
+        key = Fernet.generate_key()
+        x = Fernet(key)
+
         id_persona = request.COOKIES['id_persona']
         usuario = request.POST['user']
         contraseña = request.POST['pass']
+        encrypted_password = x.encrypt(contraseña.encode())
+        encrypted_password1 = str(encrypted_password, 'utf-8')
 
-        client = cliente(id_persona=persona(id_persona), usuario=usuario, contraseña=contraseña)
+
+        client = cliente(id_persona=persona(id_persona), usuario=usuario, contraseña=encrypted_password1)
         client.save()
 
         response = redirect('/SignInAsClient/')
@@ -269,12 +280,14 @@ def registroCliente(request):
 
 
 def inicioSesionCliente(request):
-    key = Fernet.generate_key()
+    key = "k8qA64Q0FgWp8Ro8pqAJ01Riskh9oyw-2v1VdGarUUo="
     x = Fernet(key)
     if request.method == 'POST':
         usuario = request.POST['user']
         contraseña = request.POST['pass']
         encrypted_text = x.encrypt(str.encode(usuario))
+        decrypted_text = x.decrypt(encrypted_text)
+        print(str(decrypted_text, 'utf-8'))
 
         try: 
             verificar = cliente.objects.get(usuario=usuario)
@@ -741,67 +754,75 @@ def ViewProduct(request, id):
 
 
 def administratorManager(request):
-    AdministratorsList = administrador.objects.all()
-    return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList})
+    if request.session.get('token_administrador'):
+        AdministratorsList = administrador.objects.all()
+        return render(request, 'AdministratorManager.html')
+    else:
+        return redirect('/SignInAsAdministrator/')
+    #return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList})
 def dashboard(request):
-    data=dict()
-    ######################  total ventas general:
-    totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar").aggregate(Sum("TotalPagar"))
-    totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado").aggregate(Sum("TotalPagar"))
-    data['TotalVentas']=totalVentas['TotalPagar__sum']+totalVentas2['TotalPagar__sum']
+    if request.session.get('token_administrador'):
 
-    ######################  total ventas ultimo mes:
-    fecha = date.today()
-    totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar", FechaPedido__month=fecha.month).aggregate(Sum("TotalPagar"))
-    totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado", FechaPedido__month=fecha.month).aggregate(Sum("TotalPagar"))
-    data['TotalVentasMes'] = totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum']
-    print(data['TotalVentasMes'])
+        data=dict()
+        ######################  total ventas general:
+        totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar").aggregate(Sum("TotalPagar"))
+        totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado").aggregate(Sum("TotalPagar"))
+        data['TotalVentas']= totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum']
 
-    ######################  total clientes:
-    totalClientes = cliente.objects.all().count()
-    data['TotalClientes']=totalClientes
-    totalClientesUnPedido = Pedido.objects.filter(EstadoPedido="Aceptado y enviado",FechaPedido__month=fecha.month).aggregate(Count("id_cliente"))
-    data['totalClientesUnPedido']=totalClientesUnPedido['id_cliente__count']
+        ######################  total ventas ultimo mes:
+        fecha = date.today()
+        totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar", FechaPedido__month=fecha.month).aggregate(Sum("TotalPagar"))
+        totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado", FechaPedido__month=fecha.month).aggregate(Sum("TotalPagar"))
+        data['TotalVentasMes'] = totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum']
+        print(data['TotalVentasMes'])
 
-    ######################  pedidos recibidos:
-    totalPedidos = Pedido.objects.all().count()
-    data['totalPedidos'] = totalPedidos
-    totalPedidosMes = Pedido.objects.filter( FechaPedido__month=fecha.month).count()
-    data['totalPedidosMes'] = totalPedidosMes
+        ######################  total clientes:
+        totalClientes = cliente.objects.all().count()
+        data['TotalClientes']=totalClientes
+        totalClientesUnPedido = Pedido.objects.filter(EstadoPedido="Aceptado y enviado",FechaPedido__month=fecha.month).aggregate(Count("id_cliente"))
+        data['totalClientesUnPedido']=totalClientesUnPedido['id_cliente__count']
 
-    ######################  pedidos rechazados:
-    totalRechazados =  Pedido.objects.filter(EstadoPedido="Rechazado").count()
-    data['totalRechazados'] = totalRechazados
-    totalRechazadosMes =  Pedido.objects.filter(EstadoPedido="Rechazado",FechaPedido__month=fecha.month).count()
-    data['totalRechazadosMes'] = totalRechazadosMes
+        ######################  pedidos recibidos:
+        totalPedidos = Pedido.objects.all().count()
+        data['totalPedidos'] = totalPedidos
+        totalPedidosMes = Pedido.objects.filter( FechaPedido__month=fecha.month).count()
+        data['totalPedidosMes'] = totalPedidosMes
 
-    ######################  producto menos y maspedido:
-    productos = TallaDisponible.objects.all()
-    cantidadMax=0
-    cantidadMin=999999
-    objMax=''
-    objMin=''
-    TallaMax = ''
-    TallaMin = ''
-    for i in productos:
-        obj = ProductosPedido.objects.filter(id_tallaDisponible=i.id_tallaDisponible).aggregate(Sum("cantidad"))
-        if obj['cantidad__sum']!= None:
-            if obj['cantidad__sum'] <cantidadMin:
-                cantidadMin=obj['cantidad__sum']
-                objMin=i
-            if obj['cantidad__sum'] > cantidadMax:
-                cantidadMax=obj['cantidad__sum']
-                objMax=i
-    data['cantidadMax'] = cantidadMax
-    data['cantidadMin'] = cantidadMin
-    data['objMax'] = objMax
-    data['objMin'] = objMin
+        ######################  pedidos rechazados:
+        totalRechazados =  Pedido.objects.filter(EstadoPedido="Rechazado").count()
+        data['totalRechazados'] = totalRechazados
+        totalRechazadosMes =  Pedido.objects.filter(EstadoPedido="Rechazado",FechaPedido__month=fecha.month).count()
+        data['totalRechazadosMes'] = totalRechazadosMes
 
-    departamentos=Departamento.objects.all()
+        ######################  producto menos y maspedido:
+        productos = TallaDisponible.objects.all()
+        cantidadMax=0
+        cantidadMin=999999
+        objMax=''
+        objMin=''
+        TallaMax = ''
+        TallaMin = ''
+        for i in productos:
+            obj = ProductosPedido.objects.filter(id_tallaDisponible=i.id_tallaDisponible).aggregate(Sum("cantidad"))
+            if obj['cantidad__sum']!= None:
+                if obj['cantidad__sum'] <cantidadMin:
+                    cantidadMin=obj['cantidad__sum']
+                    objMin=i
+                if obj['cantidad__sum'] > cantidadMax:
+                    cantidadMax=obj['cantidad__sum']
+                    objMax=i
+        data['cantidadMax'] = cantidadMax
+        data['cantidadMin'] = cantidadMin
+        data['objMax'] = objMax
+        data['objMin'] = objMin
 
-    data['departamentos'] = departamentos
+        departamentos=Departamento.objects.all()
 
-    return render(request, 'dashboard.html', data)
+        data['departamentos'] = departamentos
+
+        return render(request, 'dashboard.html', data)
+    else:
+        return redirect('/SignInAsAdministrator/')
 
 def Logout(request):
     request.session.flush()
