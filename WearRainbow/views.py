@@ -74,7 +74,7 @@ def DetallePedidio(request, id):
     elif pedido.EstadoPedido != "En Espera":
         data["aceptado"] = PedidoAceptado.objects.get(id_pedido=id)
 
-    print(data)
+    data["Sesion"] = val
     return render(request, 'DetallePedidio.html', data)
 
 
@@ -374,7 +374,7 @@ def inicioSesionAdministrador(request):
 
 def registroProducto(request):
     val = sesiones(request)
-    if request.session['token_admin']:
+    if request.session['token_administrador'] or request.session['token_Superadministrador']:
         if request.method == 'POST':
             # ParaRegistro de producto:
             nombre = request.POST['nombre']
@@ -465,9 +465,6 @@ def registroTalla(request):
         return response
 
 
-
-
-
 def registroPedido(request):
     val = sesiones(request)
     if request.method == 'POST':
@@ -487,13 +484,12 @@ def registroPedido(request):
 
         listaProductos = []
 
-        response = redirect('/PaymentDetails01/')
 
         for i in range(catidadTallas):
             text = TallasDisp[i].get_id_tallaCART()
             if text in request.COOKIES:
                 cantidad = request.COOKIES[text]
-                response.delete_cookie(text)
+                print(text)
                 text2 = int(text.replace('id', ''))
                 varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
                 precioU = (Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
@@ -516,6 +512,11 @@ def registroPedido(request):
 
         print(obj.id_pedido)
         response = redirect('/PaymentDetails01/' + str(obj.id_pedido))
+
+        for i in range(catidadTallas):
+            text = TallasDisp[i].get_id_tallaCART()
+            if text in request.COOKIES:
+                response.delete_cookie(text)
 
         return response
 
@@ -541,7 +542,12 @@ def registroPedidoAceptado(request, id):
     val = sesiones(request)
     if request.method == 'POST':
         FechaAceptacion = datetime.now()
-        id_administrador = request.COOKIES['id_administrador']
+
+        x = Fernet(keyToken)
+        if request.session.get('token_administrador'):
+            id_administrador = str(x.decrypt(request.session.get('token_administrador')), 'utf8')
+        else:
+            id_administrador = str(x.decrypt(request.session.get('token_Superadministrador')), 'utf8')
 
         obj = PedidoAceptado(FechaAceptacion=FechaAceptacion, id_pedido=Pedido(id),
                              id_administrador=administrador(id_administrador))
@@ -575,7 +581,12 @@ def registroPedidoRechazado(request, id):
     if request.method == 'POST':
         FechaRechazo = datetime.now()
         RazonRechazo = request.POST['textRechazo']
-        id_administrador = request.COOKIES['id_administrador']
+        x = Fernet(keyToken)
+
+        if request.session.get('token_administrador'):
+            id_administrador = str(x.decrypt(request.session.get('token_administrador')), 'utf8')
+        else:
+            id_administrador = str(x.decrypt(request.session.get('token_Superadministrador')), 'utf8')
 
         obj = PedidoRechazado(FechaRechazo=FechaRechazo, RazonRechazo=RazonRechazo, id_pedido=Pedido(id),
                               id_administrador=administrador(id_administrador))
