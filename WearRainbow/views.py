@@ -5,35 +5,47 @@ from django.db.models import Sum, Count
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from WearRainbow import models
+from WearRainbow.access import keyToken
 from WearRainbow.models import persona, administrador, Producto, Categoria, Talla, TallaDisponible, Departamento, \
     Pedido, ProductosPedido, Pago, PedidoAceptado, PedidoRechazado
 from WearRainbow.models import cliente
 from django.contrib import messages
 from cryptography.fernet import Fernet
 
+
 def paginaIndex(request):
-   
     if request.session.get('token_cliente'):
-        sesion_activa = True
+        sesion_activa = 'Cliente'
+        return render(request, 'index.html', {'Sesion': sesion_activa})
+    elif request.session.get('token_administrador'):
+        sesion_activa = 'Administrador'
+        return render(request, 'index.html', {'Sesion': sesion_activa})
+    elif request.session.get('token_Superadministrador'):
+        sesion_activa = 'Superadministrador'
+        return render(request, 'index.html', {'Sesion': sesion_activa})
     else:
-        sesion_activa = False
-    return render(request, 'index.html',{'Sesion': sesion_activa})
+        return render(request, 'index.html')
+
 
 def PaymentDetails01(request, id):
     pedido = Pedido.objects.get(id_pedido=id)
     return render(request, 'PaymentDetails01.html', {"pedido": pedido})
 
-def PaymentDetails02(request,id):
+
+def PaymentDetails02(request, id):
     pedido = Pedido.objects.get(id_pedido=id)
     return render(request, 'PaymentDetails02.html', {"pedido": pedido})
+
 
 def PaymentDetails03(request, id):
     pedido = Pedido.objects.get(id_pedido=id)
     return render(request, 'PaymentDetails03.html', {"pedido": pedido})
 
+
 def OrdersAsClient(request):
     if request.session.get('token_cliente'):
-        id_cliente = request.COOKIES['id_cliente']
+        x = Fernet(keyToken)
+        id_cliente = str(x.decrypt(request.session.get('token_cliente')), 'utf8')
         OrdersList = Pedido.objects.filter(id_cliente=cliente(id_cliente))
         print(id_cliente, OrdersList)
         return render(request, 'OrdersAsClient.html', {'OrdersList': OrdersList})
@@ -41,17 +53,16 @@ def OrdersAsClient(request):
         return redirect('/SignInAsClient')
 
 
-
-def DetallePedidio(request,id):
+def DetallePedidio(request, id):
     pedido = Pedido.objects.get(id_pedido=id)
     productos = ProductosPedido.objects.filter(id_pedido=id)
     pago = Pago.objects.filter(id_pedido=id).exists()
     data = dict()
-    data["pedido"]=pedido
-    data["productos"]=productos
-    if pago==True:
-        pagoDetails=Pago.objects.get(id_pedido=id)
-        data["pagoDetails"]=pagoDetails
+    data["pedido"] = pedido
+    data["productos"] = productos
+    if pago == True:
+        pagoDetails = Pago.objects.get(id_pedido=id)
+        data["pagoDetails"] = pagoDetails
 
     if pedido.EstadoPedido == "Rechazado":
         data["rechazo"] = PedidoRechazado.objects.get(id_pedido=id)
@@ -59,14 +70,16 @@ def DetallePedidio(request,id):
         data["aceptado"] = PedidoAceptado.objects.get(id_pedido=id)
 
     print(data)
-    return render(request, 'DetallePedidio.html',data)
+    return render(request, 'DetallePedidio.html', data)
 
-def DetallePedidoCliente(request,id):
+
+def DetallePedidoCliente(request, id):
     pedido = Pedido.objects.get(id_pedido=id)
     productos = ProductosPedido.objects.filter(id_pedido=id)
 
     return render(request, 'DetallePedidoCliente.html',
                   {"pedido": pedido, "productos": productos})
+
 
 def Carrito(request):
     if request.session.get('token_cliente'):
@@ -76,6 +89,7 @@ def Carrito(request):
         print("no entro")
         return redirect('/SignInAsClient')
 
+
 def productsAsClient(request):
     if request.session.get('token_cliente'):
         ProductoListado = Producto.objects.all()
@@ -84,6 +98,7 @@ def productsAsClient(request):
     # return render(request, 'productsAsClient.html', {"producto": productoListado})
     else:
         return redirect('/SignInAsClient')
+
 
 def contacts(request):
     return render(request, 'contacts.html')
@@ -102,7 +117,7 @@ def ClientPanel(request):
         return render(request, 'ClientPanel.html')
     else:
         return redirect('/SignInAsClient')
-    #return render(request, 'ClientPanel.html')
+    # return render(request, 'ClientPanel.html')
 
 
 def OrdersAdministrator(request):
@@ -114,16 +129,17 @@ def OrdersAdministrator(request):
     else:
         return redirect('/SignInAsAdministrator')
 
+
 def PedidosSeleccionados(request):
     if request.method == 'POST':
-        cat=request.POST['cat']
-        if cat=="op01":
+        cat = request.POST['cat']
+        if cat == "op01":
             OrdersList = Pedido.objects.all()
         elif cat == "op02":
             OrdersList = Pedido.objects.filter(EstadoPedido="En Espera")
-        elif cat=="op03":
+        elif cat == "op03":
             OrdersList = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar")
-        elif cat=="op04":
+        elif cat == "op04":
             OrdersList = Pedido.objects.filter(EstadoPedido="Aceptado y enviado")
         else:
             OrdersList = Pedido.objects.filter(EstadoPedido="Rechazado")
@@ -141,6 +157,7 @@ def CategoriesAdministrator(request):
     else:
         return redirect('/SignInAsAdministrator')
 
+
 def SizesAdministrator(request):
     if request.session.get('token_administrador'):
         TallaListado = Talla.objects.all()
@@ -149,6 +166,7 @@ def SizesAdministrator(request):
     # return render(request, 'SizesAdministrator.html', {"talla": TallaListado})
     else:
         return redirect('/SignInAsAdministrator')
+
 
 def ModifyProduct(request, id):
     if request.session.get('token_administrador'):
@@ -160,26 +178,27 @@ def ModifyProduct(request, id):
             Lista.append(i.id_talla.id_talla)
         tallaListado = Talla.objects.exclude(id_talla__in=Lista)
         return render(request, 'ModifyProduct.html',
-                    {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
-                    "tallaDisponibles": TallaDisponibleListado})
+                      {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
+                       "tallaDisponibles": TallaDisponibleListado})
     else:
         return redirect('/SignInAsAdministrator')
 
-#no funciona
+
+# no funciona
 def ViewProduct(request, id):
     if request.session.get('token_administrador'):
         producto = Producto.objects.get(id_producto=id)
         CategoriaListado = Categoria.objects.all()
         TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
         Lista = []
-       
+
         for i in TallaDisponibleListado:
             Lista.append(i.id_talla.id_talla)
         tallaListado = Talla.objects.exclude(id_talla__in=Lista)
         print(TallaDisponibleListado)
         return render(request, 'ViewProduct.html',
-                    {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
-                    "tallaDisponibles": TallaDisponibleListado})
+                      {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
+                       "tallaDisponibles": TallaDisponibleListado})
 
     # producto = Producto.objects.get(id_producto=id)
     # CategoriaListado = Categoria.objects.all()
@@ -211,13 +230,8 @@ def ViewProductClient(request, id):
 
 
 def ProductsAdministrator(request):
-    if request.session.get('token_administrador'):
-        ProductoListado = Producto.objects.all()
-        return render(request, 'ProductsAdministrator.html', {"producto": ProductoListado})
-    # productoListado = Producto.objects.all()
-    # return render(request, 'ProductsAdministrator.html', {"producto": productoListado})
-    else:
-        return redirect('/SignInAsAdministrator')
+    productoListado = Producto.objects.all()
+    return render(request, 'ProductsAdministrator.html', {"producto": productoListado})
 
 
 def AddNewProduct(request):
@@ -231,6 +245,7 @@ def AddNewProduct(request):
 
     else:
         return redirect('/SignInAsAdministrator')
+
 
 def registroPersona(request):
     if request.method == 'POST':
@@ -262,17 +277,11 @@ def registroPersona(request):
 
 def registroCliente(request):
     if request.method == 'POST':
-        key = Fernet.generate_key()
-        x = Fernet(key)
-
         id_persona = request.COOKIES['id_persona']
         usuario = request.POST['user']
         contraseña = request.POST['pass']
-        encrypted_password = x.encrypt(contraseña.encode())
-        encrypted_password1 = str(encrypted_password, 'utf-8')
 
-
-        client = cliente(id_persona=persona(id_persona), usuario=usuario, contraseña=encrypted_password1)
+        client = cliente(id_persona=persona(id_persona), usuario=usuario, contraseña=contraseña)
         client.save()
 
         response = redirect('/SignInAsClient/')
@@ -280,78 +289,68 @@ def registroCliente(request):
 
 
 def inicioSesionCliente(request):
-    key = "k8qA64Q0FgWp8Ro8pqAJ01Riskh9oyw-2v1VdGarUUo="
-    x = Fernet(key)
+    x = Fernet(keyToken)
     if request.method == 'POST':
         usuario = request.POST['user']
         contraseña = request.POST['pass']
-        encrypted_text = x.encrypt(str.encode(usuario))
-        decrypted_text = x.decrypt(encrypted_text)
-        print(str(decrypted_text, 'utf-8'))
+        verificar = cliente.objects.get(usuario=usuario)
+        encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
 
-        try: 
-            verificar = cliente.objects.get(usuario=usuario)
+        try:
             usr = verificar.get_usuario()
             pass1 = verificar.get_contraseña()
-            #print('User: ',usr, 'Pass: ', pass1, 'User: ', usuario, 'Pass: ', contraseña)
+            # print('User: ',usr, 'Pass: ', pass1, 'User: ', usuario, 'Pass: ', contraseña)
             if usuario != usr or contraseña != pass1:
                 messages.success(request, 'El nombre de usuario o contraseña no es correcto')
                 response = redirect('/SignInAsClient/')
-                
+
                 return response
             else:
                 dat2 = (verificar.get_id_persona()).get_id_persona()
                 dat1 = verificar.get_id_cliente()
                 response = redirect('/ClientPanel/')
                 request.session['token_cliente'] = encrypted_text.decode()
+
                 print(request.session['token_cliente'])
                 '''response.session['id_cliente'] = dat1
                 response.session['id_persona'] = dat2'''
 
-
-                #response.set_cookie('id_cliente', dat1)
-                #response.set_cookie('id_persona', dat2)
+                # response.set_cookie('id_cliente', dat1)
+                # response.set_cookie('id_persona', dat2)
                 return response
         except:
-            
+
             messages.success(request, 'El nombre de usuario o contraseña no es correctos')
             response = redirect('/SignInAsClient/')
             return response
 
 
-
 def inicioSesionAdministrador(request):
-    key = Fernet.generate_key()
-    x = Fernet(key)
+    x = Fernet(keyToken)
     if request.method == 'POST':
         usuario = request.POST['user']
         contraseña = request.POST['pass']
+        verificar = administrador.objects.get(usuario=usuario)
         try:
-            verificar = administrador.objects.get(usuario=usuario)
-
-            #print(verificar)
-
+            # print(verificar)
             usr = verificar.get_usuario()
             pass1 = verificar.get_contraseña()
-            encrypted_text = x.encrypt(str.encode(usuario))
+            encrypted_text = x.encrypt(str.encode(str(verificar.get_id_administrador())))
 
-            if usr != usuario or contraseña != pass1:
+            if usr != usuario or contraseña != pass1 or verificar.estado == "Desactivado":
                 messages.success(request, 'El nombre de usuario o contraseña no es correcto')
                 response = redirect('/SignInAsAdministrator/')
                 return response
             else:
                 print("datos correctos")
-                dat1 = verificar.get_id_administrador()
+                rol = ''
 
-                #print(dat1)
-
-                dat2 = (verificar.get_id_persona()).get_id_persona()
-                #print(dat2)
-                request.session['token_administrador'] = encrypted_text.decode()
-
+                if verificar.rol == "SuperAdministrador":
+                    rol = 'token_Superadministrador'
+                elif verificar.rol == "Administrador":
+                    rol = 'token_administrador'
+                request.session[rol] = encrypted_text.decode()
                 response = redirect('/OrdersAdministrator/')
-                # response.set_cookie('id_administrador', dat1)
-                # response.set_cookie('id_persona', dat2)
                 return response
         except:
             messages.success(request, 'El nombre de usuario o contraseña no es correctosss')
@@ -372,10 +371,10 @@ def registroProducto(request):
             img = request.FILES['img']
 
             product = Producto(nombre=nombre, descripcion=desc, color=color, precio=float(precio), material=material,
-                           img=img, id_categoria=Categoria(cat))
+                               img=img, id_categoria=Categoria(cat))
             product.save()
             id_producto = product.get_id_producto()
-        # Para Registro de tallas en las que estara disponible el producto:
+            # Para Registro de tallas en las que estara disponible el producto:
 
             catidadTallas = Talla.objects.count()
             Tallas = Talla.objects.all()
@@ -384,7 +383,8 @@ def registroProducto(request):
             ListaIdTallas = ()
             for i in range(catidadTallas):
                 stock = request.POST[str(Tallas[i].id_talla)]
-                obj2 = TallaDisponible(stock=stock, id_producto=Producto(id_producto), id_talla=Talla(Tallas[i].id_talla))
+                obj2 = TallaDisponible(stock=stock, id_producto=Producto(id_producto),
+                                       id_talla=Talla(Tallas[i].id_talla))
                 obj2.save()
 
             response = redirect('/ProductsAdministrator/')
@@ -392,7 +392,6 @@ def registroProducto(request):
     else:
         response = redirect('/SignInAsAdministrator/')
         return response
-
 
 
 def registroCategoria(request):
@@ -411,7 +410,6 @@ def registroCategoria(request):
 
         response = redirect('/CategoriesAdministrator/')
         return response
-
 
 
 def registroTalla(request):
@@ -449,6 +447,7 @@ def registroTalla(request):
         response = redirect('/SizesAdministrator/')
         return response
 
+
 def registroPago(request):
     if request.method == 'POST':
         talla = request.POST['nombre']
@@ -481,7 +480,6 @@ def registroPago(request):
         return response
 
 
-
 def registroPedido(request):
     if request.method == 'POST':
         # ParaRegistro de pedido:
@@ -489,10 +487,10 @@ def registroPedido(request):
         Zona = request.POST['zona']
         dep = request.POST['dep']
         Apartamento = request.POST['apartamento']
-        idCliente=request.COOKIES['id_cliente']
-        EstadoPedido='En Espera'
+        idCliente = request.COOKIES['id_cliente']
+        EstadoPedido = 'En Espera'
         FechaPedido = datetime.now()
-        TotalPagar=0;
+        TotalPagar = 0;
 
         TallasDisp = TallaDisponible.objects.all()
         catidadTallas = TallaDisponible.objects.count()
@@ -512,20 +510,22 @@ def registroPedido(request):
                 TotalPagar += float(cantidad) * precioU
                 listaProductos.append([text2, cantidad])
 
-        obj = Pedido(TotalPagar=TotalPagar, Direccion=Direccion, Zona=Zona, Apartamento=Apartamento, EstadoPedido=EstadoPedido, FechaPedido=FechaPedido, id_departamento=Departamento(dep), id_cliente=cliente(idCliente))
+        obj = Pedido(TotalPagar=TotalPagar, Direccion=Direccion, Zona=Zona, Apartamento=Apartamento,
+                     EstadoPedido=EstadoPedido, FechaPedido=FechaPedido, id_departamento=Departamento(dep),
+                     id_cliente=cliente(idCliente))
         obj.save()
 
         print(listaProductos)
 
         for i in range(len(listaProductos)):
-            b=listaProductos[i][0]
-            a=listaProductos[i][1]
+            b = listaProductos[i][0]
+            a = listaProductos[i][1]
 
-            obj2=ProductosPedido(cantidad=a,id_pedido=obj, id_tallaDisponible=TallaDisponible(b))
+            obj2 = ProductosPedido(cantidad=a, id_pedido=obj, id_tallaDisponible=TallaDisponible(b))
             obj2.save()
 
         print(obj.id_pedido)
-        response = redirect('/PaymentDetails01/'+str(obj.id_pedido))
+        response = redirect('/PaymentDetails01/' + str(obj.id_pedido))
 
         return response
 
@@ -538,7 +538,8 @@ def registroPago(request, id):
         MetodoPago = 'transferencia'
         FechaPago = datetime.now()
 
-        obj = Pago(Comprobante=Comprobante, BancoProveniente=BancoProveniente, MetodoPago=MetodoPago, FechaPago=FechaPago, id_pedido=Pedido(id))
+        obj = Pago(Comprobante=Comprobante, BancoProveniente=BancoProveniente, MetodoPago=MetodoPago,
+                   FechaPago=FechaPago, id_pedido=Pedido(id))
         obj.save()
 
         response = redirect('/productsAsClient/')
@@ -550,7 +551,8 @@ def registroPedidoAceptado(request, id):
         FechaAceptacion = datetime.now()
         id_administrador = request.COOKIES['id_administrador']
 
-        obj = PedidoAceptado(FechaAceptacion=FechaAceptacion, id_pedido=Pedido(id), id_administrador=administrador(id_administrador))
+        obj = PedidoAceptado(FechaAceptacion=FechaAceptacion, id_pedido=Pedido(id),
+                             id_administrador=administrador(id_administrador))
         obj.save()
 
         obj = Pedido.objects.get(id_pedido=id)
@@ -560,7 +562,8 @@ def registroPedidoAceptado(request, id):
         response = redirect('/OrdersAdministrator/')
         return response
 
-def modificarAcceso(request,id):
+
+def modificarAcceso(request, id):
     if request.method == 'POST':
         Rol = request.POST['rol']
         Estado = request.POST['estado']
@@ -580,7 +583,8 @@ def registroPedidoRechazado(request, id):
         RazonRechazo = request.POST['textRechazo']
         id_administrador = request.COOKIES['id_administrador']
 
-        obj = PedidoRechazado(FechaRechazo=FechaRechazo, RazonRechazo=RazonRechazo, id_pedido=Pedido(id), id_administrador=administrador(id_administrador))
+        obj = PedidoRechazado(FechaRechazo=FechaRechazo, RazonRechazo=RazonRechazo, id_pedido=Pedido(id),
+                              id_administrador=administrador(id_administrador))
         obj.save()
 
         obj = Pedido.objects.get(id_pedido=id)
@@ -589,6 +593,7 @@ def registroPedidoRechazado(request, id):
 
         response = redirect('/OrdersAdministrator/')
         return response
+
 
 def registroPedidoEnviado(request, id):
     if request.method == 'POST':
@@ -632,17 +637,18 @@ def modificarProducto(request):
 
             obj.save()
 
-        # Para Modificacion de tallas en las que estara disponible el producto:
+            # Para Modificacion de tallas en las que estara disponible el producto:
 
             catidadTallas = Talla.objects.count()
             Tallas = Talla.objects.all()
 
-        # Para crear de tallas en las que estara disponible el producto:
+            # Para crear de tallas en las que estara disponible el producto:
 
             ListaIdTallas = ()
             for i in range(catidadTallas):
                 stock = request.POST[str(Tallas[i].id_talla)]
-                obj2 = TallaDisponible.objects.get(id_producto=Producto(id_producto), id_talla=Talla(Tallas[i].id_talla))
+                obj2 = TallaDisponible.objects.get(id_producto=Producto(id_producto),
+                                                   id_talla=Talla(Tallas[i].id_talla))
                 obj2.stock = int(stock)
                 obj2.save()
 
@@ -686,9 +692,10 @@ def Carrito(request):
             valor = request.COOKIES[text]
             text2 = int(text.replace('id', ''))
             varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
-            listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor, Talla.objects.get(id_talla=varProd.id_talla.id_talla),])
-            precioU=(Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
-            subTotal+=float(valor)*precioU
+            listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor,
+                                   Talla.objects.get(id_talla=varProd.id_talla.id_talla), ])
+            precioU = (Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
+            subTotal += float(valor) * precioU
 
             # print(varProd.varProd.)
             # datos[text] = varProd.id_producto
@@ -719,9 +726,10 @@ def OrderForm(request):
             text2 = int(text.replace('id', ''))
             varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
             precioU = (Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
-            listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor, Talla.objects.get(id_talla=varProd.id_talla.id_talla),float(valor)*precioU])
+            listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor,
+                                   Talla.objects.get(id_talla=varProd.id_talla.id_talla), float(valor) * precioU])
 
-            subTotal+=float(valor)*precioU
+            subTotal += float(valor) * precioU
 
             # print(varProd.varProd.)
             # datos[text] = varProd.id_producto
@@ -747,86 +755,84 @@ def ViewProduct(request, id):
             Lista.append(i.id_talla.id_talla)
         tallaListado = Talla.objects.exclude(id_talla__in=Lista)
         return render(request, 'PreviewProductAsAdministrator.html',
-                  {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
-                   "tallaDisponibles": TallaDisponibleListado})
+                      {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
+                       "tallaDisponibles": TallaDisponibleListado})
     else:
         return redirect('/SignInAsAdministrator/')
 
 
 def administratorManager(request):
-    if request.session.get('token_administrador'):
-        AdministratorsList = administrador.objects.all()
-        return render(request, 'AdministratorManager.html')
-    else:
-        return redirect('/SignInAsAdministrator/')
-    #return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList})
+    AdministratorsList = administrador.objects.all()
+    return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList})
+
+
 def dashboard(request):
-    if request.session.get('token_administrador'):
+    data = dict()
+    ######################  total ventas general:
+    totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar").aggregate(Sum("TotalPagar"))
+    totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado").aggregate(Sum("TotalPagar"))
+    data['TotalVentas'] = totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum']
 
-        data=dict()
-        ######################  total ventas general:
-        totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar").aggregate(Sum("TotalPagar"))
-        totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado").aggregate(Sum("TotalPagar"))
-        data['TotalVentas']= totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum']
+    ######################  total ventas ultimo mes:
+    fecha = date.today()
+    totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar", FechaPedido__month=fecha.month).aggregate(
+        Sum("TotalPagar"))
+    totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado", FechaPedido__month=fecha.month).aggregate(
+        Sum("TotalPagar"))
+    data['TotalVentasMes'] = totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum']
+    print(data['TotalVentasMes'])
 
-        ######################  total ventas ultimo mes:
-        fecha = date.today()
-        totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar", FechaPedido__month=fecha.month).aggregate(Sum("TotalPagar"))
-        totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado", FechaPedido__month=fecha.month).aggregate(Sum("TotalPagar"))
-        data['TotalVentasMes'] = totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum']
-        print(data['TotalVentasMes'])
+    ######################  total clientes:
+    totalClientes = cliente.objects.all().count()
+    data['TotalClientes'] = totalClientes
+    totalClientesUnPedido = Pedido.objects.filter(EstadoPedido="Aceptado y enviado",
+                                                  FechaPedido__month=fecha.month).aggregate(Count("id_cliente"))
+    data['totalClientesUnPedido'] = totalClientesUnPedido['id_cliente__count']
 
-        ######################  total clientes:
-        totalClientes = cliente.objects.all().count()
-        data['TotalClientes']=totalClientes
-        totalClientesUnPedido = Pedido.objects.filter(EstadoPedido="Aceptado y enviado",FechaPedido__month=fecha.month).aggregate(Count("id_cliente"))
-        data['totalClientesUnPedido']=totalClientesUnPedido['id_cliente__count']
+    ######################  pedidos recibidos:
+    totalPedidos = Pedido.objects.all().count()
+    data['totalPedidos'] = totalPedidos
+    totalPedidosMes = Pedido.objects.filter(FechaPedido__month=fecha.month).count()
+    data['totalPedidosMes'] = totalPedidosMes
 
-        ######################  pedidos recibidos:
-        totalPedidos = Pedido.objects.all().count()
-        data['totalPedidos'] = totalPedidos
-        totalPedidosMes = Pedido.objects.filter( FechaPedido__month=fecha.month).count()
-        data['totalPedidosMes'] = totalPedidosMes
+    ######################  pedidos rechazados:
+    totalRechazados = Pedido.objects.filter(EstadoPedido="Rechazado").count()
+    data['totalRechazados'] = totalRechazados
+    totalRechazadosMes = Pedido.objects.filter(EstadoPedido="Rechazado", FechaPedido__month=fecha.month).count()
+    data['totalRechazadosMes'] = totalRechazadosMes
 
-        ######################  pedidos rechazados:
-        totalRechazados =  Pedido.objects.filter(EstadoPedido="Rechazado").count()
-        data['totalRechazados'] = totalRechazados
-        totalRechazadosMes =  Pedido.objects.filter(EstadoPedido="Rechazado",FechaPedido__month=fecha.month).count()
-        data['totalRechazadosMes'] = totalRechazadosMes
+    ######################  producto menos y maspedido:
+    productos = TallaDisponible.objects.all()
+    cantidadMax = 0
+    cantidadMin = 999999
+    objMax = ''
+    objMin = ''
+    TallaMax = ''
+    TallaMin = ''
+    for i in productos:
+        obj = ProductosPedido.objects.filter(id_tallaDisponible=i.id_tallaDisponible).aggregate(Sum("cantidad"))
+        if obj['cantidad__sum'] != None:
+            if obj['cantidad__sum'] < cantidadMin:
+                cantidadMin = obj['cantidad__sum']
+                objMin = i
+            if obj['cantidad__sum'] > cantidadMax:
+                cantidadMax = obj['cantidad__sum']
+                objMax = i
+    data['cantidadMax'] = cantidadMax
+    data['cantidadMin'] = cantidadMin
+    data['objMax'] = objMax
+    data['objMin'] = objMin
 
-        ######################  producto menos y maspedido:
-        productos = TallaDisponible.objects.all()
-        cantidadMax=0
-        cantidadMin=999999
-        objMax=''
-        objMin=''
-        TallaMax = ''
-        TallaMin = ''
-        for i in productos:
-            obj = ProductosPedido.objects.filter(id_tallaDisponible=i.id_tallaDisponible).aggregate(Sum("cantidad"))
-            if obj['cantidad__sum']!= None:
-                if obj['cantidad__sum'] <cantidadMin:
-                    cantidadMin=obj['cantidad__sum']
-                    objMin=i
-                if obj['cantidad__sum'] > cantidadMax:
-                    cantidadMax=obj['cantidad__sum']
-                    objMax=i
-        data['cantidadMax'] = cantidadMax
-        data['cantidadMin'] = cantidadMin
-        data['objMax'] = objMax
-        data['objMin'] = objMin
+    departamentos = Departamento.objects.all()
 
-        departamentos=Departamento.objects.all()
+    data['departamentos'] = departamentos
 
-        data['departamentos'] = departamentos
+    return render(request, 'dashboard.html', data)
 
-        return render(request, 'dashboard.html', data)
-    else:
-        return redirect('/SignInAsAdministrator/')
 
 def Logout(request):
     request.session.flush()
     if request.session.session_key is not None:
         request.session.delete()
-  
+
     return redirect('/')
