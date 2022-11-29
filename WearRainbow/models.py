@@ -25,9 +25,9 @@ class administrador(models.Model):
     id_persona = models.ForeignKey(persona, on_delete=models.CASCADE)
     usuario = models.CharField(max_length=30, null=False)
     contraseña = models.CharField(max_length=30, null=False)
-    Rol = models.CharField(max_length=30)
-    Estado = models.CharField(max_length=30)
-
+    rol = models.CharField(max_length=30)
+    estado = models.CharField(max_length=30)
+    
 
     def get_id_administrador(self):
         return self.id_administrador
