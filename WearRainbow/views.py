@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime, date
 from idlelib import window
 
@@ -289,32 +290,44 @@ def registroPersona(request):
 
 
 def registroCliente(request):
-    val = sesiones(request)
+    x = Fernet(keyToken)
     if request.method == 'POST':
         id_persona = request.COOKIES['id_persona']
         usuario = request.POST['user']
         contraseña = request.POST['pass']
-
-        client = cliente(id_persona=persona(id_persona), usuario=usuario, contraseña=contraseña)
+        encrypted = x.encrypt(str.encode(str(contraseña)))
+        encrypted = encrypted.decode()
+        client = cliente(id_persona=persona(id_persona), usuario=usuario, contraseña=encrypted)
         client.save()
-
+        print(keyToken)
+        
         response = redirect('/SignInAsClient/')
         return response
 
 
+
+
 def inicioSesionCliente(request):
-    x = Fernet(keyToken)
+    
+    
     if request.method == 'POST':
+        
+        x = Fernet(keyToken)
         usuario = request.POST['user']
         contraseña = request.POST['pass']
-
+        verificar = cliente.objects.get(usuario=usuario)
+        encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
+        decrypted_password = str(x.decrypt(str(verificar.get_contraseña())), 'utf8')
+        print(decrypted_password)
         try:
             verificar = cliente.objects.get(usuario=usuario)
             encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
             usr = verificar.get_usuario()
             pass1 = verificar.get_contraseña()
+            
+            
             # print('User: ',usr, 'Pass: ', pass1, 'User: ', usuario, 'Pass: ', contraseña)
-            if usuario != usr or contraseña != pass1:
+            if usuario != usr or contraseña != decrypted_password:
                 messages.success(request, 'El nombre de usuario o contraseña no es correcto')
                 response = redirect('/SignInAsClient/')
 
@@ -333,8 +346,8 @@ def inicioSesionCliente(request):
                 # response.set_cookie('id_persona', dat2)
                 return response
         except:
-
-            messages.success(request, 'El nombre de usuario o contraseña no es correctos')
+            
+            messages.success(request, 'Puta la wea aes del orto')
             response = redirect('/SignInAsClient/')
             return response
 
@@ -689,25 +702,30 @@ def contacts(request):
     return render(request, 'contacts.html', {'Sesion': val})
 
 def Carrito(request):
-    val = sesiones(request)
-    TallasDisp = TallaDisponible.objects.all()
-    catidadTallas = TallaDisponible.objects.count()
-    producto = Producto.objects.all()
+    if request.session.get('token_cliente'):
+        val = sesiones(request)
+        TallasDisp = TallaDisponible.objects.all()
+        catidadTallas = TallaDisponible.objects.count()
+        producto = Producto.objects.all()
 
-    datos = dict()
-    listaProductos = []
-    subTotal = 0
+        TallasDisp = TallaDisponible.objects.all()
+        catidadTallas = TallaDisponible.objects.count()
+        producto = Producto.objects.all()
 
-    for i in range(catidadTallas):
-        text = TallasDisp[i].get_id_tallaCART()
-        if text in request.COOKIES:
-            valor = request.COOKIES[text]
-            text2 = int(text.replace('id', ''))
-            varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
-            listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor,
+        datos = dict()
+        listaProductos = []
+        subTotal = 0
+
+        for i in range(catidadTallas):
+            text = TallasDisp[i].get_id_tallaCART()
+            if text in request.COOKIES:
+                valor = request.COOKIES[text]
+                text2 = int(text.replace('id', ''))
+                varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
+                listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor,
                                    Talla.objects.get(id_talla=varProd.id_talla.id_talla), ])
-            precioU = (Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
-            subTotal += float(valor) * precioU
+                precioU = (Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
+                subTotal += float(valor) * precioU
 
             # print(varProd.varProd.)
             # datos[text] = varProd.id_producto
@@ -715,11 +733,13 @@ def Carrito(request):
 
         # producto = Producto.objects.get(id_producto=text)
         # datos['tallas']=lista
-    datos['productos'] = [listaProductos]
-    datos['Sesion'] = val
+        datos['productos'] = [listaProductos]
+        datos['Sesion'] = val
 
-    messages.success(request, subTotal)
-    return render(request, 'Carrito.html', datos)
+        messages.success(request, subTotal)
+        return render(request, 'Carrito.html', datos)
+    else:
+        return redirect('/SignInAsClient/')
 
 
 def OrderForm(request):
