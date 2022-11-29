@@ -5,7 +5,7 @@ from django.db.models import Sum, Count
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from WearRainbow import models
-from WearRainbow.access import keyToken
+from WearRainbow.access import keyToken, keyBD
 from WearRainbow.models import persona, administrador, Producto, Categoria, Talla, TallaDisponible, Departamento, \
     Pedido, ProductosPedido, Pago, PedidoAceptado, PedidoRechazado
 from WearRainbow.models import cliente
@@ -127,7 +127,7 @@ def ClientPanel(request):
 
 def OrdersAdministrator(request):
     val = sesiones(request)
-    if request.session.get('token_administrador'):
+    if request.session.get('token_administrador') or request.session.get('token_Superadministrador') :
         OrdersList = Pedido.objects.all()
         return render(request, 'OrdersAdministrator.html', {'OrdersList': OrdersList,'Sesion': val})
     # OrdersList = Pedido.objects.all()
@@ -156,7 +156,7 @@ def PedidosSeleccionados(request):
 
 def CategoriesAdministrator(request):
     val = sesiones(request)
-    if request.session.get('token_administrador'):
+    if request.session.get('token_administrador') or request.session.get('token_Superadministrador') :
         CategoriaListado = Categoria.objects.all()
         return render(request, 'CategoriesAdministrator.html', {"categoria": CategoriaListado,'Sesion': val})
 
@@ -166,7 +166,7 @@ def CategoriesAdministrator(request):
 
 def SizesAdministrator(request):
     val = sesiones(request)
-    if request.session.get('token_administrador'):
+    if request.session.get('token_administrador') or request.session.get('token_Superadministrador') :
         TallaListado = Talla.objects.all()
         return render(request, 'SizesAdministrator.html', {"talla": TallaListado,'Sesion': val})
     # TallaListado = Talla.objects.all()
@@ -177,7 +177,7 @@ def SizesAdministrator(request):
 
 def ModifyProduct(request, id):
     val = sesiones(request)
-    if request.session.get('token_administrador'):
+    if request.session.get('token_administrador') or request.session.get('token_Superadministrador') :
         producto = Producto.objects.get(id_producto=id)
         CategoriaListado = Categoria.objects.all()
         TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
@@ -195,7 +195,7 @@ def ModifyProduct(request, id):
 # no funciona
 def ViewProduct(request, id):
     val = sesiones(request)
-    if request.session.get('token_administrador'):
+    if request.session.get('token_administrador') or request.session.get('token_Superadministrador') :
         producto = Producto.objects.get(id_producto=id)
         CategoriaListado = Categoria.objects.all()
         TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
@@ -247,7 +247,7 @@ def ProductsAdministrator(request):
 
 def AddNewProduct(request):
     val = sesiones(request)
-    if request.session.get('token_administrador'):
+    if request.session.get('token_administrador') or request.session.get('token_Superadministrador') :
         CategoriaListado = Categoria.objects.all()
         TallaListado = Talla.objects.all()
         return render(request, 'AddNewProduct.html', {"categoria": CategoriaListado, "talla": TallaListado,'Sesion': val})
@@ -307,10 +307,10 @@ def inicioSesionCliente(request):
     if request.method == 'POST':
         usuario = request.POST['user']
         contraseña = request.POST['pass']
-        verificar = cliente.objects.get(usuario=usuario)
-        encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
 
         try:
+            verificar = cliente.objects.get(usuario=usuario)
+            encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
             usr = verificar.get_usuario()
             pass1 = verificar.get_contraseña()
             # print('User: ',usr, 'Pass: ', pass1, 'User: ', usuario, 'Pass: ', contraseña)
@@ -344,9 +344,8 @@ def inicioSesionAdministrador(request):
     if request.method == 'POST':
         usuario = request.POST['user']
         contraseña = request.POST['pass']
-        verificar = administrador.objects.get(usuario=usuario)
         try:
-            # print(verificar)
+            verificar = administrador.objects.get(usuario=usuario)
             usr = verificar.get_usuario()
             pass1 = verificar.get_contraseña()
             encrypted_text = x.encrypt(str.encode(str(verificar.get_id_administrador())))
@@ -363,18 +362,19 @@ def inicioSesionAdministrador(request):
                     rol = 'token_Superadministrador'
                 elif verificar.rol == "Administrador":
                     rol = 'token_administrador'
+
                 request.session[rol] = encrypted_text.decode()
-                response = redirect('/OrdersAdministrator/')
+
+                response = redirect('/')
                 return response
         except:
             messages.success(request, 'El nombre de usuario o contraseña no es correctosss')
             response = redirect('/SignInAsAdministrator/')
             return response
 
-
 def registroProducto(request):
     val = sesiones(request)
-    if request.session['token_administrador'] or request.session['token_Superadministrador']:
+    if request.session.get('token_administrador') or request.session.get('token_Superadministrador') :
         if request.method == 'POST':
             # ParaRegistro de producto:
             nombre = request.POST['nombre']
@@ -619,7 +619,7 @@ def registroPedidoEnviado(request, id):
 
 def modificarProducto(request):
     val = sesiones(request)
-    if request.session.get('token_administrador'):
+    if request.session.get('token_administrador') or request.session.get('token_Superadministrador') :
         if request.method == 'POST':
             # Para Modificacion de producto:
             id_producto = request.POST['id']
@@ -760,7 +760,7 @@ def OrderForm(request):
 
 def ViewProduct(request, id):
     val = sesiones(request)
-    if request.session.get('token_administrador'):
+    if request.session.get('token_administrador') or request.session.get('token_Superadministrador') :
         producto = Producto.objects.get(id_producto=id)
         CategoriaListado = Categoria.objects.all()
         TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
