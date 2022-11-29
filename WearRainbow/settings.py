@@ -75,16 +75,30 @@ DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
         'NAME': 'WearRainbowDB',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
+        #'trusted_connection': 'yes',
+        #'USER': '',
+        'USER': '',
+        'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '1433 ',
 
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
         },
     }
 }
+
+
+     #   'USER': '',
+        #'USER': 'admin',
+        #'PASSWORD': 'admin',
+    #    'HOST': 'localhost',
+    #    'PORT': '1433 ',
+
+     #   'OPTIONS': {
+     #       'driver': 'ODBC Driver 17 for SQL Server',
+    #    },
+ #   }
+#}
 
 DATABASE_CONNECTION_POOLING = False
 
