@@ -12,48 +12,53 @@ from WearRainbow.models import cliente
 from django.contrib import messages
 from cryptography.fernet import Fernet
 
+def sesiones(request):
+    val=''
+    if request.session.get('token_cliente'):
+        val = 'Cliente'
+    elif request.session.get('token_administrador'):
+        val = 'Administrador'
+    elif request.session.get('token_Superadministrador'):
+        val = 'Superadministrador'
+    return val
+
 
 def paginaIndex(request):
-    if request.session.get('token_cliente'):
-        sesion_activa = 'Cliente'
-        return render(request, 'index.html', {'Sesion': sesion_activa})
-    elif request.session.get('token_administrador'):
-        sesion_activa = 'Administrador'
-        return render(request, 'index.html', {'Sesion': sesion_activa})
-    elif request.session.get('token_Superadministrador'):
-        sesion_activa = 'Superadministrador'
-        return render(request, 'index.html', {'Sesion': sesion_activa})
-    else:
-        return render(request, 'index.html')
-
+    val = sesiones(request)
+    return render(request, 'index.html', {'Sesion': val})
 
 def PaymentDetails01(request, id):
+    val = sesiones(request)
     pedido = Pedido.objects.get(id_pedido=id)
-    return render(request, 'PaymentDetails01.html', {"pedido": pedido})
+    return render(request, 'PaymentDetails01.html', {"pedido": pedido,'Sesion': val})
 
 
 def PaymentDetails02(request, id):
+    val = sesiones(request)
     pedido = Pedido.objects.get(id_pedido=id)
-    return render(request, 'PaymentDetails02.html', {"pedido": pedido})
+    return render(request, 'PaymentDetails02.html', {"pedido": pedido,'Sesion': val})
 
 
 def PaymentDetails03(request, id):
+    val = sesiones(request)
     pedido = Pedido.objects.get(id_pedido=id)
-    return render(request, 'PaymentDetails03.html', {"pedido": pedido})
+    return render(request, 'PaymentDetails03.html', {"pedido": pedido,'Sesion': val})
 
 
 def OrdersAsClient(request):
+    val = sesiones(request)
     if request.session.get('token_cliente'):
         x = Fernet(keyToken)
         id_cliente = str(x.decrypt(request.session.get('token_cliente')), 'utf8')
         OrdersList = Pedido.objects.filter(id_cliente=cliente(id_cliente))
         print(id_cliente, OrdersList)
-        return render(request, 'OrdersAsClient.html', {'OrdersList': OrdersList})
+        return render(request, 'OrdersAsClient.html', {'OrdersList': OrdersList,'Sesion': val,'Sesion': val})
     else:
         return redirect('/SignInAsClient')
 
 
 def DetallePedidio(request, id):
+    val = sesiones(request)
     pedido = Pedido.objects.get(id_pedido=id)
     productos = ProductosPedido.objects.filter(id_pedido=id)
     pago = Pago.objects.filter(id_pedido=id).exists()
@@ -74,14 +79,16 @@ def DetallePedidio(request, id):
 
 
 def DetallePedidoCliente(request, id):
+    val = sesiones(request)
     pedido = Pedido.objects.get(id_pedido=id)
     productos = ProductosPedido.objects.filter(id_pedido=id)
 
     return render(request, 'DetallePedidoCliente.html',
-                  {"pedido": pedido, "productos": productos})
+                  {"pedido": pedido, "productos": productos,'Sesion': val})
 
 
 def Carrito(request):
+    val = sesiones(request)
     if request.session.get('token_cliente'):
         print("entro")
         return render(request, 'Carrito.html')
@@ -91,28 +98,26 @@ def Carrito(request):
 
 
 def productsAsClient(request):
-    if request.session.get('token_cliente'):
-        ProductoListado = Producto.objects.all()
-        return render(request, 'productsAsClient.html', {"producto": ProductoListado})
+    val = sesiones(request)
+    ProductoListado = Producto.objects.all()
+    return render(request, 'productsAsClient.html', {"producto": ProductoListado,'Sesion': val})
     # productoListado = Producto.objects.all()
     # return render(request, 'productsAsClient.html', {"producto": productoListado})
-    else:
-        return redirect('/SignInAsClient')
 
-
-def contacts(request):
-    return render(request, 'contacts.html')
 
 
 def SignInAsClient(request):
+    val = sesiones(request)
     return render(request, 'SigninAsClient.html')
 
 
 def SignInAsAdministrator(request):
+    val = sesiones(request)
     return render(request, 'SignInAsAdministrator.html')
 
 
 def ClientPanel(request):
+    val = sesiones(request)
     if request.session.get('token_cliente'):
         return render(request, 'ClientPanel.html')
     else:
@@ -121,9 +126,10 @@ def ClientPanel(request):
 
 
 def OrdersAdministrator(request):
+    val = sesiones(request)
     if request.session.get('token_administrador'):
         OrdersList = Pedido.objects.all()
-        return render(request, 'OrdersAdministrator.html', {'OrdersList': OrdersList})
+        return render(request, 'OrdersAdministrator.html', {'OrdersList': OrdersList,'Sesion': val})
     # OrdersList = Pedido.objects.all()
     # return render(request, 'OrdersAdministrator.html',{'OrdersList': OrdersList})
     else:
@@ -131,6 +137,7 @@ def OrdersAdministrator(request):
 
 
 def PedidosSeleccionados(request):
+    val = sesiones(request)
     if request.method == 'POST':
         cat = request.POST['cat']
         if cat == "op01":
@@ -144,24 +151,24 @@ def PedidosSeleccionados(request):
         else:
             OrdersList = Pedido.objects.filter(EstadoPedido="Rechazado")
 
-        return render(request, 'OrdersAdministrator.html', {'OrdersList': OrdersList})
+        return render(request, 'OrdersAdministrator.html', {'OrdersList': OrdersList,'Sesion': val})
 
 
 def CategoriesAdministrator(request):
+    val = sesiones(request)
     if request.session.get('token_administrador'):
         CategoriaListado = Categoria.objects.all()
-        return render(request, 'CategoriesAdministrator.html', {"categoria": CategoriaListado})
+        return render(request, 'CategoriesAdministrator.html', {"categoria": CategoriaListado,'Sesion': val})
 
-    # CategoriaListado = Categoria.objects.all()
-    # return render(request, 'CategoriesAdministrator.html', {"categoria": CategoriaListado})
     else:
         return redirect('/SignInAsAdministrator')
 
 
 def SizesAdministrator(request):
+    val = sesiones(request)
     if request.session.get('token_administrador'):
         TallaListado = Talla.objects.all()
-        return render(request, 'SizesAdministrator.html', {"talla": TallaListado})
+        return render(request, 'SizesAdministrator.html', {"talla": TallaListado,'Sesion': val})
     # TallaListado = Talla.objects.all()
     # return render(request, 'SizesAdministrator.html', {"talla": TallaListado})
     else:
@@ -169,6 +176,7 @@ def SizesAdministrator(request):
 
 
 def ModifyProduct(request, id):
+    val = sesiones(request)
     if request.session.get('token_administrador'):
         producto = Producto.objects.get(id_producto=id)
         CategoriaListado = Categoria.objects.all()
@@ -179,13 +187,14 @@ def ModifyProduct(request, id):
         tallaListado = Talla.objects.exclude(id_talla__in=Lista)
         return render(request, 'ModifyProduct.html',
                       {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
-                       "tallaDisponibles": TallaDisponibleListado})
+                       "tallaDisponibles": TallaDisponibleListado,'Sesion': val})
     else:
         return redirect('/SignInAsAdministrator')
 
 
 # no funciona
 def ViewProduct(request, id):
+    val = sesiones(request)
     if request.session.get('token_administrador'):
         producto = Producto.objects.get(id_producto=id)
         CategoriaListado = Categoria.objects.all()
@@ -198,7 +207,7 @@ def ViewProduct(request, id):
         print(TallaDisponibleListado)
         return render(request, 'ViewProduct.html',
                       {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
-                       "tallaDisponibles": TallaDisponibleListado})
+                       "tallaDisponibles": TallaDisponibleListado,'Sesion': val})
 
     # producto = Producto.objects.get(id_producto=id)
     # CategoriaListado = Categoria.objects.all()
@@ -217,6 +226,7 @@ def ViewProduct(request, id):
 
 
 def ViewProductClient(request, id):
+    val = sesiones(request)
     producto = Producto.objects.get(id_producto=id)
     CategoriaListado = Categoria.objects.all()
     TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
@@ -226,19 +236,21 @@ def ViewProductClient(request, id):
     tallaListado = Talla.objects.exclude(id_talla__in=Lista)
     return render(request, 'PreviewProductAsClient.html',
                   {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
-                   "tallaDisponibles": TallaDisponibleListado})
+                   "tallaDisponibles": TallaDisponibleListado,'Sesion': val})
 
 
 def ProductsAdministrator(request):
+    val = sesiones(request)
     productoListado = Producto.objects.all()
-    return render(request, 'ProductsAdministrator.html', {"producto": productoListado})
+    return render(request, 'ProductsAdministrator.html', {"producto": productoListado,'Sesion': val})
 
 
 def AddNewProduct(request):
+    val = sesiones(request)
     if request.session.get('token_administrador'):
         CategoriaListado = Categoria.objects.all()
         TallaListado = Talla.objects.all()
-        return render(request, 'AddNewProduct.html', {"categoria": CategoriaListado, "talla": TallaListado})
+        return render(request, 'AddNewProduct.html', {"categoria": CategoriaListado, "talla": TallaListado,'Sesion': val})
     # CategoriaListado = Categoria.objects.all()
     # tallaListado = Talla.objects.all()
     # return render(request, 'AddNewProduct.html', {"categoria": CategoriaListado, "talla": tallaListado})
@@ -248,6 +260,7 @@ def AddNewProduct(request):
 
 
 def registroPersona(request):
+    val = sesiones(request)
     if request.method == 'POST':
         nombre = request.POST['nombre']
         apellidoPaterno = request.POST['appP']
@@ -268,7 +281,7 @@ def registroPersona(request):
         # client = cliente(id_persona=persona(23), usuario='user01', contraseña='pass01')
         # client.save()
 
-        response = render(request, 'RegisterClient.html', {'current_id': user.get_id_persona()})
+        response = render(request, 'RegisterClient.html', {'current_id': user.get_id_persona(),'Sesion': val})
         response.set_cookie('id_persona', user.get_id_persona())
         return response
     else:
@@ -276,6 +289,7 @@ def registroPersona(request):
 
 
 def registroCliente(request):
+    val = sesiones(request)
     if request.method == 'POST':
         id_persona = request.COOKIES['id_persona']
         usuario = request.POST['user']
@@ -308,7 +322,7 @@ def inicioSesionCliente(request):
             else:
                 dat2 = (verificar.get_id_persona()).get_id_persona()
                 dat1 = verificar.get_id_cliente()
-                response = redirect('/ClientPanel/')
+                response = redirect('/')
                 request.session['token_cliente'] = encrypted_text.decode()
 
                 print(request.session['token_cliente'])
@@ -359,6 +373,7 @@ def inicioSesionAdministrador(request):
 
 
 def registroProducto(request):
+    val = sesiones(request)
     if request.session['token_admin']:
         if request.method == 'POST':
             # ParaRegistro de producto:
@@ -395,6 +410,7 @@ def registroProducto(request):
 
 
 def registroCategoria(request):
+    val = sesiones(request)
     if request.method == 'POST':
         # ParaRegistro de categoria:
 
@@ -413,6 +429,7 @@ def registroCategoria(request):
 
 
 def registroTalla(request):
+    val = sesiones(request)
     if request.method == 'POST':
         # ParaRegistro de talla:
 
@@ -448,46 +465,19 @@ def registroTalla(request):
         return response
 
 
-def registroPago(request):
-    if request.method == 'POST':
-        talla = request.POST['nombre']
-        largoEspalda = request.POST['size1']
 
-        if id == '':
-            obj = Talla(talla=talla, largoEspalda=largoEspalda, contornoPecho=contornoPecho,
-                        contornoCuello=contornoCuello)
-            obj.save()
-
-            productos = Producto.objects.all()
-
-            for i in productos:
-                obj2 = TallaDisponible(stock=0, id_producto=Producto(i.id_producto), id_talla=Talla(obj.get_id_talla()))
-                obj2.save()
-
-        else:
-            obj = Talla.objects.get(id_talla=id)
-            if talla != '':
-                obj.talla = talla
-            if largoEspalda != '':
-                obj.largoEspalda = int(largoEspalda)
-            if contornoPecho != '':
-                obj.contornoPecho = int(contornoPecho)
-            if contornoCuello != '':
-                obj.contornoCuello = int(contornoCuello)
-            obj.save()
-
-        response = redirect('/SizesAdministrator/')
-        return response
 
 
 def registroPedido(request):
+    val = sesiones(request)
     if request.method == 'POST':
         # ParaRegistro de pedido:
         Direccion = request.POST['direccion']
         Zona = request.POST['zona']
         dep = request.POST['dep']
         Apartamento = request.POST['apartamento']
-        idCliente = request.COOKIES['id_cliente']
+        x = Fernet(keyToken)
+        idCliente = str(x.decrypt(request.session.get('token_cliente')), 'utf8')
         EstadoPedido = 'En Espera'
         FechaPedido = datetime.now()
         TotalPagar = 0;
@@ -531,6 +521,7 @@ def registroPedido(request):
 
 
 def registroPago(request, id):
+    val = sesiones(request)
     if request.method == 'POST':
         # ParaRegistro de pedido:
         BancoProveniente = request.POST['banco']
@@ -547,6 +538,7 @@ def registroPago(request, id):
 
 
 def registroPedidoAceptado(request, id):
+    val = sesiones(request)
     if request.method == 'POST':
         FechaAceptacion = datetime.now()
         id_administrador = request.COOKIES['id_administrador']
@@ -564,6 +556,7 @@ def registroPedidoAceptado(request, id):
 
 
 def modificarAcceso(request, id):
+    val = sesiones(request)
     if request.method == 'POST':
         Rol = request.POST['rol']
         Estado = request.POST['estado']
@@ -578,6 +571,7 @@ def modificarAcceso(request, id):
 
 
 def registroPedidoRechazado(request, id):
+    val = sesiones(request)
     if request.method == 'POST':
         FechaRechazo = datetime.now()
         RazonRechazo = request.POST['textRechazo']
@@ -596,6 +590,7 @@ def registroPedidoRechazado(request, id):
 
 
 def registroPedidoEnviado(request, id):
+    val = sesiones(request)
     if request.method == 'POST':
         FechaEnvio = datetime.now()
 
@@ -612,6 +607,7 @@ def registroPedidoEnviado(request, id):
 
 
 def modificarProducto(request):
+    val = sesiones(request)
     if request.session.get('token_administrador'):
         if request.method == 'POST':
             # Para Modificacion de producto:
@@ -659,6 +655,7 @@ def modificarProducto(request):
 
 
 def addCart(request, id):
+    val = sesiones(request)
     if request.method == 'POST':
         # Para Modificacion de producto:
         Tallas = TallaDisponible.objects.all()
@@ -676,8 +673,12 @@ def addCart(request, id):
                     response.delete_cookie(str(text))
         return response
 
+def contacts(request):
+    val = sesiones(request)
+    return render(request, 'contacts.html', {'Sesion': val})
 
 def Carrito(request):
+    val = sesiones(request)
     TallasDisp = TallaDisponible.objects.all()
     catidadTallas = TallaDisponible.objects.count()
     producto = Producto.objects.all()
@@ -704,13 +705,14 @@ def Carrito(request):
         # producto = Producto.objects.get(id_producto=text)
         # datos['tallas']=lista
     datos['productos'] = [listaProductos]
-    print(subTotal)
+    datos['Sesion'] = val
 
     messages.success(request, subTotal)
     return render(request, 'Carrito.html', datos)
 
 
 def OrderForm(request):
+    val = sesiones(request)
     TallasDisp = TallaDisponible.objects.all()
     catidadTallas = TallaDisponible.objects.count()
     producto = Producto.objects.all()
@@ -739,13 +741,14 @@ def OrderForm(request):
         # datos['tallas']=lista
     datos['productos'] = [listaProductos]
     datos['departamentos'] = Departamento.objects.all()
-    print(subTotal)
+    datos['Sesion'] = val
 
     messages.success(request, subTotal)
     return render(request, 'OrderForm.html', datos)
 
 
 def ViewProduct(request, id):
+    val = sesiones(request)
     if request.session.get('token_administrador'):
         producto = Producto.objects.get(id_producto=id)
         CategoriaListado = Categoria.objects.all()
@@ -762,11 +765,13 @@ def ViewProduct(request, id):
 
 
 def administratorManager(request):
+    val = sesiones(request)
     AdministratorsList = administrador.objects.all()
-    return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList})
+    return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList,'Sesion': val})
 
 
 def dashboard(request):
+    val = sesiones(request)
     data = dict()
     ######################  total ventas general:
     totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar").aggregate(Sum("TotalPagar"))
@@ -826,6 +831,8 @@ def dashboard(request):
     departamentos = Departamento.objects.all()
 
     data['departamentos'] = departamentos
+
+    data['Sesion'] = val
 
     return render(request, 'dashboard.html', data)
 

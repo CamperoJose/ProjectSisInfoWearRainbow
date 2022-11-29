@@ -1,5 +1,6 @@
 {% load static %}
-     
+{% include "DefaultNavbar.html" %}
+
 <html lang="en">
 
 <head>
@@ -9,41 +10,11 @@
 	<title>WEAR RAINBOW</title>
 	<!-- All CSS -->
     <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}' />
-	<link href='{% static "cssForIndex.css" %}' rel="stylesheet">
+
 </head>
 <body>
-	<nav style="background: #3D384D" class="navbar navbar-expand-lg navbar-dark bg-ligth fixed-top">
-		<div class="container">
-			<a class="navbar-brand" href="#"><img style="height: 45px"  src="{% static 'MEDIA/logo01.png' %}" alt=""></a> <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span></button>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav ms-auto mb-4 mb-lg-0">
 
-					<li class="nav-item">
-						<a class="nav-link" href="{% url 'OrdersAdministrator' %}">Pedidos</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{% url 'ProductsAdministrator' %}">Productos</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{% url 'CategoriesAdministrator' %}">Categorias</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{% url 'SizesAdministrator' %}">Tallas</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{% url 'administratorManager' %}">Administradores</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{% url 'dashboard' %}">Reporte</a>
-					</li>
-					<li class="nav-item">
-						<a style="color: #F2727D; font-weight: bold;" class="nav-link" href="{% url 'paginaIndex' %}">Cerrar Sesión</a>
-					</li>
 
-				</ul>
-			</div>
-		</div>
-	</nav>
     <br><br><br><br>
 
 	<div class="container">
@@ -70,6 +41,11 @@
 	</div>
 
 	<hr>
+	{% if Sesion %}
+	<h1 style="color: black">{{Sesion}}</h1>
+	{% else %}
+	<h1 style="color: black">no hay sesion</h1>
+	{% endif %}
 
 	<div class="container">
 		<h4>Listado de pedidos:</h4>
