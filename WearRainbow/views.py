@@ -109,13 +109,36 @@ def productsAsClient(request):
 
 def SignInAsClient(request):
     val = sesiones(request)
-    return render(request, 'SigninAsClient.html')
+    print(val)
+    if val=='':
+        return render(request, 'SigninAsClient.html')
+    else:
+        return redirect('/')
 
 
 def SignInAsAdministrator(request):
     val = sesiones(request)
-    return render(request, 'SignInAsAdministrator.html')
+    if val == '':
+        return render(request, 'SignInAsAdministrator.html')
+    else:
+        return redirect('/')
 
+
+
+def RegisterClient(request):
+    val = sesiones(request)
+    if val == '':
+        return render(request, 'RegisterClient.html')
+    else:
+        return redirect('/')
+
+def RegisterPerson(request):
+
+    val = sesiones(request)
+    if val == '':
+        return render(request, 'RegisterPerson.html')
+    else:
+        return redirect('/')
 
 def ClientPanel(request):
     val = sesiones(request)
@@ -282,7 +305,7 @@ def registroPersona(request):
         # client = cliente(id_persona=persona(23), usuario='user01', contraseña='pass01')
         # client.save()
 
-        response = render(request, 'RegisterClient.html', {'current_id': user.get_id_persona(),'Sesion': val})
+        response = render(request, 'RegisterClient.html', {'current_id': user.get_id_persona(), 'Sesion': val})
         response.set_cookie('id_persona', user.get_id_persona())
         return response
     else:
@@ -300,33 +323,26 @@ def registroCliente(request):
         client = cliente(id_persona=persona(id_persona), usuario=usuario, contraseña=encrypted)
         client.save()
         print(keyToken)
-        
+
         response = redirect('/SignInAsClient/')
+        response.delete_cookie('id_persona')
         return response
 
 
-
-
 def inicioSesionCliente(request):
-    
-    
     if request.method == 'POST':
-        
         x = Fernet(keyToken)
         usuario = request.POST['user']
         contraseña = request.POST['pass']
-        verificar = cliente.objects.get(usuario=usuario)
-        encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
-        decrypted_password = str(x.decrypt(str(verificar.get_contraseña())), 'utf8')
-        print(decrypted_password)
         try:
             verificar = cliente.objects.get(usuario=usuario)
             encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
+            decrypted_password = str(x.decrypt(str(verificar.get_contraseña())), 'utf8')
+            print(decrypted_password)
+            encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
             usr = verificar.get_usuario()
             pass1 = verificar.get_contraseña()
-            
-            
-            # print('User: ',usr, 'Pass: ', pass1, 'User: ', usuario, 'Pass: ', contraseña)
+            print('User: ',usr, 'Pass: ', pass1, 'User: ', usuario, 'Pass: ', contraseña)
             if usuario != usr or contraseña != decrypted_password:
                 messages.success(request, 'El nombre de usuario o contraseña no es correcto')
                 response = redirect('/SignInAsClient/')
@@ -347,7 +363,7 @@ def inicioSesionCliente(request):
                 return response
         except:
             
-            messages.success(request, 'Puta la wea aes del orto')
+            messages.success(request, 'El nombre de usuario o contraseña no es correctos')
             response = redirect('/SignInAsClient/')
             return response
 
@@ -373,7 +389,6 @@ def inicioSesionAdministrador(request):
             else:
                 print("datos correctos")
                 rol = ''
-
                 if verificar.rol == "SuperAdministrador":
                     rol = 'token_Superadministrador'
                 elif verificar.rol == "Administrador":
@@ -384,9 +399,10 @@ def inicioSesionAdministrador(request):
                 response = redirect('/OrdersAdministrator/')
                 return response
         except:
-            messages.success(request, 'El nombre de usuario o contraseña no es correctosss')
+            messages.success(request, 'El nombre de usuario o contraseña no es correctos')
             response = redirect('/SignInAsAdministrator/')
             return response
+
 
 def registroProducto(request):
     val = sesiones(request)
@@ -835,9 +851,12 @@ def ViewProduct(request, id):
 
 def administratorManager(request):
     val = sesiones(request)
-    AdministratorsList = administrador.objects.all()
-    print(AdministratorsList[0].rol)
-    return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList,'Sesion': val})
+    if val=='SuperAdministrador':
+        AdministratorsList = administrador.objects.all()
+        print(AdministratorsList[0].rol)
+        return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList,'Sesion': val})
+    else:
+        return redirect('/')
 
 
 def dashboard(request):

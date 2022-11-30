@@ -1,279 +1,76 @@
 {% load static %}
 {% include "DefaultNavbar.html" %}
-<html>
-  <head>
-    <meta charset="UTF-8">
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
 	<meta content="IE=edge" http-equiv="X-UA-Compatible">
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<title>WEAR RAINBOW</title>
-    <style>
-      .formPopup {
-        display: none;
-        position: fixed;
-        left: 45%;
-        top: 25%;
-        transform: translate(-50%, 5%);
-        border: 3px solid #3D384D;
-        z-index: 9;
-        border-radius: 15px;
-      }
-      .formContainer {
-        max-width: 300px;
-        padding: 20px;
-        background-color: #fff;
-      }
-
-    </style>
-
+	<!-- All CSS -->
     <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}' />
 	<link href='{% static "cssForIndex.css" %}' rel="stylesheet">
-
-  </head>
-  <body>
-
-    <br><br>
-
-    <div style="position: sticky; top: 71px; background-color: white">
-        <div class="container">
-            <div class="text-center text-lg-start mt-4 pt-2">
-			<a href="{% url 'OrdersAdministrator' %}">
-            <button class="btn  btn-md" style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: #F2727D; color: white; ">
-				Volver</button></a>
-            </div>
-        </div>
-        <hr>
-    </div>
-
-    <div class="modal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" id="popupForm1">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Modal title</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <p>Modal body text goes here.</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Save changes</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
+</head>
+<body>
 
 
-    <div class="container">
-      <div class="formPopup" id="popupForm3">
-        <form action="/action_page.php" class="formContainer">
-          <h2>Aceptar Pedido</h2>
-          <input type="checkbox" name="conf"  required>
-                <label>He revisado y verificado el pago completo y correcto del cliente. Confirmando así el pedido para su posterior preparación y envió. </label><br>
-          <button type="submit" class="btn  btn-md" style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: #3D384D; color: white; ">
-              Confirmar
-          </button>
-          <button type="button" class="btn cancel" onclick="closeForm1()">
-              Cerrar
-          </button>
-            hola
-        </form>
-      </div>
-    </div>
+    <section class="vh-100">
+      <div class="container-fluid h-custom">
+        <div class="row d-flex justify-content-center align-items-center h-100">
 
-    <div class="loginPopup">
-      <div class="formPopup" id="popupForm2">
-        <form action="/action_page.php" class="formContainer">
-          <h2>Rechazar Pedido</h2>
-          <label for="email">
-            <strong>E-mail</strong>
-          </label>
-          <input type="text" id="email" placeholder="Your Email" name="email" required>
-          <label for="psw">
-            <strong>Password</strong>
-          </label>
-          <input type="password" id="psw" placeholder="Your Password" name="psw" required>
-          <button type="submit" >Log in</button>
-          <button type="button" class="btn cancel" onclick="closeForm2()">Close</button>
-        </form>
-      </div>
-    </div>
+          <div class="col-md-8 row-cols-1 col-xl-4 offset-xl-0">
+            <form action="/inicioSesionAdministrador/" class="form-horizontal" method="post">
+            {% csrf_token %}
+              <!-- Email input -->
+              <div class="form-outline mb-4">
+                <input type="text" name="user" class="form-control form-control-md"
+                  placeholder="Ingrese su Usuario" required/>
+                <label class="form-label" for="form3Example3">Usuario</label>
+              </div>
 
-    <div class="container d-flex justify-content-center mt-50 mb-50">
-        <div class="row">
-             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="mb-4 pull-left">
-                                        <h4 class="invoice-color mb-2 mt-md-2">Datos del cliente:</h4>
-                                        <ul class="list list-unstyled mb-0">
-                                            <li style="font-weight: bold">Nombre:  <span style="font-weight: lighter">{{pedido.id_cliente.id_persona.nombre}}</span></li>
-                                            <li style="font-weight: bold">Apellido Paterno:  <span style="font-weight: lighter">{{pedido.id_cliente.id_persona.apellidoPaterno}}</span></li>
-                                            <li style="font-weight: bold">Apellido Materno:  <span style="font-weight: lighter">{{pedido.id_cliente.id_persona.apellidoMaterno}}</span></li>
-                                            <li style="font-weight: bold">Celular:  <span style="font-weight: lighter">{{pedido.id_cliente.id_persona.celular}}</span></li>
-                                            <li style="font-weight: bold">Correo:  <span style="font-weight: lighter">{{pedido.id_cliente.id_persona.correo}}</span></li>
-                                            <li style="font-weight: bold">Carnet de Identidad:  <span style="font-weight: lighter">{{pedido.id_cliente.id_persona.ciNumero}} {{pedido.id_cliente.id_persona.ciExtension}} </span></li>
+              <!-- Password input -->
+              <div class="form-outline mb-3">
+                <input type="password" name="pass" class="form-control form-control-md"
+                  placeholder="Ingrese su Contraseña" required/>
+                <label class="form-label" for="form3Example4">Contraseña</label>
+              </div>
 
-                                        </ul>
-                                </div>
-                            </div>
+                {% if messages %}
+                    {% for msg in messages %}
+                    <b>{{msg}}</b>
+                    {% endfor %}
+                    {% endif %}
 
-                            <div class="col-sm-6">
-                                <div class="mb-4 ">
-                                    <div class="text-sm-right">
-                                        <h4 class="invoice-color mb-2 mt-md-2">Pedido #{{pedido.id_pedido}}</h4>
-                                        <ul class="list list-unstyled mb-0">
-                                            <li style="font-weight: bold">Estado Pedido:  <span style="font-weight: lighter">{{pedido.EstadoPedido}}</span></li>
-                                            <br>
-                                            <li style="font-weight: bold">Fecha Pedido:  <span style="font-weight: lighter">{{pedido.FechaPedido}}</span></li>
-                                            <li style="font-weight: bold">Fecha 2:  <span style="font-weight: lighter">{{pedido.FechaPedido}}</span></li>
-                                            <li style="font-weight: bold">Fecha 3:  <span style="font-weight: lighter">{{pedido.FechaPedido}}</span></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="form-check mb-0">
 
-                            <div class="row">
-                                <div class="col-sm-6">
-                                <div class="mb-4 pull-left">
-                                        <h4 class="invoice-color mb-2 mt-md-2">Datos de envío:</h4>
-                                        <ul class="list list-unstyled mb-0">
-                                            <li style="font-weight: bold">Departamento:  <span style="font-weight: lighter">{{pedido.id_departamento.Departamento}}</span></li>
-                                            <li style="font-weight: bold">Direccion:  <span style="font-weight: lighter">{{pedido.Direccion}}</span></li>
-                                            <li style="font-weight: bold">Zona:  <span style="font-weight: lighter">{{pedido.Zona}}</span></li>
-                                            <li style="font-weight: bold">Apartamento:  <span style="font-weight: lighter">{{pedido.Apartamento}}</span></li>
-
-                                        </ul>
-                                </div>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <div class="mb-4 ">
-                                    <div class="text-sm-right">
-                                        <h4 class="invoice-color mb-2 mt-md-2">Estado del pago:</h4>
-
-                                        <ul class="list list-unstyled mb-0">
-                                            {% if pagoDetails %}
-                                                <li style="font-weight: lighter; color: lightseagreen">PAGO ENVIADO</li>
-                                                <a style="color: #F2727D" target="_blank" href="{{pagoDetails.Comprobante.url}}">Ver Comprobante</a>
-                                            {% else %}
-                                                <li style="font-weight: lighter; color: orangered">PAGO PENDIENTE</li>
-                                            {% endif %}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <h4 class="invoice-color mb-2 mt-md-2">Productos comprados:</h4>
-
-                    <div class="table-responsive">
-                        <table class="table table-lg">
-                            <thead>
-                                <tr>
-                                    <th>Img</th>
-                                    <th>Id Producto</th>
-                                    <th>Nombre Producto</th>
-                                    <th>Talla</th>
-                                    <th>Precio</th>
-                                    <th>Cantidad</th>
-                                    <th>Subtotal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for p in productos %}
-                                <tr>
-                                    <td><img style="height: 70px; border-radius: 5px" src="{{p.id_tallaDisponible.id_producto.img.url}}" alt=""></td>
-                                    <td>{{p.id_tallaDisponible.id_producto.id_producto}}</td>
-                                    <td>{{p.id_tallaDisponible.id_producto.nombre}}</td>
-                                    <td>{{p.id_tallaDisponible.id_talla.talla}}</td>
-                                    <td>{{p.id_tallaDisponible.id_producto.precio}}Bs.-</td>
-                                    <td>{{p.cantidad}}</td>
-                                    <td>{{p.get_subtotal}}Bs.-</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="card-body">
-                        <div class="d-md-flex flex-md-wrap">
-
-                            <div class="pt-2 mb-3 wmin-md-400 ml-auto">
-                                <h4 class="mb-3 text-left">Total a pagar:</h4>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <tbody>
-                                            <tr>
-                                                <th class="text-left">Subtotal:</th>
-                                                <td class="text-right">{{pedido.TotalPagar}}Bs.-</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-left">Envío: </th>
-                                                <td class="text-right">{{pedido.get_envio}}Bs.-</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-left">Total:</th>
-                                                <td class="text-right text-primary"><h5 class="font-weight-semibold">{{pedido.TotalPagar}}Bs.-</h5></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-
-
-                                <div class="pt-2 mb-3 wmin-md-400 ml-auto">
-                                <div class="row justify-content-center">
-
-
-                                <div class="col-lg-2 col-md-2 col-sm-2">
-
-                                    <button onclick="openForm1()" class="btn  btn-md" style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: mediumseagreen; color: white; " >
-                                         Aceptar Pedido
-                                    </button>
-                                    <br><br>
-
-                                    <button onclick="openForm2()" class="btn  btn-md" style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: indianred; color: white; ">
-                                         Rechazar Pedido
-                                    </button>
-
-                                </div>
-		                    </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-             </div>
+                <a href="{% url 'SignInAsClient' %}" class="text-body">Ingresar como Cliente</a>
+              </div>
+
+              <div class="text-center text-lg-start mt-4 pt-2">
+                <button type="submit" class="btn  btn-md"
+                  style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: #3D384D; color: white; ">Ingresar</button>
+
+
+              </div>
+
+            </form>
+          </div>
+
+            <div class="col-md-9 col-lg-6 col-xl-5">
+            <img src="{% static 'MEDIA/img03.png' %}"
+              class="img-fluid" alt="Sample image">
+          </div>
+
         </div>
-    </div>
-
-    <script>
-      function openForm1() {
-        document.getElementById("popupForm1").style.display = "block";
-      }
-      function closeForm1() {
-        document.getElementById("popupForm1").style.display = "none";
-      }
-
-      function openForm2() {
-        document.getElementById("popupForm2").style.display = "block";
-      }
-      function closeForm2() {
-        document.getElementById("popupForm2").style.display = "none";
-      }
+      </div>
 
 
-    </script>
+    </section>
 
-  </body>
-</html>
+	<!-- All Js -->
 
-
-
+    <script src="{% static 'js/jquery-3.5.1.slim.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>

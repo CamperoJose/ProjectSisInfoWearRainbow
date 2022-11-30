@@ -14,58 +14,69 @@
 <body>
 
 
-    <section class="vh-100">
-      <div class="container-fluid h-custom">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-          <div class="col-md-9 col-lg-6 col-xl-5">
-            <img src="{% static 'MEDIA/img02.png' %}"
-              class="img-fluid" alt="Sample image">
-          </div>
-          <div class="col-md-8 col-lg-6 col-xl-4 offset-md-1">
-            <form action="/inicioSesionCliente/" class="form-horizontal" method="post">
-            {% csrf_token %}
-              <!-- Email input -->
-              <div class="form-outline mb-4">
-                <input type="text" name="user" class="form-control form-control-md"
-                  placeholder="Ingrese su Usuario" />
-                <label class="form-label" for="form3Example3">Usuario</label>
-              </div>
+    <!-- Section: Design Block -->
+<section class="vh-100" style="background: linear-gradient(to right, #ffccff 0%, #c4e5ff 80%);filter:">
+  <div class="container py-5 h-100" style="opacity: 1">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-10">
+        <div class="card" style="border-radius: 1rem;">
+          <div class="row g-0">
+            <div class="col-md-6 col-lg-5 d-none d-md-block">
+              <img src="{% static 'MEDIA/img04.png' %}"
+                alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem; height: 100%" />
+            </div>
+            <div class="col-md-6 col-lg-7 d-flex align-items-center">
+              <div class="card-body p-4 p-lg-5 text-black">
 
-              <!-- Password input -->
-              <div class="form-outline mb-3">
-                <input type="password" name="pass" class="form-control form-control-md"
-                  placeholder="Ingrese su Contraseña" />
-                <label class="form-label" for="form3Example4">Contraseña</label>
-              </div>
+                <form action="/inicioSesionCliente/" class="form-horizontal" method="post">
+                    {% csrf_token %}
 
-                {% if messages %}
+                    <img src="{% static 'MEDIA/logo01.png' %}"
+                     alt="login form" class="img-fluid" style="height: 40px" />
+
+
+                  <h5 class=" mb-3 pb-3" style=" font-weight: bold; color: #679FBF">Ingresar a mi cuenta</h5>
+
+                  <div class="form-outline mb-4">
+                    <input type="text" name="user" class="form-control form-control-lg" placeholder="Ingrese su usuario" required/>
+                    <label class="form-label" >Usuario</label>
+                  </div>
+
+                  <div class="form-outline mb-4">
+                    <input type="password" name="pass" class="form-control form-control-lg" placeholder="Ingrese su contraseña" required/>
+                    <label class="form-label" >Contraseña</label>
+                  </div>
+
+                    {% if messages %}
                     {% for msg in messages %}
                     <b>{{msg}}</b>
                     {% endfor %}
                     {% endif %}
 
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="form-check mb-0">
-
-                </div>
-                <a href="{% url 'SignInAsAdministrator' %}" class="text-body">Ingresar como Administrador</a>
-              </div>
-
-              <div class="text-center text-lg-start mt-4 pt-2">
-                <button type="submit" class="btn  btn-md"
+                  <div class="pt-1 mb-4">
+                    <button type="submit" class="btn  btn-md"
                   style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: #3D384D; color: white; ">Ingresar</button>
+                  </div>
 
-                <p class="small fw-bold mt-2 pt-1 mb-0"> <a href="{% url 'registrarPersona' %}"
-                    class="link-danger">Registrarse</a></p>
+                  <p class="mb-5 pb-lg-2" style="color: #F79816;">¿No tienes una cuenta? <a href="{% url 'registrarPersona' %}"
+                      style="color: #679FBF; font-weight: bolder">Registrate aquí</a></p>
+
+                    <a style="color: #E52B69" href="{% url 'SignInAsAdministrator' %}">Ingresar como administrador</a>
+
+                </form>
+
               </div>
-
-            </form>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
 
 
-    </section>
+</body>
+<!-- Section: Design Block -->
 
 	<!-- All Js -->
 

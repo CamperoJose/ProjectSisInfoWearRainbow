@@ -24,7 +24,7 @@ class administrador(models.Model):
     id_administrador = models.AutoField(primary_key=True, null=False, unique=True)
     id_persona = models.ForeignKey(persona, on_delete=models.CASCADE)
     usuario = models.CharField(max_length=30, null=False)
-    contraseña = models.CharField(max_length=30, null=False)
+    contraseña = models.CharField(max_length=500, null=False)
     rol = models.CharField(max_length=30)
     estado = models.CharField(max_length=110)
     
@@ -46,7 +46,7 @@ class cliente(models.Model):
     id_cliente = models.AutoField(primary_key=True, null=False, unique=True)
     id_persona = models.ForeignKey(persona, on_delete=models.CASCADE)
     usuario = models.CharField(max_length=30, null=False)
-    contraseña = models.CharField(max_length=105, null=False)
+    contraseña = models.CharField(max_length=500, null=False)
 
     def get_id_cliente(self):
         return self.id_cliente

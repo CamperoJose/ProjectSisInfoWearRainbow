@@ -103,6 +103,12 @@
                 </div>
               </div>
 
+              {% if messages %}
+                    {% for msg in messages %}
+                    <b>{{msg}}</b>
+                    {% endfor %}
+              {% endif %}
+
               <div class="form-group">
                   <div class="col-md-12 text-center">
                       <button type="submit" class="btn  btn-md"
