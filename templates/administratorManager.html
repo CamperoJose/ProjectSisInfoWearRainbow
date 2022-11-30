@@ -9,13 +9,169 @@
 	<title>WEAR RAINBOW</title>
 	<!-- All CSS -->
     <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}' />
+	<script src='{% static "js/bootstrap.min.js" %}'></script>
 </head>
 <body>
 
     <br><br><br><br>
 
-
+	
 	<div class="container">
+		<!-- Button trigger modal -->
+	
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAdmin">
+			Añadir
+		</button>
+		<div class="modal fade" id="addAdmin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+				<div style="background-color: lightblue; color: #3D384D" class="modal-header">
+				  <h5 class="modal-title" >Añadir Administrador</h5>
+				  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+			  <form action="/addAdministrador/" method="post">
+				  {% csrf_token %}
+				<div class="modal-body">
+
+					<div class="row">
+						<div class="col-md-6 mb-4">
+		
+						  <div class="form-outline">
+							<label class="form-label">Nombres</label>
+
+							<input type="text" name="nombre"  class="form-control form-control-lg" required />
+						  </div>
+		
+						</div>
+						<div class="col-md-6 mb-4">
+		
+						  <div class="form-outline">
+							<label class="form-label">Apellido Paterno</label>
+
+							<input type="text" name="appP" class="form-control form-control-lg" required/>
+						  </div>
+		
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-4">
+		
+								<div class="form-outline">
+									<label class="form-label">Apellido Materno</label>
+
+								  <input type="text" name="appM"  class="form-control form-control-lg" required />
+								</div>
+							</div>
+								<div class="col-md-6 mb-4">
+
+									<div class="form-outline">
+										<label class="form-label">CI</label>
+
+									  <input type="text" name="CiN" class="form-control form-control-lg" required/>
+									</div>
+			  
+							  </div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-4">
+
+								<div class="form-outline">
+									<label class="form-label" >CI extensión</label>
+
+								  <input type="text" placeholder="ej.: LP" name="CiE" class="form-control form-control-lg" required/>
+								</div>
+			  
+							  </div>
+							  <div class="col-md-4 mb-4">
+
+								<div class="form-outline">
+									<label class="form-label">Complemento</label>
+
+								  <input type="text" placeholder="Opcional"  name="ciC" class="form-control form-control-lg"/>
+								</div>
+			  
+							  </div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-4 pb-2">
+								<div class="form-outline">
+									<label class="form-label">Correo</label>
+
+								  <input type="email" name="correo" class="form-control form-control-lg" required/>
+								</div>
+							  </div>
+
+							  <div class="col-md-6 mb-4 pb-2">
+								<div class="form-outline">
+									<label class="form-label">Número de celular</label>
+								  <input type="tel" name="celular" class="form-control form-control-lg" required/>
+								</div>
+							  </div>
+
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-4 pb-2">
+								<label class="form-label">Nombre de Usuario</label>
+								<input type="text" name="admin_user" class="form-control form-control-lg" required>
+
+							</div>
+							<div class="col-md-6 mb-4 pb-2">
+								<label class="form-label">Contraseña</label>
+								<input type="password" name="admin_passw" class="form-control form-control-lg" required>
+
+							</div>
+						</div>
+
+					  
+		
+					  
+		
+						{% comment %} <label >Estado del usuario:</label>
+						<select class="form-control" name="estado">
+							  <option value="Activo" {% if o.estado == "Activo" %} selected {% endif %}>Activo</option>
+							  <option value="Desactivado" {% if o.estado == "Desactivado" %} selected {% endif %} >Desactivado</option>
+						  </select> {% endcomment %}
+					</div>
+
+
+					<div class="row">
+						<label >Rol del empleado:</label>
+						<div class="col-md-6 mb-4">
+							<div class="form-outline">
+							<select class="form-control" name="rol">
+							  <option value="Administrador" >Administrador</option>
+							  <option value="SuperAdministrador">Super Administrador</option>
+							</select>
+						</div>
+					</div>
+						<div class="col-md-6 mb-4">
+							<label style="margin-bottom:-8px">Estado:</label>
+							<div class="form-outline" style="margin-bottom:-8px">
+							<select class="form-control" name="estado" style="margin-bottom:-8px">
+							  <option value="Activo" >Activo</option>
+							  <option value="Inactivo">Inactivo</option>
+							</select>
+						</div>
+					</div>
+							
+					</div>
+
+					
+
+				</div>
+				<div class="modal-footer">
+				  <button style="background-color: #dfe6e6; border: 0px; color: #3D384D" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+				  <button style="background-color: #3D384D; border: 0px" type="submit" class="btn btn-primary">Aceptar</button>
+				</div>
+				  </form>
+			  </div>
+			</div>
+		  </div>
+
+  
+
+	
+  <!-- Modal -->
+  
 		<h4>Administradores:</h4>
 
 		<div class="d-flex justify-content-center row">

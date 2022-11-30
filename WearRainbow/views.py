@@ -6,7 +6,7 @@ from django.db.models import Sum, Count
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from WearRainbow import models
-from WearRainbow.access import keyToken, keyBD
+from WearRainbow.access import keyToken
 from WearRainbow.models import persona, administrador, Producto, Categoria, Talla, TallaDisponible, Departamento, \
     Pedido, ProductosPedido, Pago, PedidoAceptado, PedidoRechazado
 from WearRainbow.models import cliente
@@ -353,6 +353,7 @@ def inicioSesionCliente(request):
 
 
 def inicioSesionAdministrador(request):
+
     x = Fernet(keyToken)
     if request.method == 'POST':
         usuario = request.POST['user']
@@ -363,7 +364,7 @@ def inicioSesionAdministrador(request):
             pass1 = verificar.get_contraseña()
             encrypted_text = x.encrypt(str.encode(str(verificar.get_id_administrador())))
 
-            if usr != usuario or contraseña != pass1 or verificar.estado == "Desactivado":
+            if usr != usuario or contraseña != pass1 :
                 messages.success(request, 'El nombre de usuario o contraseña no es correcto')
                 response = redirect('/SignInAsAdministrator/')
                 return response
@@ -587,6 +588,41 @@ def modificarAcceso(request, id):
 
         response = redirect('/administratorManager/')
         return response
+
+def addAdministrador(request):
+    if request.method =='POST':
+        nombre = request.POST['nombre']
+        apellidoPaterno = request.POST['appP']
+        apellidoMaterno = request.POST['appM']
+        ciNumero = request.POST['CiN']
+        ciExtension = request.POST['CiE']
+        ciComplemento = request.POST['ciC']
+        celular = request.POST['celular']
+        correo = request.POST['correo']
+        user = persona(nombre=nombre, apellidoPaterno=apellidoPaterno, apellidoMaterno=apellidoMaterno,
+                       ciNumero=ciNumero, ciExtension=ciExtension, ciComplemento=ciComplemento, celular=celular,
+                       correo=correo)
+        user.save()
+
+        x = Fernet(keyToken)
+    
+       
+        persona_1 = persona.objects.get(correo=correo)
+        id_persona1 = persona_1.get_id_persona()
+        usuario = request.POST['admin_user']
+        contraseña = request.POST['admin_passw']
+        rol = request.POST['rol']
+        estado = request.POST['estado']
+        encrypted = x.encrypt(str.encode(str(contraseña)))
+        encrypted = encrypted.decode()
+        admin = administrador(id_persona=persona(id_persona1), usuario=usuario, contraseña=encrypted, rol=rol, estado=estado)
+        admin.save()
+        print(keyToken)
+        
+        response = redirect('/administratorManager/')
+        return response
+
+         
 
 
 def registroPedidoRechazado(request, id):

@@ -26,7 +26,7 @@ class administrador(models.Model):
     usuario = models.CharField(max_length=30, null=False)
     contraseña = models.CharField(max_length=30, null=False)
     rol = models.CharField(max_length=30)
-    estado = models.CharField(max_length=30)
+    estado = models.CharField(max_length=110)
     
 
     def get_id_administrador(self):

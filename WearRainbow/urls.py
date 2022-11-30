@@ -62,6 +62,7 @@ urlpatterns = [
     path('registroPedidoRechazado/<id>', views.registroPedidoRechazado, name="registroPedidoRechazado"),
     path('registroPedidoEnviado/<id>', views.registroPedidoEnviado, name="registroPedidoEnviado"),
     path('modificarAcceso/<id>', views.modificarAcceso, name="modificarAcceso"),
+    path('addAdministrador/', views.addAdministrador, name="addAdministrador"),
     path('Logout/', views.Logout, name="Logout"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
