@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime, date
 from idlelib import window
 
@@ -11,9 +12,6 @@ from WearRainbow.models import persona, administrador, Producto, Categoria, Tall
 from WearRainbow.models import cliente
 from django.contrib import messages
 from cryptography.fernet import Fernet
-from django.template.loader import get_template
-from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
 
 def sesiones(request):
     val=''
@@ -111,13 +109,36 @@ def productsAsClient(request):
 
 def SignInAsClient(request):
     val = sesiones(request)
-    return render(request, 'SigninAsClient.html')
+    print(val)
+    if val=='':
+        return render(request, 'SigninAsClient.html')
+    else:
+        return redirect('/')
 
 
 def SignInAsAdministrator(request):
     val = sesiones(request)
-    return render(request, 'SignInAsAdministrator.html')
+    if val == '':
+        return render(request, 'SignInAsAdministrator.html')
+    else:
+        return redirect('/')
 
+
+
+def RegisterClient(request):
+    val = sesiones(request)
+    if val == '':
+        return render(request, 'RegisterClient.html')
+    else:
+        return redirect('/')
+
+def RegisterPerson(request):
+
+    val = sesiones(request)
+    if val == '':
+        return render(request, 'RegisterPerson.html')
+    else:
+        return redirect('/')
 
 def ClientPanel(request):
     val = sesiones(request)
@@ -284,7 +305,7 @@ def registroPersona(request):
         # client = cliente(id_persona=persona(23), usuario='user01', contraseña='pass01')
         # client.save()
 
-        response = render(request, 'RegisterClient.html', {'current_id': user.get_id_persona(),'Sesion': val})
+        response = render(request, 'RegisterClient.html', {'current_id': user.get_id_persona(), 'Sesion': val})
         response.set_cookie('id_persona', user.get_id_persona())
         return response
     else:
@@ -302,33 +323,26 @@ def registroCliente(request):
         client = cliente(id_persona=persona(id_persona), usuario=usuario, contraseña=encrypted)
         client.save()
         print(keyToken)
-        
+
         response = redirect('/SignInAsClient/')
+        response.delete_cookie('id_persona')
         return response
 
 
-
-
 def inicioSesionCliente(request):
-    
-    
     if request.method == 'POST':
-        
         x = Fernet(keyToken)
         usuario = request.POST['user']
         contraseña = request.POST['pass']
-        verificar = cliente.objects.get(usuario=usuario)
-        encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
-        decrypted_password = str(x.decrypt(str(verificar.get_contraseña())), 'utf8')
-        print(decrypted_password)
         try:
             verificar = cliente.objects.get(usuario=usuario)
             encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
+            decrypted_password = str(x.decrypt(str(verificar.get_contraseña())), 'utf8')
+            print(decrypted_password)
+            encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
             usr = verificar.get_usuario()
             pass1 = verificar.get_contraseña()
-            
-            
-            # print('User: ',usr, 'Pass: ', pass1, 'User: ', usuario, 'Pass: ', contraseña)
+            print('User: ',usr, 'Pass: ', pass1, 'User: ', usuario, 'Pass: ', contraseña)
             if usuario != usr or contraseña != decrypted_password:
                 messages.success(request, 'El nombre de usuario o contraseña no es correcto')
                 response = redirect('/SignInAsClient/')
@@ -349,7 +363,7 @@ def inicioSesionCliente(request):
                 return response
         except:
             
-            messages.success(request, 'Puta la wea aes del orto')
+            messages.success(request, 'El nombre de usuario o contraseña no es correctos')
             response = redirect('/SignInAsClient/')
             return response
 
@@ -375,7 +389,6 @@ def inicioSesionAdministrador(request):
             else:
                 print("datos correctos")
                 rol = ''
-
                 if verificar.rol == "SuperAdministrador":
                     rol = 'token_Superadministrador'
                 elif verificar.rol == "Administrador":
@@ -386,9 +399,10 @@ def inicioSesionAdministrador(request):
                 response = redirect('/OrdersAdministrator/')
                 return response
         except:
-            messages.success(request, 'El nombre de usuario o contraseña no es correctosss')
+            messages.success(request, 'El nombre de usuario o contraseña no es correctos')
             response = redirect('/SignInAsAdministrator/')
             return response
+
 
 def registroProducto(request):
     val = sesiones(request)
@@ -539,8 +553,6 @@ def registroPedido(request):
         return response
 
 
-
-
 def registroPago(request, id):
     val = sesiones(request)
     if request.method == 'POST':
@@ -560,7 +572,6 @@ def registroPago(request, id):
 
 def registroPedidoAceptado(request, id):
     val = sesiones(request)
-    
     if request.method == 'POST':
         FechaAceptacion = datetime.now()
 
@@ -576,43 +587,11 @@ def registroPedidoAceptado(request, id):
 
         obj = Pedido.objects.get(id_pedido=id)
         obj.EstadoPedido = "Aceptado sin enviar"
-        print(obj.id_cliente)
-        id_persona_cliente1 = obj.id_cliente_id
-        
-        cliente1 = cliente.objects.get(id_cliente=id_persona_cliente1)
-        id_persona_cliente = cliente1.id_persona_id
-        persona_correo = persona.objects.get(id_persona=id_persona_cliente) 
-        #persona = persona.objects.get(id_persona=id_cliente_persona)
-        correo = str(persona_correo.correo)
         obj.save()
-        pedido = Pedido.objects.get(id_pedido=id)
-        productos = ProductosPedido.objects.filter(id_pedido=id)
-        data = {}
-        data["pedido"] = pedido
-        data["productos"] = productos
-        contexto ={'pedido':data['pedido'],'productos':data['productos']}
-        sendEmail(correo,contexto)
 
         response = redirect('/OrdersAdministrator/')
         return response
 
-def sendEmail(mail,contexto):
-    template = get_template('correo.html')
-    content = template.render(contexto)
-    
-    email = EmailMultiAlternatives(
-        'Pedido Aceptado',
-        'Su pedido ha sido aceptado!',
-        settings.EMAIL_HOST_USER,
-        [mail]
-    )
-    email.attach_alternative(content, 'text/html')
-    email.send()
-    return redirect('/OrdersAdministrator/')
-
-
-
-    
 
 def modificarAcceso(request, id):
     val = sesiones(request)
@@ -872,9 +851,12 @@ def ViewProduct(request, id):
 
 def administratorManager(request):
     val = sesiones(request)
-    AdministratorsList = administrador.objects.all()
-    print(AdministratorsList[0].rol)
-    return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList,'Sesion': val})
+    if val=='SuperAdministrador':
+        AdministratorsList = administrador.objects.all()
+        print(AdministratorsList[0].rol)
+        return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList,'Sesion': val})
+    else:
+        return redirect('/')
 
 
 def dashboard(request):
