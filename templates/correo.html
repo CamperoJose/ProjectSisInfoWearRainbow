@@ -1,0 +1,48 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Tu pedido con ID: {{pedido.id_pedido}} ha sido aceptado!</h1>
+    <h2>Detalles del pedido:</h2>
+    <p>Dirección de envío: {{pedido.direccion}}</p>
+    <p>Zona: {{pedido.zona}}</p>
+    <h4 class="invoice-color mb-2 mt-md-2">Productos comprados:</h4>
+
+                    <div class="table-responsive">
+                        <table class="table table-lg">
+                            <thead>
+                                <tr>
+                                    <th>Img</th>
+                                    <th>Id Producto</th>
+                                    <th>Nombre Producto</th>
+                                    <th>Talla</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for p in productos %}
+                                <tr>
+                                    <td><img style="height: 70px; border-radius: 5px" src="{{p.id_tallaDisponible.id_producto.img.url}}" alt=""></td>
+                                    <td>{{p.id_tallaDisponible.id_producto.id_producto}}</td>
+                                    <td>{{p.id_tallaDisponible.id_producto.nombre}}</td>
+                                    <td>{{p.id_tallaDisponible.id_talla.talla}}</td>
+                                    <td>{{p.id_tallaDisponible.id_producto.precio}}Bs.-</td>
+                                    <td>{{p.cantidad}}</td>
+                                    <td>{{p.get_subtotal}}Bs.-</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+ 
+
+</body>
+</html>

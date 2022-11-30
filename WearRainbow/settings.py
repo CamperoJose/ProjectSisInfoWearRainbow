@@ -140,5 +140,12 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'WearRainbow/static'),)
 
+# Static consts for email
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'sergio.guachalla@ucb.edu.bo'
+EMAIL_HOST_PASSWORD = 'tjewilsmhgcpihre'
+EMAIL_USE_TLS = True
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
