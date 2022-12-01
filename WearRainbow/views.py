@@ -34,20 +34,28 @@ def paginaIndex(request):
 
 def PaymentDetails01(request, id):
     val = sesiones(request)
-    pedido = Pedido.objects.get(id_pedido=id)
-    return render(request, 'PaymentDetails01.html', {"pedido": pedido, 'Sesion': val})
-
+    if val == 'Cliente':
+        pedido = Pedido.objects.get(id_pedido=id)
+        return render(request, 'PaymentDetails01.html', {"pedido": pedido, 'Sesion': val})
+    else:
+        return redirect('/')
 
 def PaymentDetails02(request, id):
     val = sesiones(request)
-    pedido = Pedido.objects.get(id_pedido=id)
-    return render(request, 'PaymentDetails02.html', {"pedido": pedido, 'Sesion': val})
+    if val == 'Cliente':
+        pedido = Pedido.objects.get(id_pedido=id)
+        return render(request, 'PaymentDetails02.html', {"pedido": pedido, 'Sesion': val})
+    else:
+        return redirect('/')
 
 
 def PaymentDetails03(request, id):
     val = sesiones(request)
-    pedido = Pedido.objects.get(id_pedido=id)
-    return render(request, 'PaymentDetails03.html', {"pedido": pedido, 'Sesion': val})
+    if val == 'Cliente':
+        pedido = Pedido.objects.get(id_pedido=id)
+        return render(request, 'PaymentDetails03.html', {"pedido": pedido, 'Sesion': val})
+    else:
+        return redirect('/')
 
 
 def OrdersAsClient(request):
@@ -79,7 +87,6 @@ def DetallePedidio(request, id):
             data["rechazo"] = PedidoRechazado.objects.get(id_pedido=id)
         elif pedido.EstadoPedido != "En Espera":
             data["aceptado"] = PedidoAceptado.objects.get(id_pedido=id)
-        print(data["aceptado"].FechaAceptacion)
 
         data["Sesion"] = val
         return render(request, 'DetallePedidio.html', data)
@@ -88,11 +95,38 @@ def DetallePedidio(request, id):
 
 def DetallePedidoCliente(request, id):
     val = sesiones(request)
-    pedido = Pedido.objects.get(id_pedido=id)
-    productos = ProductosPedido.objects.filter(id_pedido=id)
+    if val == 'Cliente':
 
-    return render(request, 'DetallePedidoCliente.html',
-                  {"pedido": pedido, "productos": productos, 'Sesion': val})
+        x = Fernet(keyToken)
+        id_cliente = str(x.decrypt(request.session.get('token_cliente')), 'utf8')
+
+        pedido = Pedido.objects.get(id_pedido=id)
+
+        id_clientePedido=pedido.id_cliente.id_cliente
+
+        if str(id_clientePedido)==str(id_cliente):
+
+            productos = ProductosPedido.objects.filter(id_pedido=id)
+            pago = Pago.objects.filter(id_pedido=id).exists()
+            data=dict()
+            data['pedido']=pedido
+            data['productos'] = productos
+            data['Sesion'] = val
+
+            if pago==True:
+                pagoDetails = Pago.objects.get(id_pedido=id)
+                data['pagoDetails'] = pagoDetails
+
+            if pedido.EstadoPedido == "Rechazado":
+                data["rechazo"] = PedidoRechazado.objects.get(id_pedido=id)
+            elif pedido.EstadoPedido != "En Espera":
+                data["aceptado"] = PedidoAceptado.objects.get(id_pedido=id)
+
+            return render(request, 'DetallePedidoCliente.html',data)
+        else:
+            return redirect('/')
+    else:
+        return redirect('/SignInAsClient')
 
 
 def Carrito(request):
@@ -141,7 +175,7 @@ def ClientPanel(request):
 def OrdersAdministrator(request):
     val = sesiones(request)
     if request.session.get('token_administrador') or request.session.get('token_Superadministrador'):
-        OrdersList = Pedido.objects.all()
+        OrdersList = reversed(Pedido.objects.all())
         return render(request, 'OrdersAdministrator.html', {'OrdersList': OrdersList, 'Sesion': val})
     # OrdersList = Pedido.objects.all()
     # return render(request, 'OrdersAdministrator.html',{'OrdersList': OrdersList})
@@ -151,20 +185,23 @@ def OrdersAdministrator(request):
 
 def PedidosSeleccionados(request):
     val = sesiones(request)
-    if request.method == 'POST':
-        cat = request.POST['cat']
-        if cat == "op01":
-            OrdersList = Pedido.objects.all()
-        elif cat == "op02":
-            OrdersList = Pedido.objects.filter(EstadoPedido="En Espera")
-        elif cat == "op03":
-            OrdersList = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar")
-        elif cat == "op04":
-            OrdersList = Pedido.objects.filter(EstadoPedido="Aceptado y enviado")
-        else:
-            OrdersList = Pedido.objects.filter(EstadoPedido="Rechazado")
+    if request.session.get('token_administrador') or request.session.get('token_Superadministrador'):
+        if request.method == 'POST':
+            cat = request.POST['cat']
+            if cat == "op01":
+                OrdersList = reversed(Pedido.objects.all())
+            elif cat == "op02":
+                OrdersList = reversed(Pedido.objects.filter(EstadoPedido="En Espera"))
+            elif cat == "op03":
+                OrdersList = reversed(Pedido.objects.filter(EstadoPedido="Aceptado sin enviar"))
+            elif cat == "op04":
+                OrdersList = reversed(Pedido.objects.filter(EstadoPedido="Aceptado y enviado"))
+            else:
+                OrdersList = reversed(Pedido.objects.filter(EstadoPedido="Rechazado"))
 
-        return render(request, 'OrdersAdministrator.html', {'OrdersList': OrdersList, 'Sesion': val})
+            return render(request, 'OrdersAdministrator.html', {'OrdersList': OrdersList, 'Sesion': val})
+    else:
+        return redirect('/SignInAsAdministrator')
 
 
 def CategoriesAdministrator(request):
@@ -190,7 +227,7 @@ def SizesAdministrator(request):
 
 def ModifyProduct(request, id):
     val = sesiones(request)
-    if request.session.get('token_administrador') or request.session.get('token_Superadministrador'):
+    if val=='Administrador' or val=='Superadministrador':
         producto = Producto.objects.get(id_producto=id)
         CategoriaListado = Categoria.objects.all()
         TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
@@ -208,7 +245,7 @@ def ModifyProduct(request, id):
 # no funciona
 def ViewProduct(request, id):
     val = sesiones(request)
-    if request.session.get('token_administrador') or request.session.get('token_Superadministrador'):
+    if val=='Administrador' or val=='Superadministrador':
         producto = Producto.objects.get(id_producto=id)
         CategoriaListado = Categoria.objects.all()
         TallaDisponibleListado = TallaDisponible.objects.filter(id_producto=id)
@@ -232,8 +269,6 @@ def ViewProduct(request, id):
     # return render(request, 'PreviewProductAsAdministrator.html',
     #               {"producto": producto, "categoria": CategoriaListado, "talla": tallaListado,
     #                "tallaDisponibles": TallaDisponibleListado})
-    elif request.session.get('token_cliente'):
-        print("no entro")
     else:
         return redirect('/SignInAsAdministrator')
 
@@ -254,9 +289,12 @@ def ViewProductClient(request, id):
 
 def ProductsAdministrator(request):
     val = sesiones(request)
-    productoListado = Producto.objects.all()
-    return render(request, 'ProductsAdministrator.html', {"producto": productoListado, 'Sesion': val})
+    if val == 'Administrador' or val == 'Superadministrador':
 
+        productoListado = Producto.objects.all()
+        return render(request, 'ProductsAdministrator.html', {"producto": productoListado, 'Sesion': val})
+    else:
+        return redirect('/SignInAsAdministrator')
 
 def AddNewProduct(request):
     val = sesiones(request)
@@ -831,38 +869,39 @@ def Carrito(request):
 
 def OrderForm(request):
     val = sesiones(request)
-    TallasDisp = TallaDisponible.objects.all()
-    catidadTallas = TallaDisponible.objects.count()
-    producto = Producto.objects.all()
+    if val == 'Cliente':
+        TallasDisp = TallaDisponible.objects.all()
+        catidadTallas = TallaDisponible.objects.count()
+        producto = Producto.objects.all()
+        datos = dict()
+        listaProductos = []
+        subTotal = 0
 
-    datos = dict()
-    listaProductos = []
-    subTotal = 0
+        for i in range(catidadTallas):
+            text = TallasDisp[i].get_id_tallaCART()
+            if text in request.COOKIES:
+                valor = request.COOKIES[text]
+                text2 = int(text.replace('id', ''))
+                varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
+                precioU = (Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
+                listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor,
+                                       Talla.objects.get(id_talla=varProd.id_talla.id_talla), float(valor) * precioU])
 
-    for i in range(catidadTallas):
-        text = TallasDisp[i].get_id_tallaCART()
-        if text in request.COOKIES:
-            valor = request.COOKIES[text]
-            text2 = int(text.replace('id', ''))
-            varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
-            precioU = (Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
-            listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor,
-                                   Talla.objects.get(id_talla=varProd.id_talla.id_talla), float(valor) * precioU])
+                subTotal += float(valor) * precioU
+                # print(varProd.varProd.)
+                # datos[text] = varProd.id_producto
+                # lista.append(varProd)
 
-            subTotal += float(valor) * precioU
+            # producto = Producto.objects.get(id_producto=text)
+            # datos['tallas']=lista
+        datos['productos'] = [listaProductos]
+        datos['departamentos'] = Departamento.objects.all()
+        datos['Sesion'] = val
 
-            # print(varProd.varProd.)
-            # datos[text] = varProd.id_producto
-            # lista.append(varProd)
-
-        # producto = Producto.objects.get(id_producto=text)
-        # datos['tallas']=lista
-    datos['productos'] = [listaProductos]
-    datos['departamentos'] = Departamento.objects.all()
-    datos['Sesion'] = val
-
-    messages.success(request, subTotal)
-    return render(request, 'OrderForm.html', datos)
+        messages.success(request, subTotal)
+        return render(request, 'OrderForm.html', datos)
+    else:
+        return redirect('/')
 
 
 def ViewProduct(request, id):

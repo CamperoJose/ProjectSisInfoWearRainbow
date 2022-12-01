@@ -65,7 +65,7 @@
                 </div>
                 {% if messages %}
                 {% for msg in messages %}
-                    <h4 style="text-align: right; padding-right: 30px" class="fw-normal mb-0 text-black">Total: {{msg}}Bs.-</h4>
+                    <h4 style="text-align: right; padding-right: 30px" class="fw-normal mb-0 text-black">Subtotal de productos: {{msg}}Bs.-</h4>
                 {% endfor %}
                 {% endif %}
 
@@ -90,18 +90,18 @@
                             {% csrf_token %}
                                 <div class="row justify-content-center">
                                     <div class="col-lg-7 col-md-6 col-sm-12">
-                                        <div class="form-group"><label>Direccion</label><input type="text" class="form-control" name="direccion"> </div>
-                                        <div class="form-group"> <label >Zona</label> <input type="text" class="form-control" name="zona">  </div>
+                                        <div class="form-group"><label>Direccion</label><input type="text" class="form-control" name="direccion" required> </div>
+                                        <div class="form-group"> <label >Zona</label> <input type="text" class="form-control" name="zona" required>  </div>
                                         <div class="form-group"> <label>Departamento</label>
                                             <select class="form-control" name="dep">
                                                 {% for c in departamentos %}
-                                                    <option value="{{c.id_departamento}}" > {{c.Departamento}} (Costo de envio: {{c.precio}}Bs.-)</option>
+                                                    <option value="{{c.id_departamento}}" > {{c.Departamento}} (Costo extra de envio: {{c.precio}}Bs.-)</option>
                                                 {% endfor%}
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 col-sm-12">
-                                        <div class="form-group"> <label >Apartamento</label>  <input type="text" class="form-control" name="apartamento"> </div>
+                                        <div class="form-group"> <label >Apartamento</label>  <input type="text" class="form-control" name="apartamento" required> </div>
                                     </div>
                                 </div>
 

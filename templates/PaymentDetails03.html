@@ -15,7 +15,7 @@
 <body>
 
 	<main>
-        <br>
+        <br><br><br><br>
         <section class="about section-padding" id="about">
 			<div class="container">
 				<h4 align="center" style="font-weight: bold;">PAGO CON TRANSFERENCIA O DEPÓSITO BANCARIO PARA PEDIDO #{{pedido.id_pedido}} </h4>
@@ -41,7 +41,7 @@
                                         <label class="my-auto"><b>Banco Proveniente</b></label><input type="text" class="form-control" name="banco" required> </div>
                                     <div class="form-group files">
                                         <label class="my-auto"><b>Subir comprobante</b></label>
-                                        <input name="img" type="file" class="form-control" />
+                                        <input name="img" type="file" class="form-control" required/>
                                     </div>
                                     <!-- <button style="background-color: #F2727D" class="btn btn-block text-white btn-md"><b>Subir comprobante</b></button> -->
                                     <br>
@@ -71,38 +71,6 @@
 	</main>
     <br>
     <!-- FOOTERt -->
-    <footer class="text-center text-white" style="background-color: #3D384D;">
-        <!-- Grid container -->
-        <div class="container pt-4">
-            <!-- Section: Social media -->
-            <section class="mb-4">
-
-                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="https://www.whatsapp.com"
-                    target="_blank" role="button">
-                    <img style="height: 35px;" src="{% static 'MEDIA/icono01.png' %}" alt="">
-                </a>
-
-
-                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="https://www.facebook.com" role="button"
-                    target="_blank">
-                    <img style="height: 35px;" src="{% static 'MEDIA/icono02.png' %}" alt="">
-                </a>
-
-
-                <a class="btn btn-link btn-floating btn-lg text-dark m-1" href="https://www.instagram.com" role="button"
-                    target="_blank">
-                    <img style="height: 35px;" src="{% static 'MEDIA/icono03.png' %}" alt="">
-                </a>
-                <!-- Section: Social media -->
-        </div>
-        <!-- Grid container -->
-        <!-- Copyright -->
-        <div class="text-center text-light p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-            © 2022 Copyright:
-            <a class="text-light" href="./index.html">WEAR RAINBOW</a>
-        </div>
-        <!-- Copyright -->
-    </footer>
 
 	<!-- All Js -->
 
