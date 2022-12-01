@@ -990,8 +990,7 @@ def dashboard(request):
 
         ######################  total ventas ultimo mes:
         fecha = date.today()
-        print(Pedido.objects.get(id_pedido=7).FechaPedido.month)
-        print(fecha.month)
+
         totalVentas = Pedido.objects.filter(FechaPedido__month=fecha.month, EstadoPedido="Aceptado sin enviar").aggregate(
             Sum("TotalPagar"))
         totalVentas2 = Pedido.objects.filter(FechaPedido__month=fecha.month, EstadoPedido="Aceptado y enviado").aggregate(
