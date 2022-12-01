@@ -64,24 +64,27 @@ def OrdersAsClient(request):
 
 def DetallePedidio(request, id):
     val = sesiones(request)
-    pedido = Pedido.objects.get(id_pedido=id)
-    productos = ProductosPedido.objects.filter(id_pedido=id)
-    pago = Pago.objects.filter(id_pedido=id).exists()
-    data = dict()
-    data["pedido"] = pedido
-    data["productos"] = productos
-    if pago == True:
-        pagoDetails = Pago.objects.get(id_pedido=id)
-        data["pagoDetails"] = pagoDetails
+    if val == 'Administrador' or val == 'Superadministrador':
+        pedido = Pedido.objects.get(id_pedido=id)
+        productos = ProductosPedido.objects.filter(id_pedido=id)
+        pago = Pago.objects.filter(id_pedido=id).exists()
+        data = dict()
+        data["pedido"] = pedido
+        data["productos"] = productos
+        if pago == True:
+            pagoDetails = Pago.objects.get(id_pedido=id)
+            data["pagoDetails"] = pagoDetails
 
-    if pedido.EstadoPedido == "Rechazado":
-        data["rechazo"] = PedidoRechazado.objects.get(id_pedido=id)
-    elif pedido.EstadoPedido != "En Espera":
-        data["aceptado"] = PedidoAceptado.objects.get(id_pedido=id)
+        if pedido.EstadoPedido == "Rechazado":
+            data["rechazo"] = PedidoRechazado.objects.get(id_pedido=id)
+        elif pedido.EstadoPedido != "En Espera":
+            data["aceptado"] = PedidoAceptado.objects.get(id_pedido=id)
+        print(data["aceptado"].FechaAceptacion)
 
-    data["Sesion"] = val
-    return render(request, 'DetallePedidio.html', data)
-
+        data["Sesion"] = val
+        return render(request, 'DetallePedidio.html', data)
+    else:
+        return redirect('/')
 
 def DetallePedidoCliente(request, id):
     val = sesiones(request)
@@ -112,12 +115,18 @@ def productsAsClient(request):
 
 def SignInAsClient(request):
     val = sesiones(request)
-    return render(request, 'SigninAsClient.html')
+    if val == '':
+      return render(request, 'SigninAsClient.html')
+    else:
+        return redirect('/')
 
 
 def SignInAsAdministrator(request):
     val = sesiones(request)
-    return render(request, 'SignInAsAdministrator.html')
+    if val=='':
+        return render(request, 'SignInAsAdministrator.html')
+    else:
+        return redirect('/')
 
 
 def ClientPanel(request):
@@ -427,16 +436,27 @@ def registroCategoria(request):
     val = sesiones(request)
     if request.method == 'POST':
         # ParaRegistro de categoria:
-
         categoria = request.POST['nombre']
-        id = request.POST['id']
-        if id == '':
-            obj = Categoria(categoria=categoria)
-            obj.save()
+
+        obj = Categoria(categoria=categoria)
+        obj.save()
+        '''
         else:
             obj = Categoria.objects.get(id_categoria=id)
             obj.categoria = categoria
             obj.save()
+        '''
+
+        response = redirect('/CategoriesAdministrator/')
+        return response
+
+def modificarCategoria(request, id):
+    val = sesiones(request)
+    if request.method == 'POST':
+        categoria = request.POST['nombre']
+        obj = Categoria.objects.get(id_categoria=id)
+        obj.categoria=categoria
+        obj.save()
 
         response = redirect('/CategoriesAdministrator/')
         return response
@@ -864,9 +884,13 @@ def ViewProduct(request, id):
 
 def administratorManager(request):
     val = sesiones(request)
-    AdministratorsList = administrador.objects.all()
-    print(AdministratorsList[0].rol)
-    return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList, 'Sesion': val})
+    if val=='Superadministrador':
+        AdministratorsList = administrador.objects.all()
+        print(AdministratorsList[0].rol)
+        return render(request, 'administratorManager.html', {'AdministratorsList': AdministratorsList, 'Sesion': val})
+    else:
+        return redirect('/')
+
 
 
 def dashboard(request):
@@ -934,8 +958,6 @@ def dashboard(request):
     data['Sesion'] = val
 
     return render(request, 'dashboard.html', data)
-
-
 def Logout(request):
     request.session.flush()
     if request.session.session_key is not None:

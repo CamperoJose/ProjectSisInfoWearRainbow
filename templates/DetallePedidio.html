@@ -58,7 +58,7 @@
                                             <li style="font-weight: bold">Fecha Pedido:  <span style="font-weight: lighter">{{pedido.FechaPedido}}</span></li>
 
                                             {% if pedido.EstadoPedido == "Aceptado sin enviar"%}
-                                            <li style="font-weight: bold">Fecha Pedido aceptado:  <span style="font-weight: lighter">{{pedido.FechaAceptacion}}</span></li>
+                                            <li style="font-weight: bold">Fecha Pedido aceptado:  <span style="font-weight: lighter">{{aceptado.FechaAceptacion}}</span></li>
                                             {% endif %}
 
                                             {% if pedido.EstadoPedido == "Aceptado y enviado"%}

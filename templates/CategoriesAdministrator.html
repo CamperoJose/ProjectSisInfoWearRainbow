@@ -20,17 +20,13 @@
 
 	<div class="container">
 		<div class="row">
-    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-5">
+    <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5">
 
-        <h1>Adicionar o Modificar Categoría</h1>
+        <h1>Adicionar Categoría</h1>
         <div class="card">
             <div class="card-body">
                 <form action="/registroCategoria/" method="POST">{% csrf_token %}
 
-                    <div class="form-group">
-                        <input type="text"  name="id" class="form-control" placeholder="Id categoria (llenar solo para modificar)"
-                            maxlength="30" >
-                    </div>
                     <br>
                     <div class="form-group">
                         <input type="text"  name="nombre" class="form-control" placeholder="Nombre"
@@ -45,23 +41,54 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-12 col-md-6 col-lg-5 col-xl-7">
+    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-7">
         <h1>Listado de Categorías</h1>
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr style="color: #679FBF; ">
-                        <th style="text-align: center">Id Categoría</th>
                         <th style="text-align: center">Nombre categoría</th>
                         <th style="text-align: center" >Cantidad de productos</th>
+                        <th style="text-align: center" >Modificar</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for c in categoria %}
                     <tr>
-                        <td style="text-align: center; font-weight: bold" >{{c.id_categoria}}</td>
                         <td style="text-align: left; padding-left: 8%">{{c.categoria}}</td>
                         <td style="text-align: center">{{c.get_total_products}} productos</td>
+                        <td style="text-align: center; padding-right: 2%"><button style="background-color: white; border: 0px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dsa{{c.id_categoria}}" data-bs-whatever="@mdo"><img style="height: 25px" src="{% static 'MEDIA/icono05.png' %}" alt=""></button></td>
+
+									<div class="modal fade" id="dsa{{c.id_categoria}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+										<div class="modal-content">
+										  <div style="background-color: lightblue; color: #3D384D" class="modal-header">
+											<h5 class="modal-title" >Modificar actual categoria: {{c.categoria}} </h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										  </div>
+										<form action="/modificarCategoria/{{c.id_categoria}}" method="post">
+                                            {% csrf_token %}
+										  <div class="modal-body">
+
+											  <div class="form-group">
+                                                    <input type="text"  name="nombre" class="form-control" value="{{c.categoria}}"
+                                                        maxlength="30" required>
+                                              </div>
+
+											  <div class="mb-3">
+												  <input type="checkbox" name="conf"  required>
+												  <label>Confirmar cambios.</label><br>
+											  </div>
+
+										  </div>
+										  <div class="modal-footer">
+											<button style="background-color: #dfe6e6; border: 0px; color: #3D384D" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+											<button style="background-color: #3D384D; border: 0px" type="submit" class="btn btn-primary">Aceptar</button>
+										  </div>
+											</form>
+										</div>
+									  </div>
+									</div>
                     </tr>
                     {% endfor %}
                 </tbody>

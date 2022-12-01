@@ -204,6 +204,9 @@ class ProductosPedido(models.Model):
     id_pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     id_tallaDisponible = models.ForeignKey(TallaDisponible, on_delete=models.CASCADE)
 
+    def get_subtotal(self):
+        return round(self.cantidad*self.id_tallaDisponible.id_producto.precio, 2)
+
 
 
 class Pago(models.Model):
