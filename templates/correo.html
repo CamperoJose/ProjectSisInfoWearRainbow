@@ -1,25 +1,39 @@
 {%load static%}
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        table, td, th {
+          border: 1px solid;
+        }
+
+        table {
+          border-collapse: collapse;
+        }
+    </style>
+
 </head>
 <body>
-    <h1>Tu pedido con ID: {{pedido.id_pedido}} ha sido aceptado!</h1>
-    <h2>Detalles del pedido:</h2>
-    <p>Dirección de envío: {{pedido.direccion}}</p>
-    <p>Zona: {{pedido.zona}}</p>
-    <h4 class="invoice-color mb-2 mt-md-2">Productos comprados:</h4>
+    <center>
+         <h2 style="color: #F2727D">WEAR RAINBOW</h2>
+    </center>
+    <h2>Hola {{pedido.id_cliente.id_persona.nombre}}, tu pedido con ID: {{pedido.id_pedido}} ha sido aceptado!</h2>
+    <h4>Detalles del pedido:</h4>
+    <p>Dirección de envío: {{pedido.Direccion}}</p>
+    <p>Zona: {{pedido.Zona}}</p>
+    <p>Apartamento: {{pedido.Apartamento}}</p>
+    <br>
+    <p>Departamento destino: {{pedido.id_departamento.Departamento}}</p>
+    <h4 class="invoice-color mb-2 mt-md-2">Productos pedidos:</h4>
 
                     <div class="table-responsive">
                         <table class="table table-lg">
                             <thead>
                                 <tr>
-                                    <th>Img</th>
-                                    <th>Id Producto</th>
                                     <th>Nombre Producto</th>
                                     <th>Talla</th>
                                     <th>Precio</th>
@@ -29,9 +43,8 @@
                             </thead>
                             <tbody>
                             {% for p in productos %}
-                                <tr>
-                                    <td><img style="height: 70px; border-radius: 5px" src="{{p.id_tallaDisponible.id_producto.img.url}}" alt=""></td>
-                                    <td>{{p.id_tallaDisponible.id_producto.id_producto}}</td>
+                                <tr style="align-items: center">
+
                                     <td>{{p.id_tallaDisponible.id_producto.nombre}}</td>
                                     <td>{{p.id_tallaDisponible.id_talla.talla}}</td>
                                     <td>{{p.id_tallaDisponible.id_producto.precio}}Bs.-</td>
@@ -42,7 +55,28 @@
                             </tbody>
                         </table>
                     </div>
- 
+
+                <div class="pt-2 mb-3 wmin-md-400 ml-auto">
+                                <h4 class="mb-3 text-left">Total a pagar:</h4>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <th class="text-left">Subtotal:</th>
+                                                <td class="text-right">{{Sub}}Bs.-</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-left">Envío: </th>
+                                                <td class="text-right">{{pedido.get_envio}}Bs.-</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-left">Total:</th>
+                                                <td style="font-weight: bolder"><h5>{{pedido.TotalPagar}}Bs.-</h5></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
 
 </body>
 </html>

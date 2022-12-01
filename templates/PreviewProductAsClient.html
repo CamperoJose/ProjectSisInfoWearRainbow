@@ -13,7 +13,7 @@
 </head>
 <body>
 =
-    <br><br><br><br><br>
+    <br><br><br>
 	<div class="col-md-8 col-lg-6 col-xl-4 offset-md-1">
         <div class="text-center text-lg-start mt-4 pt-2">
 			<a href="{% url 'productsAsClient' %}">
@@ -21,9 +21,9 @@
 				Volver</button></a>
         </div>
     </div>
+<br>
 
 
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
 <div class="container">
     <div class="card">
@@ -32,7 +32,7 @@
 
             <div class="row">
                 <div class="col-lg-5 col-md-7 col-sm-7">
-                    <div class="white-box text-center"><img style="border-radius: 15px" src={{producto.img.url}} class="img-responsive"></div>
+                    <div class="white-box text-center"><img style="border-radius: 15px; width: 100%" src={{producto.img.url}} class="img-responsive"></div>
                 </div>
                 <div class="col-lg-7 col-md-7 col-sm-6">
                     <h3 class="box-title mt-5">Descripción del producto</h3>

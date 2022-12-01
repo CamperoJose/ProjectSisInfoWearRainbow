@@ -36,7 +36,7 @@ def PaymentDetails01(request, id):
     val = sesiones(request)
     if val == 'Cliente':
         pedido = Pedido.objects.get(id_pedido=id)
-        return render(request, 'PaymentDetails01.html', {"pedido": pedido, 'Sesion': val})
+        return render(request, 'PaymentDetails01.html', {"pedido": pedido, 'Sub': round((float(pedido.TotalPagar)-float(pedido.id_departamento.precio)),2), 'Sesion': val})
     else:
         return redirect('/')
 
@@ -89,6 +89,8 @@ def DetallePedidio(request, id):
             data["aceptado"] = PedidoAceptado.objects.get(id_pedido=id)
 
         data["Sesion"] = val
+        data["Sub"] = round((float(pedido.TotalPagar)-float(pedido.id_departamento.precio)),2)
+
         return render(request, 'DetallePedidio.html', data)
     else:
         return redirect('/')
@@ -112,6 +114,7 @@ def DetallePedidoCliente(request, id):
             data['pedido']=pedido
             data['productos'] = productos
             data['Sesion'] = val
+            data["Sub"] = round((float(pedido.TotalPagar)-float(pedido.id_departamento.precio)),2)
 
             if pago==True:
                 pagoDetails = Pago.objects.get(id_pedido=id)
@@ -393,7 +396,7 @@ def inicioSesionCliente(request):
                 return response
         except:
 
-            messages.success(request, 'Puta la wea aes del orto')
+            messages.success(request, 'El nombre de usuario o contraseña no es correcto')
             response = redirect('/SignInAsClient/')
             return response
 
@@ -504,34 +507,43 @@ def registroTalla(request):
     val = sesiones(request)
     if request.method == 'POST':
         # ParaRegistro de talla:
-
         talla = request.POST['nombre']
         largoEspalda = request.POST['size1']
         contornoPecho = request.POST['size2']
         contornoCuello = request.POST['size3']
-        id = request.POST['id']
-        if id == '':
-            obj = Talla(talla=talla, largoEspalda=largoEspalda, contornoPecho=contornoPecho,
-                        contornoCuello=contornoCuello)
-            obj.save()
 
-            productos = Producto.objects.all()
+        obj = Talla(talla=talla, largoEspalda=largoEspalda, contornoPecho=contornoPecho,
+                    contornoCuello=contornoCuello)
+        obj.save()
 
-            for i in productos:
-                obj2 = TallaDisponible(stock=0, id_producto=Producto(i.id_producto), id_talla=Talla(obj.get_id_talla()))
-                obj2.save()
+        productos = Producto.objects.all()
 
-        else:
-            obj = Talla.objects.get(id_talla=id)
-            if talla != '':
-                obj.talla = talla
-            if largoEspalda != '':
-                obj.largoEspalda = int(largoEspalda)
-            if contornoPecho != '':
-                obj.contornoPecho = int(contornoPecho)
-            if contornoCuello != '':
-                obj.contornoCuello = int(contornoCuello)
-            obj.save()
+        for i in productos:
+            obj2 = TallaDisponible(stock=0, id_producto=Producto(i.id_producto), id_talla=Talla(obj.get_id_talla()))
+            obj2.save()
+
+        response = redirect('/SizesAdministrator/')
+        return response
+
+
+def modificarTalla(request, id):
+    val = sesiones(request)
+    if request.method == 'POST':
+        talla = request.POST['nombre']
+        largoEspalda = request.POST['size1']
+        contornoPecho = request.POST['size2']
+        contornoCuello = request.POST['size3']
+
+        obj = Talla.objects.get(id_talla=id)
+        if talla != '':
+            obj.talla = talla
+        if largoEspalda != '':
+            obj.largoEspalda = int(largoEspalda)
+        if contornoPecho != '':
+            obj.contornoPecho = int(contornoPecho)
+        if contornoCuello != '':
+            obj.contornoCuello = int(contornoCuello)
+        obj.save()
 
         response = redirect('/SizesAdministrator/')
         return response
@@ -566,6 +578,8 @@ def registroPedido(request):
                 precioU = (Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
                 TotalPagar += float(cantidad) * precioU
                 listaProductos.append([text2, cantidad])
+
+        TotalPagar+=float((Departamento.objects.get(id_departamento=dep)).precio)
 
         obj = Pedido(TotalPagar=TotalPagar, Direccion=Direccion, Zona=Zona, Apartamento=Apartamento,
                      EstadoPedido=EstadoPedido, FechaPedido=FechaPedido, id_departamento=Departamento(dep),
@@ -641,7 +655,8 @@ def registroPedidoAceptado(request, id):
         data = {}
         data["pedido"] = pedido
         data["productos"] = productos
-        contexto = {'pedido': data['pedido'], 'productos': data['productos']}
+        print(data["pedido"])
+        contexto = {'pedido': data['pedido'], 'productos': data['productos'],'Sub': round((float(pedido.TotalPagar)-float(pedido.id_departamento.precio)),2)}
         sendEmail(correo, contexto)
 
         response = redirect('/OrdersAdministrator/')
@@ -803,22 +818,49 @@ def modificarProducto(request):
 
 def addCart(request, id):
     val = sesiones(request)
-    if request.method == 'POST':
-        # Para Modificacion de producto:
+    if val=='Cliente':
+        if request.method == 'POST':
+            # Para Modificacion de producto:
+            Tallas = TallaDisponible.objects.all()
+            catidadTallas = TallaDisponible.objects.count()
+
+            response = redirect('/productsAsClient/')
+            for i in range(catidadTallas):
+                text = Tallas[i].get_id_tallaCART()
+                if Tallas[i].stock > 0 and str(Tallas[i].id_producto.id_producto) == id:
+                    quantity = request.POST[str(text)]
+                    if int(quantity) > 0:
+                        if str(text) in request.COOKIES:
+                            cantidad1=quantity
+                            cantidad2=request.COOKIES[str(text)]
+                            valor=int(cantidad1)+int(cantidad2)
+                            if valor<=Tallas[i].stock:
+                                response.set_cookie(text, str(valor))
+
+                        else:
+                            response.set_cookie(text, quantity)
+
+
+            return response
+    else:
+        return redirect('/SignInAsClient')
+
+def deleteItem(request, id):
+    val = sesiones(request)
+    if val=='Cliente':
         Tallas = TallaDisponible.objects.all()
         catidadTallas = TallaDisponible.objects.count()
 
-        response = redirect('/productsAsClient/')
+        response = redirect('/Carrito/')
         for i in range(catidadTallas):
             text = Tallas[i].get_id_tallaCART()
-            if Tallas[i].stock > 0 and str(Tallas[i].id_producto.id_producto) == id:
-                quantity = request.POST[str(text)]
-                if int(quantity) > 0:
-                    response.set_cookie(text, quantity)
-
-                if str(text) in request.COOKIES and int(quantity) <= 0:
-                    response.delete_cookie(str(text))
+            print(text)
+            print(id)
+            if str(text) in request.COOKIES and str(text) == id:
+                response.delete_cookie(str(text))
         return response
+    else:
+        return redirect('/SignInAsClient')
 
 
 def contacts(request):
@@ -848,7 +890,7 @@ def Carrito(request):
                 text2 = int(text.replace('id', ''))
                 varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
                 listaProductos.append([Producto.objects.get(id_producto=varProd.id_producto.id_producto), valor,
-                                       Talla.objects.get(id_talla=varProd.id_talla.id_talla), ])
+                                       Talla.objects.get(id_talla=varProd.id_talla.id_talla), text])
                 precioU = (Producto.objects.get(id_producto=varProd.id_producto.id_producto)).precio
                 subTotal += float(valor) * precioU
 
@@ -869,6 +911,7 @@ def Carrito(request):
 
 def OrderForm(request):
     val = sesiones(request)
+    cont = 0
     if val == 'Cliente':
         TallasDisp = TallaDisponible.objects.all()
         catidadTallas = TallaDisponible.objects.count()
@@ -876,10 +919,10 @@ def OrderForm(request):
         datos = dict()
         listaProductos = []
         subTotal = 0
-
         for i in range(catidadTallas):
             text = TallasDisp[i].get_id_tallaCART()
             if text in request.COOKIES:
+                cont+=1
                 valor = request.COOKIES[text]
                 text2 = int(text.replace('id', ''))
                 varProd = TallaDisponible.objects.get(id_tallaDisponible=text2)
@@ -894,6 +937,10 @@ def OrderForm(request):
 
             # producto = Producto.objects.get(id_producto=text)
             # datos['tallas']=lista
+        if cont==0:
+            return redirect('/productsAsClient/')
+
+
         datos['productos'] = [listaProductos]
         datos['departamentos'] = Departamento.objects.all()
         datos['Sesion'] = val
@@ -934,72 +981,86 @@ def administratorManager(request):
 
 def dashboard(request):
     val = sesiones(request)
-    data = dict()
-    ######################  total ventas general:
-    totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar").aggregate(Sum("TotalPagar"))
-    totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado").aggregate(Sum("TotalPagar"))
-    data['TotalVentas'] = totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum']
+    if val == 'Superadministrador':
+        data = dict()
+        ######################  total ventas general:
+        totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar").aggregate(Sum("TotalPagar"))
+        totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado").aggregate(Sum("TotalPagar"))
+        data['TotalVentas'] = round(totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum'],2)
 
-    ######################  total ventas ultimo mes:
-    fecha = date.today()
-    totalVentas = Pedido.objects.filter(EstadoPedido="Aceptado sin enviar", FechaPedido__month=fecha.month).aggregate(
-        Sum("TotalPagar"))
-    totalVentas2 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado", FechaPedido__month=fecha.month).aggregate(
-        Sum("TotalPagar"))
-    data['TotalVentasMes'] = totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum']
-    print(data['TotalVentasMes'])
+        ######################  total ventas ultimo mes:
+        fecha = date.today()
+        print(Pedido.objects.get(id_pedido=7).FechaPedido.month)
+        print(fecha.month)
+        totalVentas = Pedido.objects.filter(FechaPedido__month=fecha.month, EstadoPedido="Aceptado sin enviar").aggregate(
+            Sum("TotalPagar"))
+        totalVentas2 = Pedido.objects.filter(FechaPedido__month=fecha.month, EstadoPedido="Aceptado y enviado").aggregate(
+            Sum("TotalPagar"))
+        if totalVentas['TotalPagar__sum'] != None and totalVentas2['TotalPagar__sum'] != None :
+            data['TotalVentasMes'] = round(totalVentas['TotalPagar__sum'] + totalVentas2['TotalPagar__sum'],2)
+        elif totalVentas['TotalPagar__sum'] != None:
+            data['TotalVentasMes'] = round(totalVentas['TotalPagar__sum'],2)
+        elif totalVentas2['TotalPagar__sum'] != None:
+            data['TotalVentasMes'] = round(totalVentas2['TotalPagar__sum'],2)
 
-    ######################  total clientes:
-    totalClientes = cliente.objects.all().count()
-    data['TotalClientes'] = totalClientes
-    totalClientesUnPedido = Pedido.objects.filter(EstadoPedido="Aceptado y enviado",
-                                                  FechaPedido__month=fecha.month).aggregate(Count("id_cliente"))
-    data['totalClientesUnPedido'] = totalClientesUnPedido['id_cliente__count']
+        ######################  total clientes:
+        totalClientes = cliente.objects.all().count()
+        data['TotalClientes'] = totalClientes
+        totalClientesUnPedido1 = Pedido.objects.filter(EstadoPedido="Aceptado y enviado").count()
+        data['totalClientesUnPedido'] = totalClientesUnPedido1
 
-    ######################  pedidos recibidos:
-    totalPedidos = Pedido.objects.all().count()
-    data['totalPedidos'] = totalPedidos
-    totalPedidosMes = Pedido.objects.filter(FechaPedido__month=fecha.month).count()
-    data['totalPedidosMes'] = totalPedidosMes
+        ######################  pedidos recibidos:
+        totalPedidos = Pedido.objects.all().count()
+        data['totalPedidos'] = totalPedidos
+        totalPedidosMes = Pedido.objects.filter(FechaPedido__month=fecha.month).count()
+        data['totalPedidosMes'] = totalPedidosMes
 
-    ######################  pedidos rechazados:
-    totalRechazados = Pedido.objects.filter(EstadoPedido="Rechazado").count()
-    data['totalRechazados'] = totalRechazados
-    totalRechazadosMes = Pedido.objects.filter(EstadoPedido="Rechazado", FechaPedido__month=fecha.month).count()
-    data['totalRechazadosMes'] = totalRechazadosMes
+        ######################  pedidos rechazados:
+        totalRechazados = Pedido.objects.filter(EstadoPedido="Rechazado").count()
+        data['totalRechazados'] = totalRechazados
+        totalRechazadosMes = Pedido.objects.filter(EstadoPedido="Rechazado", FechaPedido__month=fecha.month).count()
+        data['totalRechazadosMes'] = totalRechazadosMes
 
-    ######################  producto menos y maspedido:
-    productos = TallaDisponible.objects.all()
-    cantidadMax = 0
-    cantidadMin = 999999
-    objMax = ''
-    objMin = ''
-    TallaMax = ''
-    TallaMin = ''
-    for i in productos:
-        obj = ProductosPedido.objects.filter(id_tallaDisponible=i.id_tallaDisponible).aggregate(Sum("cantidad"))
-        if obj['cantidad__sum'] != None:
-            if obj['cantidad__sum'] < cantidadMin:
-                cantidadMin = obj['cantidad__sum']
-                objMin = i
-            if obj['cantidad__sum'] > cantidadMax:
-                cantidadMax = obj['cantidad__sum']
-                objMax = i
-    data['cantidadMax'] = cantidadMax
-    data['cantidadMin'] = cantidadMin
-    data['objMax'] = objMax
-    data['objMin'] = objMin
+        ######################  producto menos y maspedido:
+        productos = TallaDisponible.objects.all()
+        cantidadMax = 0
+        cantidadMin = 9999999
+        objMax = ''
+        objMin = ''
+        TallaMax = ''
+        TallaMin = ''
+        for i in productos:
+            obj = ProductosPedido.objects.filter(id_tallaDisponible=i.id_tallaDisponible).aggregate(Sum("cantidad"))
+            if obj['cantidad__sum'] != None:
+                if obj['cantidad__sum'] < cantidadMin:
+                    cantidadMin = obj['cantidad__sum']
+                    objMin = i
+                if obj['cantidad__sum'] > cantidadMax:
+                    cantidadMax = obj['cantidad__sum']
+                    objMax = i
+        data['cantidadMax'] = cantidadMax
+        data['cantidadMin'] = cantidadMin
+        data['objMax'] = objMax
+        data['objMin'] = objMin
 
-    departamentos = Departamento.objects.all()
+        departamentos = Departamento.objects.all()
 
-    data['departamentos'] = departamentos
+        data['departamentos'] = departamentos
 
-    data['Sesion'] = val
+        data['Sesion'] = val
 
-    return render(request, 'dashboard.html', data)
+        return render(request, 'dashboard.html', data)
+    else:
+        return redirect('/SignInAsAdministrator')
+
+
 def Logout(request):
     request.session.flush()
     if request.session.session_key is not None:
         request.session.delete()
 
     return redirect('/')
+
+
+def Error404View(request, exception):
+    return render(request, 'notfoud.html')

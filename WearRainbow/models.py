@@ -172,8 +172,7 @@ class Departamento(models.Model):
         return Pedido.objects.filter(id_departamento=self.id_departamento).count()
 
     def get_total_ventas(self):
-        return Pedido.objects.filter(id_departamento=self.id_departamento).aggregate(Sum(('TotalPagar')))
-
+        return Pedido.objects.filter(id_departamento=self.id_departamento).aggregate(Sum('TotalPagar'))
 
 class Pedido(models.Model):
     id_pedido = models.AutoField(primary_key=True, null=False, unique=True)

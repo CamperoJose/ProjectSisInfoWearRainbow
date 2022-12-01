@@ -18,8 +18,16 @@ from django.urls import path
 
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls import handler404
 
 from . import views
+
+# add a flag for
+# handling the 404 error
+handler404 = 'pages.views.Error404View'
+handler500 = 'pages.views.Error404View'
+
+
 urlpatterns = [
     #path('admin/', admin.site.urls),
     path('', views.paginaIndex, name="paginaIndex"),
@@ -39,6 +47,7 @@ urlpatterns = [
     path('registroProducto/', views.registroProducto, name="registroProducto"),
     path('contacts/', views.contacts, name="contacts"),
     path('registroTalla/', views.registroTalla, name="registroTalla"),
+    path('modificarTalla/<id>', views.modificarTalla, name="modificarTalla"),
     path('ModifyProduct/<id>', views.ModifyProduct, name="ModifyProduct"),
     path('DetallePedidio/<id>', views.DetallePedidio, name="DetallePedidio"),
     path('DetallePedidoCliente/<id>', views.DetallePedidoCliente, name="DetallePedidoCliente"),
@@ -47,6 +56,7 @@ urlpatterns = [
     path('OrdersAsClient/', views.OrdersAsClient, name="OrdersAsClient"),
     path('modificarProducto/', views.modificarProducto, name="modificarProducto"),
     path('addCart/<id>', views.addCart, name="addCart"),
+    path('deleteItem/<id>', views.deleteItem, name="deleteItem"),
     path('registroCategoria/', views.registroCategoria, name="registroCategoria"),
     path('modificarCategoria/<id>', views.modificarCategoria, name="modificarCategoria"),
     path('registrarCliente/', views.registroCliente, name="registrarCliente"),

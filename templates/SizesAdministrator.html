@@ -15,46 +15,37 @@
 
     <br><br><br><br><br>
 
-
-
-
-
-
 		<div class="container">
 		<div class="row">
     <div class="col-sm-12 col-md-6 col-lg-4 col-xl-5">
 
-        <h1>Adicionar o Modificar Talla</h1>
+        <h1>Adicionar nueva Talla</h1>
         <div class="card">
             <div class="card-body">
                 <form action="/registroTalla/" method="POST">{% csrf_token %}
 
-                    <div class="form-group">
-                        <input type="text"  name="id" class="form-control" placeholder="Id Talla (llenar solo para modificar)"
-                            maxlength="30" >
-                    </div>
                     <br>
                     <div class="form-group">
                         <input type="text"  name="nombre" class="form-control" placeholder="Talla"
-                            maxlength="30" >
+                            maxlength="30" required>
                     </div>
 
                     <br>
                     <div class="form-group">
-                        <input type="text"  name="size1" class="form-control" placeholder="Largo Espalda"
-                            maxlength="30" >
+                        <input type="number"  name="size1" class="form-control" placeholder="Largo Espalda"
+                            min="0" required>
                     </div>
 
                     <br>
                     <div class="form-group">
-                        <input type="text"  name="size2" class="form-control" placeholder="Contorno Pecho"
-                            maxlength="30" >
+                        <input type="number"  name="size2" class="form-control" placeholder="Contorno Pecho"
+                            min="0" required>
                     </div>
 
                     <br>
                     <div class="form-group">
-                        <input type="text"  name="size3" class="form-control" placeholder="Contorno Cuello"
-                            maxlength="30" >
+                        <input type="number"  name="size3" class="form-control" placeholder="Contorno Cuello"
+                            min="0" required>
                     </div>
 
 
@@ -78,6 +69,7 @@
                         <th style="text-align: center" >Largo Espalda</th>
                         <th style="text-align: center" >Contorno Pecho</th>
                         <th style="text-align: center" >Contorno Cuello</th>
+                        <th style="text-align: center" >Modificar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,6 +80,61 @@
                         <td style="text-align: center">{{t.largoEspalda}} cm.</td>
                         <td style="text-align: center">{{t.contornoPecho}} cm.</td>
                         <td style="text-align: center">{{t.contornoCuello}} cm.</td>
+                        <td style="text-align: center; padding-right: 2%"><button style="background-color: white; border: 0px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dsa{{t.id_talla}}" data-bs-whatever="@mdo"><img style="height: 25px" src="{% static 'MEDIA/icono05.png' %}" alt=""></button></td>
+
+									<div class="modal fade" id="dsa{{t.id_talla}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+										<div class="modal-content">
+										  <div style="background-color: lightblue; color: #3D384D" class="modal-header">
+											<h5 class="modal-title" >Modificar actual talla: {{t.talla}} </h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										  </div>
+										<form action="/modificarTalla/{{t.id_talla}}" method="post">
+                                            {% csrf_token %}
+										  <div class="modal-body">
+
+                                              <div class="form-group">
+                                                <input type="text"  name="nombre" class="form-control" value="{{t.talla}}"
+                                                    maxlength="30" required>
+                                                  <label>Nombre de la talla</label>
+                                            </div>
+
+                                            <br>
+                                            <div class="form-group">
+                                                <input type="text"  name="size1" class="form-control" value="{{t.largoEspalda}}"
+                                                    maxlength="30" required>
+                                                <label>Largo Espalda</label>
+                                            </div>
+
+                                            <br>
+                                            <div class="form-group">
+                                                <input type="text"  name="size2" class="form-control" value="{{t.contornoPecho}}"
+                                                    maxlength="30" required>
+                                                <label>Contorno Pecho</label>
+                                            </div>
+
+                                            <br>
+                                            <div class="form-group">
+                                                <input type="text"  name="size3" class="form-control" value="{{t.contornoCuello}}"
+                                                    maxlength="30" required>
+                                                <label>Contorno Cuello</label>
+                                            </div>
+                                              <br>
+
+											  <div class="mb-3">
+												  <input type="checkbox" name="conf"  required>
+												  <label>Confirmar cambios.</label><br>
+											  </div>
+
+										  </div>
+										  <div class="modal-footer">
+											<button style="background-color: #dfe6e6; border: 0px; color: #3D384D" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+											<button style="background-color: #3D384D; border: 0px" type="submit" class="btn btn-primary">Aceptar</button>
+										  </div>
+											</form>
+										</div>
+									  </div>
+									</div>
                     </tr>
                     {% endfor %}
                 </tbody>

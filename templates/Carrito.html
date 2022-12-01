@@ -13,7 +13,7 @@
 </head>
 <body>
 
-    <br><br><br><br><br>
+    <br><br><br>
 	<div class="col-md-8 col-lg-6 col-xl-4 offset-md-1">
         <div class="text-center text-lg-start mt-4 pt-2">
 			<a href="{% url 'productsAsClient' %}">
@@ -21,9 +21,7 @@
 				Volver</button></a>
         </div>
     </div>
-
-
-
+    <br><br>
 
 
   <div class="container">
@@ -39,6 +37,7 @@
 			{% for a in t %}
 
 
+
         <div class="card rounded-3 mb-4">
           <div class="card-body p-4">
             <div class="row d-flex justify-content-between align-items-center">
@@ -50,6 +49,8 @@
               <div class="col-md-3 col-lg-3 col-xl-3">
                 <p class="lead fw-normal mb-2">{{a.0.nombre}}</p>
                 <p><span class="text-muted">Talla: </span>{{a.2}} <br><span class="text-muted">Cantidad: </span>{{a.1}}</p>
+                <div class="small fw-bold mt-2 pt-1 mb-0 justify-content-end"> <a href="/ViewProductClient/{{a.0.id_producto}}"
+                    class="link-danger">Ver producto</a></div>
               </div>
               <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
 
@@ -57,8 +58,9 @@
               </div>
               <div class="col-md-3 col-lg-4 col-xl-4 offset-lg-1">
                 <h5 class="mb-0">Precio unitario: {{a.0.precio}}Bs.-</h5>
-                  <div class="small fw-bold mt-2 pt-1 mb-0 justify-content-end"> <a href="/ViewProductClient/{{a.0.id_producto}}"
-                    class="link-danger">Modificar cantidad</a></div>
+
+                <div class="small fw-bold mt-2 pt-1 mb-0 justify-content-end"> <a href="/deleteItem/{{a.3}}"
+                    class="link-danger"><img  style="height: 35px" src="{% static 'MEDIA/icono09.png' %}" alt=""></a></div>
               </div>
 
 
