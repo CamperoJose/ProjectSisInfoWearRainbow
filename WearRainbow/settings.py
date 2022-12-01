@@ -72,7 +72,7 @@ WSGI_APPLICATION = 'WearRainbow.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-''' CONEXION A BD CON SQL SERVER DE FORMA LOCAL
+# CONEXION A BD CON SQL SERVER DE FORMA LOCAL
 
 DATABASES = {
     'default': {
@@ -100,6 +100,7 @@ DATABASES ={
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3')
     }
 }
+'''
 
 
 
