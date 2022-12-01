@@ -361,15 +361,14 @@ def registroCliente(request):
 
 def inicioSesionCliente(request):
     if request.method == 'POST':
-
-        x = Fernet(keyToken)
-        usuario = request.POST['user']
-        contraseña = request.POST['pass']
-        verificar = cliente.objects.get(usuario=usuario)
-        encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
-        decrypted_password = str(x.decrypt(str(verificar.get_contraseña())), 'utf8')
-        print(decrypted_password)
         try:
+            x = Fernet(keyToken)
+            usuario = request.POST['user']
+            contraseña = request.POST['pass']
+            verificar = cliente.objects.get(usuario=usuario)
+            encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
+            decrypted_password = str(x.decrypt(str(verificar.get_contraseña())), 'utf8')
+            print(decrypted_password)
             verificar = cliente.objects.get(usuario=usuario)
             encrypted_text = x.encrypt(str.encode(str(verificar.get_id_cliente())))
             usr = verificar.get_usuario()
@@ -413,7 +412,7 @@ def inicioSesionAdministrador(request):
             encrypted_text = x.encrypt(str.encode(str(verificar.get_id_administrador())))
             decrypted_password = str(x.decrypt(str(verificar.get_contraseña())), 'utf8')
 
-            if usr != usuario or contraseña != decrypted_password:
+            if usr != usuario or contraseña != decrypted_password or verificar.estado == 'Desactivado':
                 messages.success(request, 'El nombre de usuario o contraseña no es correcto')
                 response = redirect('/SignInAsAdministrator/')
                 return response
