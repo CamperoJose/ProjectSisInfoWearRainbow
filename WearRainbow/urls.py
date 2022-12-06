@@ -24,9 +24,10 @@ from . import views
 
 # add a flag for
 # handling the 404 error
+'''
 handler404 = 'pages.views.Error404View'
 handler500 = 'pages.views.Error404View'
-
+'''
 
 urlpatterns = [
     #path('admin/', admin.site.urls),
@@ -39,6 +40,7 @@ urlpatterns = [
     path('ClientPanel/', views.ClientPanel, name="ClientPanel"),
     path('OrdersAdministrator/', views.OrdersAdministrator, name="OrdersAdministrator"),
     path('Carrito/', views.Carrito, name="Carrito"),
+    path('DepartamentsAdministrator/', views.DepartamentsAdministrator, name="DepartamentsAdministrator"),
     path('CategoriesAdministrator/', views.CategoriesAdministrator, name="CategoriesAdministrator"),
     path('SizesAdministrator/', views.SizesAdministrator, name="SizesAdministrator"),
     path('ProductsAdministrator/', views.ProductsAdministrator, name="ProductsAdministrator"),
@@ -59,6 +61,8 @@ urlpatterns = [
     path('deleteItem/<id>', views.deleteItem, name="deleteItem"),
     path('registroCategoria/', views.registroCategoria, name="registroCategoria"),
     path('modificarCategoria/<id>', views.modificarCategoria, name="modificarCategoria"),
+    path('registroDepartamentos/', views.registroDepartamentos, name="registroDepartamentos"),
+    path('modificarDepartamento/<id>', views.modificarDepartamento, name="modificarDepartamento"),
     path('registrarCliente/', views.registroCliente, name="registrarCliente"),
     path('inicioSesionCliente/', views.inicioSesionCliente, name="inicioSesionCliente"),
     path('inicioSesionAdministrador/', views.inicioSesionAdministrador, name="inicioSesionAdministrador"),

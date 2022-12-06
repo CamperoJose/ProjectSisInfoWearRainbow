@@ -165,8 +165,16 @@ class TallaDisponible(models.Model):
 
 class Departamento(models.Model):
     id_departamento = models.AutoField(primary_key=True, null=False, unique=True)
-    Departamento = models.CharField(max_length=30, null=False)
+    departamento = models.CharField(max_length=30, null=False)
     precio = models.FloatField(null=False)
+
+    def __str__(self):
+        return self.id_departamento
+
+    def get_departamento(self):
+        return str(self.departamento)
+    def get_precio(self):
+        return round(self.precio, 1)
 
     def get_cantidad_ventas(self):
         return Pedido.objects.filter(id_departamento=self.id_departamento).count()

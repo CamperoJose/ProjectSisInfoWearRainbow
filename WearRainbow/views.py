@@ -405,33 +405,29 @@ def inicioSesionAdministrador(request):
     if request.method == 'POST':
         usuario = request.POST['user']
         contraseña = request.POST['pass']
-        try:
-            verificar = administrador.objects.get(usuario=usuario)
-            usr = verificar.get_usuario()
-            pass1 = verificar.get_contraseña()
-            encrypted_text = x.encrypt(str.encode(str(verificar.get_id_administrador())))
-            decrypted_password = str(x.decrypt(str(verificar.get_contraseña())), 'utf8')
 
-            if usr != usuario or contraseña != decrypted_password or verificar.estado == 'Desactivado':
-                messages.success(request, 'El nombre de usuario o contraseña no es correcto')
-                response = redirect('/SignInAsAdministrator/')
-                return response
-            else:
-                print("datos correctos")
-                rol = ''
+        verificar = administrador.objects.get(usuario=usuario)
+        usr = verificar.get_usuario()
+        pass1 = verificar.get_contraseña()
+        encrypted_text = x.encrypt(str.encode(str(verificar.get_id_administrador())))
+        decrypted_password = str(x.decrypt(str(verificar.get_contraseña())), 'utf8')
 
-                if verificar.rol == "SuperAdministrador":
-                    rol = 'token_Superadministrador'
-                elif verificar.rol == "Administrador":
-                    rol = 'token_administrador'
-
-                request.session[rol] = encrypted_text.decode()
-
-                response = redirect('/OrdersAdministrator/')
-                return response
-        except:
-            messages.success(request, 'El nombre de usuario o contraseña no es correctosss')
+        if usr != usuario or contraseña != decrypted_password or verificar.estado == 'Desactivado':
+            messages.success(request, 'El nombre de usuario o contraseña no es correcto')
             response = redirect('/SignInAsAdministrator/')
+            return response
+        else:
+            print("datos correctos")
+            rol = ''
+
+            if verificar.rol == "SuperAdministrador":
+                rol = 'token_Superadministrador'
+            elif verificar.rol == "Administrador":
+                rol = 'token_administrador'
+
+            request.session[rol] = encrypted_text.decode()
+
+            response = redirect('/OrdersAdministrator/')
             return response
 
 
@@ -1062,3 +1058,41 @@ def Logout(request):
 
 def Error404View(request, exception):
     return render(request, 'notfoud.html')
+
+
+def DepartamentsAdministrator(request):
+    val = sesiones(request)
+    if request.session.get('token_administrador') or request.session.get('token_Superadministrador'):
+        DepartamentoListado = Departamento.objects.all()
+        return render(request, 'DepartamentsAdministrator.html', {"Departamento": DepartamentoListado, 'Sesion': val})
+    else:
+        return redirect('/OrdersAdministrator/')
+
+def registroDepartamentos(request):
+    val = sesiones(request)
+    if request.method == 'POST':
+        # ParaRegistro de categoria:
+        departamento = request.POST['departamento']
+        precio = request.POST['precio']
+        obj = Departamento(departamento=departamento, precio=float(precio))
+        obj.save()
+        response = redirect('/DepartamentsAdministrator/')
+        return response
+
+
+
+def modificarDepartamento(request, id):
+    val = sesiones(request)
+    if request.method == 'POST':
+        departamento = request.POST['departamento']
+        precio = request.POST['precio']
+        obj = Departamento.objects.get(id_departamento=id)
+        obj.departamento=departamento
+        obj.precio=float(precio)
+        obj.save()
+        response = redirect('/DepartamentsAdministrator/')
+        return response
+
+
+
+
