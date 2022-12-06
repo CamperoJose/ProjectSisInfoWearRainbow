@@ -80,16 +80,16 @@ DATABASES = {
         'NAME': 'WearRainbowDB',
         #'trusted_connection': 'yes',
         #'USER': '',
-        'USER': '',
-        'PASSWORD': '',
+        'USER': 'admin',
+        'PASSWORD': 'admin',
         'HOST': 'localhost',
+        'PORT': '1433 ',
 
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
         },
     }
 }
-
 '''
 
 # CONEXION A BD CON SQLITE
@@ -101,7 +101,6 @@ DATABASES ={
     }
 }
 '''
-
 
 
 
