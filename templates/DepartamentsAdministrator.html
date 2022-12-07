@@ -1,0 +1,122 @@
+{% load static %}
+{% include "DefaultNavbar.html" %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>WEAR RAINBOW</title>
+    <!-- All CSS -->
+    <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}'/>
+    <link href='{% static "cssForIndex.css" %}' rel="stylesheet">
+</head>
+<body>
+<br><br><br><br><br>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5">
+
+            <h1>Agregar Departamento</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form action="/registroDepartamentos/" method="POST">{% csrf_token %}
+
+                        <br>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="departamento" required>
+                            <input type=number class="form-control" name="precio" min="0" step=1.00 required>
+                        </div>
+                        <br>
+
+                        <div class="form-group">
+                            <button style=" background-color: #F2727D;" type="submit" class="btn btn-block text-white">
+                                Guardar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-7">
+            <h1>Listado de Departamentos</h1>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr style="color: #679FBF; ">
+                        <th style="text-align: center">Departamentos</th>
+                        <th style="text-align: center">Precio</th>
+                        <th style="text-align: center">Modificar</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for c in Departamento %}
+                    <tr>
+                        <td style="text-align: left; padding-left: 8%">{{c.departamento}}</td>
+                        <td style="text-align: center">{{c.precio}}</td>
+                        <td style="text-align: center; padding-right: 2%">
+                            <button style="background-color: white; border: 0px" type="button" class="btn btn-primary"
+                                    data-bs-toggle="modal" data-bs-target="#dsa{{c.id_departamento}}"
+                                    data-bs-whatever="@mdo"><img style="height: 25px"
+                                                                 src="{% static 'MEDIA/icono05.png' %}" alt=""></button>
+                        </td>
+
+                        <div class="modal fade" id="dsa{{c.id_departamento}}" tabindex="-1"
+                             aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div style="background-color: lightblue; color: #3D384D" class="modal-header">
+                                        <h5 class="modal-title">Modificar departamento: {{c.departamento}} </h5>
+                                        <h5 class="modal-title">Modificar precio: {{c.precio}} </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <form action="/modificarDepartamento/{{c.id_departamento}}" method="post">
+                                        {% csrf_token %}
+                                        <div class="modal-body">
+
+                                            <div class="form-group">
+                                                <input type="text" name="departamento" class="form-control"
+                                                       value="{{c.departamento}}"
+                                                       maxlength="30" required>
+                                                <input type=number class="form-control" name="precio"
+                                                       value="{{c.precio}}">
+                                                <label>Nombre del departamento</label>
+                                                <label>Precio</label>
+                                            </div>
+                                            <br>
+
+                                            <div class="mb-3">
+                                                <input type="checkbox" name="conf" required>
+                                                <label>Confirmar cambios.</label><br>
+                                            </div>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button style="background-color: #dfe6e6; border: 0px; color: #3D384D"
+                                                    type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Cerrar
+                                            </button>
+                                            <button style="background-color: #3D384D; border: 0px" type="submit"
+                                                    class="btn btn-primary">Aceptar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- All Js -->
+
+<script src="{% static 'js/jquery-3.5.1.slim.min.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
